@@ -1,0 +1,38 @@
+Version 0.9.0pre - 12/20/10 - Pre-0.9 Git import
+	All:
+		Prefix header -> Common.h.
+		Fix some massive retain errors and implement dealloc in all classes. This will probably result in various memleaks, let clang sort that out in the future.
+		Partial XML writing support using custom, ChanKit-native formatting.
+		Xcode's Clang 1.6 fixes RegexKitLite build issues, make it the default.
+	CKImage:
+		CKImage class to ease iOS/OS X cross-compatibility, sanitize the metadata situation, abstract data retrieval and storage, and provide imageboard-relevant convenience methods.	
+	CKPoster:
+		Preliminary posting support including reCAPTCHA, post attempt templates, and return data parsing.
+	CKRecipe:
+		URL matching for supported sites of various resource types (images, threads, etc).
+		Recipe changes to accommodate arbitrary numbers of alternate paths. The "Path" key may now be an ordered array of XPaths to test (it can still be a string if there are no alternates). This deprecates the "Alternate" key and helps us get around any shortcomings of the XPath library. Recipe documentation has been amended to reflect this change.
+	CKBoard:
+		New stat methods: newestPost, optimized newestPostID, and unholy abomination findPostForImage.
+	CKPage:
+		Likewise: newestPost, oldestPost, and time-interval rangeOfPosts.
+	CKPost:
+		New storage container for in-comment context with quotes, admin messages, etc. Incidentally, these are now broken.
+	ChanParse:
+		Rudimentary reCAPTCHA posting support.
+		Sanitize image dumping thanks to CKImage.
+	Other:
+		Miscellaneous changes and cleanup.
+Version 0.8.1 - 10/17/10
+	All:
+		CSA bug fixing
+		Send NULL to NSError parameters rather than nil; no practical difference, but seems to be convention.
+	CKUser:
+		Authority now tested individually via regular expressions as not all software groups privilege level in the same element.
+	CKThread:
+		More accurately named vars (imagereplies included the OP, now imagecount)
+		Convenience methods to get all posts containing images or all images themselves
+	ChanParse:
+		Image dumping with the -url -dump command
+
+Version 0.8.0 - 10/16/10
+	Initial release.

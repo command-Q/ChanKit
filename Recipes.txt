@@ -1,0 +1,34 @@
+Recipes are property lists containing the XPaths, regular expressions, and format strings necessary to parse a given board software, which reside in the Recipes subdirectory of the framework's Resources folder. These allow ChanKit's parsing engine to be easily extensible to many different varieties of imageboard and also easily upgradeable in the event of sudden board software changes. yotsuba.plist is the present canonical implementation, whose definitions should be followed when adding support for new boards. It will be replaced by a native format in the near future.
+
+The location of keys as they appear in yotsuba.plist must be followed strictly, however each key itself (with certain exceptions) may be of either string type or a more versatile dictionary type. 
+Within end-node dictionary keys, there must be at least one key:
+	- "Path", containing the sole XPath or array of potential XPaths from which nodes will be obtained.
+There may optionally be three other keys:
+	- "NodeRegex" which evaluates the given regular expression against each resulting node's individual string value.
+	- "Regex" which evaluates against the final joined string product of the nodes.
+Keys other than these are ignored by the parser and may be grouped here for convenience. Additionally, comments should be added in the "Comments" key. 
+Note that all regular expressions take their result from the first capture as given by ().
+
+Each standard lookup operation goes through the following steps:
+	1. Attempt to obtain XML nodes given by XPath "Path", attempting to apply format string if test var is provided.
+		1.1. If "Path" is an array, then iterate the list until a path successfully extracts nodes.
+	2. Extract string value of nodes and trim white space.
+		2.1. Apply "NodeRegex" if provided.
+	3. Merge array of results into a single string delimited by newline characters.
+	4. Trim final whitespace and apply "Regex" if provided.
+	5. Return string or nil if string is empty.
+Obvious exceptions to this process include static format strings and definitions.
+
+Paths may be excluded entirely in most cases if they do not apply to the given board software. The only faulty paths which can cause a runtime error are ones that are given an incorrect format string.
+Note also that full XPaths, while less versatile, are greatly preferred over search XPaths due to their markedly higher execution speed. However, in cases like single posts where the entirety of the data is localized to one parent element, relative paths are employed instead, again for speed considerations.
+
+ChanKit will attempt to intelligently detect board software for a given document with a series of tests against its recipe database (@detectBoardSoftware).
+Order of detection: 
+	1. URLs explicitly declared as supported by a recipe's "Sites" array.
+	2. Software title matching against the recipe's supported "Title" and list of supported versions*.
+	3. Fuzzy detection by testing for nil against a unique XPath contained in the recipe's "Identifier" (this ought to be more robust).
+	4.  ¯\(°_o)/¯ CK_ERR_UNSUPPORTED
+*If either the list or path are excluded from the recipe, all versions are considered to be supported.
+Positive status codes are returned based on the succeeding test or a 0 equivalent on failure, negative on critical errors such as a nil document. In cases where detection fails, you must set the plist manually via either a full path (@recipeFile) or the recipe name within the framework (@recipeNamed).
+
+As of ChanKit version 0.8 the recipe format is not frozen and in fact it is very likely that keys will be added to support certain functionality of not yet implemented board software (such as video embeds in Kusaba X). The format will be frozen as much as possible for the 1.0 release.
