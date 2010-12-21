@@ -1,0 +1,4 @@
+Due to the bundling requirements of ChanKit, an iOS static library isn't suitable. The alternative common method of including a framework in an iOS app is followed instead; simply copy ChanKit as a directory into your project and include ChanKit.h. Two libraries must be linked for RegexKitLite and KissXML, respectively: libicucore and libxml2 (both found in Xcode's "Existing Frameworks" dialog under Dylibs. libxml2 also requires a header search path of "/usr/include/libxml2" to be set in the project settings.
+For a more detailed guide on linking these frameworks, see
+http://regexkit.sourceforge.net/RegexKitLite/#AddingRegexKitLitetoyourProject
+http://code.google.com/p/kissxml/wiki/GettingStarted
