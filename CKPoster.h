@@ -12,7 +12,7 @@
 // This struct will be deprecated in the near future as captchas will be handled by a class of their own.
 typedef struct {
 	NSString* challenge;
-	NSImage* image;
+	UIImage* image;
 	NSString* verification;
 } captcha_s;
 
@@ -37,7 +37,7 @@ BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); };
 @property(nonatomic,readwrite,copy) NSString* comment;
 @property(nonatomic,readwrite,copy) NSString* file;
 @property(nonatomic,readwrite,copy) NSString* verification;
-@property(nonatomic,readonly,copy) NSImage* captcha;
+@property(nonatomic,readonly,copy) UIImage* captcha;
 
 - (id)initWithPostingDictionary:(NSDictionary*)dict;
 + (CKPoster*)posterWithDictionary:(NSDictionary*)dict;
@@ -45,13 +45,13 @@ BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); };
 // No factory method for a reference poster, this doesn't seem necessary
 - (id)initWithURL:(NSURL*)url;
 + (CKPoster*)posterForURL:(NSURL*)url;
-- (id)initWithXML:(NSXMLNode*)doc;
-+ (CKPoster*)posterForXML:(NSXMLNode*)doc;
+- (id)initWithXML:(DDXMLNode*)doc;
++ (CKPoster*)posterForXML:(DDXMLNode*)doc;
 - (void)dealloc;
 - (int)populate;
-- (void)populate:(NSXMLNode*)doc;
+- (void)populate:(DDXMLNode*)doc;
 
-- (NSImage*)captcha;
+- (UIImage*)captcha;
 - (BOOL)verify:(NSString*)captchaverification;
 - (void)prepare;
 - (CKPost*)post:(int*)error;

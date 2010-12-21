@@ -84,7 +84,7 @@ static CKRecipe* sharedInstance = nil;
 		return CK_DETECTION_FAILED;
 	}
 }
-- (int)detectBoardSoftware:(NSXMLDocument*)doc {
+- (int)detectBoardSoftware:(DDXMLDocument*)doc {
 	@synchronized(self) {
 		if(!doc) return CK_DETECTION_COULDNOTPROCEED;
 		if([self detectSite:[NSURL URLWithString:[doc URI]]]) {
@@ -129,8 +129,8 @@ static CKRecipe* sharedInstance = nil;
 	}
 }
 - (id)lookup:(NSString*)keyPath { @synchronized(self) { return [self lookupKeys:[keyPath pathComponents] inDictionary:recipe]; }}
-- (NSString*)lookup:(NSString*)keyPath inDocument:(NSXMLNode*)doc { @synchronized(self) { return [self lookup:keyPath inDocument:doc test:nil]; }}
-- (NSString*)lookup:(NSString*)keyPath inDocument:(NSXMLNode*)doc test:(id)test {
+- (NSString*)lookup:(NSString*)keyPath inDocument:(DDXMLNode*)doc { @synchronized(self) { return [self lookup:keyPath inDocument:doc test:nil]; }}
+- (NSString*)lookup:(NSString*)keyPath inDocument:(DDXMLNode*)doc test:(id)test {
 	@synchronized(self) {
 		NSDictionary* lookup = nil;
 		NSArray* nodes,* paths;
@@ -158,7 +158,7 @@ static CKRecipe* sharedInstance = nil;
 		
 		NSString* regex,* string;
 		NSString* data = [NSString string];
-		for(NSXMLElement* node in nodes) {
+		for(DDXMLElement* node in nodes) {
 			string = [node stringValue];
 			if(lookup && (regex = [lookup objectForKey:@"NodeRegex"])) string = [string stringByMatching:regex capture:1L];		
 			string = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];

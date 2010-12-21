@@ -23,7 +23,7 @@
 		URL = [url retain];
 		DLog(@"URL: %@",URL);
 
-		NSXMLDocument* doc;
+		DDXMLDocument* doc;
 		if([CKUtil fetchXML:&doc fromURL:URL]) return nil;
 		
 		name = [[[CKRecipe sharedRecipe] lookup:@"Chan/Name" inDocument:doc] retain];

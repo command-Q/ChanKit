@@ -36,14 +36,14 @@
 		user = [[CKUser alloc] initWithUserInfo:uinfo];
 		
 		NSBundle* classbundle = [NSBundle bundleForClass:[self class]];
-		image = [[CKImage alloc] initByReferencingURL:[classbundle URLForImageResource:@"ChanKit.png"]];
-		image.thumbnail = [[CKImage alloc] initWithContentsOfURL:[classbundle URLForImageResource:@"ChanKit_thumb.png"]];
+		image = [[CKImage alloc] initByReferencingURL:[classbundle URLForResource:@"ChanKit" withExtension:@"png"]];
+		image.thumbnail = [[CKImage alloc] initWithContentsOfURL:[classbundle URLForResource:@"ChanKit_thumb" withExtension:@"png"]];
 		[image setMetadata:[NSDictionary dictionaryWithObjectsAndKeys:	
 							@"KRUrxKSynSfP8h/eYN8yqA==",@"MD5",
 							[NSNumber numberWithUnsignedInteger:328230],@"Size",
-							[NSValue valueWithSize:NSMakeSize(512.0,512.0)],@"Resolution",
+							[NSValue valueWithCGSize:CGSizeMake(512.0,512.0)],@"Resolution",
 							[[[NSFileManager defaultManager] attributesOfItemAtPath:
-							[classbundle pathForImageResource:@"ChanKit.png"] error:nil] fileModificationDate],
+							[classbundle pathForResource:@"ChanKit" ofType:@"png"] error:nil] fileModificationDate],
 							@"Timestamp",nil]];
 
 		subject = @"Subject";
@@ -91,7 +91,7 @@
 }
 + (CKPost*)postFromURL:(NSURL*)url { return [[[self alloc] initWithURL:url] autorelease]; }
 
-- (id)initWithXML:(NSXMLNode*)doc threadContext:(CKThread*)thr {
+- (id)initWithXML:(DDXMLNode*)doc threadContext:(CKThread*)thr {
 	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]])) {
 	/*	CKPost* inthread;
 		if((inthread = [thr postWithID:ID])) return self = [inthread retain];
@@ -100,7 +100,7 @@
 	}
 	return self;
 }
-+ (CKPost*)postFromXML:(NSXMLNode*)doc threadContext:(CKThread*)thr { return [[[self alloc] initWithXML:doc threadContext:thr] autorelease]; }
++ (CKPost*)postFromXML:(DDXMLNode*)doc threadContext:(CKThread*)thr { return [[[self alloc] initWithXML:doc threadContext:thr] autorelease]; }
 
 - (void)dealloc {
 	[URL release];
@@ -121,14 +121,14 @@
 
 - (int)populate { 
 	int error;
-	NSXMLDocument* doc;
+	DDXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
 	[self populate:doc];
 	return 0;
 }
 
-- (void)populate:(NSXMLNode*)doc {
+- (void)populate:(DDXMLNode*)doc {
 	if(![doc level]) {
 		// doc is root node
 		NSString* rootpath = OP ? [[CKRecipe sharedRecipe] lookup:@"Post/OP"] : 
@@ -211,8 +211,8 @@
 				post = [CKPost postReferencingURL:[[URL URLByDeletingLastPathComponent] URLByAppendingPathComponent:qurl]];
 			else if([qurl isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Quotes/CrossBoard"]]) {
 				// Cross-board quote, we have to resolve it
-				NSXMLDocument* request = [[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString:qurl] 
-																			  options:NSXMLDocumentTidyHTML error:NULL] autorelease];
+				DDXMLDocument* request = [[[DDXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString:qurl] 
+																			  options:DDXMLDocumentTidyHTML error:NULL] autorelease];
 				if(request)
 					post = [[CKPost alloc] initByReferencingURL:
 							[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Post/Redirect" inDocument:request]]];
@@ -295,14 +295,14 @@
 	return [quotes.values indexOfObjectPassingTest:^(id quote, NSUInteger idx, BOOL *stop){return *stop = [quote ID] == [post ID];}] != NSNotFound;
 }
 
-- (NSXMLNode*)generateXML {
-	NSXMLNode* xmluser = [user XMLRepresentation];
-	NSXMLNode* xmlfile = [image XMLRepresentation];
+- (DDXMLNode*)generateXML {
+	DDXMLNode* xmluser = [user XMLRepresentation];
+	DDXMLNode* xmlfile = [image XMLRepresentation];
 	
-	NSXMLElement* xmlsubject = [NSXMLElement elementWithName:@"span"
-													children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:subject]]
+	DDXMLElement* xmlsubject = [DDXMLElement elementWithName:@"span"
+													children:[NSArray arrayWithObject:[DDXMLNode textWithStringValue:subject]]
 												  attributes:[NSArray arrayWithObject:
-															  [NSXMLNode attributeWithName:@"class" stringValue:@"subject"]]];
+															  [DDXMLNode attributeWithName:@"class" stringValue:@"subject"]]];
 	
 	NSMutableArray* piecemeal;
 	NSUInteger lastend = 0;
@@ -310,18 +310,18 @@
 	for(NSUInteger i = 0; i < quotes.count; i++) {
 		NSRange range = [[quotes.ranges objectAtIndex:i] rangeValue];
 		CKPost* post = [quotes.values objectAtIndex:i];
-		[piecemeal addObject:[NSXMLNode textWithStringValue:[comment substringWithRange:NSMakeRange(lastend,range.location - lastend)]]];
-		[piecemeal addObject:[NSXMLElement elementWithName:@"a"
+		[piecemeal addObject:[DDXMLNode textWithStringValue:[comment substringWithRange:NSMakeRange(lastend,range.location - lastend)]]];
+		[piecemeal addObject:[DDXMLElement elementWithName:@"a"
 												  children:[NSArray arrayWithObject:
-															[NSXMLNode textWithStringValue:[NSString stringWithFormat:@">>%d",post.ID]]]
+															[DDXMLNode textWithStringValue:[NSString stringWithFormat:@">>%d",post.ID]]]
 												attributes:[NSArray arrayWithObjects:
-															[NSXMLNode attributeWithName:@"class" stringValue:@"quote"],
-															[NSXMLNode attributeWithName:@"href"
+															[DDXMLNode attributeWithName:@"class" stringValue:@"quote"],
+															[DDXMLNode attributeWithName:@"href"
 																			 stringValue:[NSString stringWithFormat:@"#%d",post.ID]],
 															nil]]];//gonna have to do better than this
 		lastend = range.location + range.length;
 	}
-	[piecemeal addObject:[NSXMLNode textWithStringValue:[comment substringWithRange:NSMakeRange(lastend,len - lastend)]]];
+	[piecemeal addObject:[DDXMLNode textWithStringValue:[comment substringWithRange:NSMakeRange(lastend,len - lastend)]]];
 	
 	// ... eventually we return an <li>
 	return nil;

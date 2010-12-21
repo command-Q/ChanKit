@@ -59,7 +59,7 @@
 }
 + (CKUser*)userNamed:(NSString*)namestring { return [[[self alloc] initWithName:namestring] autorelease]; }
 
-- (id)initWithXML:(NSXMLNode*)doc {
+- (id)initWithXML:(DDXMLNode*)doc {
 	if(self = [self init]) {
 		if(![doc level]) {
 			// doc is root node
@@ -73,7 +73,7 @@
 				ID = [[URL fragment] intValue];
 			NSString* rootpath = OP ?	[[CKRecipe sharedRecipe] lookup:@"Post/OP"] : 
 										[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post/Index"],[NSNumber numberWithInt:ID]];
-			NSXMLElement* root = [[doc nodesForXPath:rootpath error:NULL] objectAtIndex:0];
+			DDXMLElement* root = [[doc nodesForXPath:rootpath error:NULL] objectAtIndex:0];
 			
 			if(root && (self = [self initWithXML:root])) return self;
 			return nil;
@@ -92,7 +92,7 @@
 	}
 	return self;
 }
-+ (CKUser*)userFromXML:(NSXMLNode*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }
++ (CKUser*)userFromXML:(DDXMLNode*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }
 
 + (CKUser*)anonymous { return [[[self alloc] initWithUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:@"Anonymous",@"Name",nil]] autorelease]; }
 
@@ -178,34 +178,34 @@
 	return self.namestring;
 }
 
-- (NSXMLNode*)XMLRepresentation {
-	NSXMLNode* xmlname = [NSXMLElement elementWithName:@"span" 
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:name]] 						
-											attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"name"]]];
+- (DDXMLNode*)XMLRepresentation {
+	DDXMLNode* xmlname = [DDXMLElement elementWithName:@"span" 
+											  children:[NSArray arrayWithObject:[DDXMLNode textWithStringValue:name]] 						
+											attributes:[NSArray arrayWithObject:[DDXMLNode attributeWithName:@"class" stringValue:@"name"]]];
 	
-	NSXMLNode* xmltrip = [NSXMLElement elementWithName:@"span" 
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:tripcode.trip]] 						
-											attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"tripcode"]]];
+	DDXMLNode* xmltrip = [DDXMLElement elementWithName:@"span" 
+											  children:[NSArray arrayWithObject:[DDXMLNode textWithStringValue:tripcode.trip]] 						
+											attributes:[NSArray arrayWithObject:[DDXMLNode attributeWithName:@"class" stringValue:@"tripcode"]]];
 	
-	NSXMLNode* xmlstrip = [NSXMLElement elementWithName:@"span" 
-											   children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:tripcode.securetrip]]						
-											 attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"securetripcode"]]];
+	DDXMLNode* xmlstrip = [DDXMLElement elementWithName:@"span" 
+											   children:[NSArray arrayWithObject:[DDXMLNode textWithStringValue:tripcode.securetrip]]						
+											 attributes:[NSArray arrayWithObject:[DDXMLNode attributeWithName:@"class" stringValue:@"securetripcode"]]];
 
-	NSXMLNode* xmlauth = [NSXMLElement elementWithName:@"span" 
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.authority]]						
+	DDXMLNode* xmlauth = [DDXMLElement elementWithName:@"span" 
+											  children:[NSArray arrayWithObject:[DDXMLNode textWithStringValue:self.authority]]						
 											attributes:[NSArray arrayWithObjects:
-														[NSXMLNode attributeWithName:@"class" stringValue:@"privilege"],
-														[NSXMLNode attributeWithName:@"data-privilege" 
+														[DDXMLNode attributeWithName:@"class" stringValue:@"privilege"],
+														[DDXMLNode attributeWithName:@"data-privilege" 
 																		 stringValue:[NSString stringWithFormat:@"%d",privilege]],nil]];
-	NSXMLNode* xmlemail = [NSXMLElement elementWithName:@"a" 
-											   children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:email]]						
+	DDXMLNode* xmlemail = [DDXMLElement elementWithName:@"a" 
+											   children:[NSArray arrayWithObject:[DDXMLNode textWithStringValue:email]]						
 											 attributes:[NSArray arrayWithObjects:
-														 [NSXMLNode attributeWithName:@"class" stringValue:@"mail"],
-														 [NSXMLNode attributeWithName:@"href" stringValue:[NSString stringWithFormat:@"mailto:%@",email]],nil]];
+														 [DDXMLNode attributeWithName:@"class" stringValue:@"mail"],
+														 [DDXMLNode attributeWithName:@"href" stringValue:[NSString stringWithFormat:@"mailto:%@",email]],nil]];
 	
-	return [NSXMLElement elementWithName:@"div"
+	return [DDXMLElement elementWithName:@"div"
 								children:[NSArray arrayWithObjects:xmlname,xmltrip,xmlstrip,xmlauth,xmlemail,nil]
-							  attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"user"]]];
+							  attributes:[NSArray arrayWithObject:[DDXMLNode attributeWithName:@"class" stringValue:@"user"]]];
 }
 
 @end

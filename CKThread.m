@@ -43,19 +43,19 @@
 }
 + (CKThread*)threadFromURL:(NSURL*)url { return [[[self alloc] initWithURL:url] autorelease]; }
 
-- (id)initWithPage:(NSXMLDocument*)doc {
+- (id)initWithPage:(DDXMLDocument*)doc {
 	if(self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]]) {		
-		NSXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Thread/Root"] error:NULL] objectAtIndex:0];
+		DDXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Thread/Root"] error:NULL] objectAtIndex:0];
 		[root setURI:[URL absoluteString]];
 		NSArray* pre = [root nodesForXPath:
 						[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread/Preceding"],[NSNumber numberWithInt:ID]] error:NULL];
 		if([pre count])
-			for(int i = [(NSXMLNode*)[pre objectAtIndex:0] index]; i >= 0; i--)
+			for(int i = [(DDXMLNode*)[pre objectAtIndex:0] index]; i >= 0; i--)
 				[root removeChildAtIndex:i];
 		NSArray* post = [root nodesForXPath:
 						[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread/Following"],[NSNumber numberWithInt:ID]] error:NULL];
 		if([post count])
-			for(int i = [root childCount]-1; i >= [(NSXMLNode*)[post objectAtIndex:0] index]; i--)
+			for(int i = [root childCount]-1; i >= [(DDXMLNode*)[post objectAtIndex:0] index]; i--)
 				[root removeChildAtIndex:i];
 
 		[[posts objectAtIndex:0] populate:root];
@@ -76,7 +76,7 @@
 	}
 	return self;
 }
-+ (CKThread*)threadFromPage:(NSXMLDocument*)doc { return [[[self alloc] initWithPage:doc] autorelease]; }
++ (CKThread*)threadFromPage:(DDXMLDocument*)doc { return [[[self alloc] initWithPage:doc] autorelease]; }
 
 - (void)dealloc {
 	[URL release];
@@ -87,14 +87,14 @@
 
 - (int)populate { 
 	int error;
-	NSXMLDocument* doc;
+	DDXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
 	[self populate:doc];
 	return 0;
 }
 
-- (void)populate:(NSXMLDocument*)doc {
+- (void)populate:(DDXMLDocument*)doc {
 	NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread/Replies" inDocument:doc] 
 						componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	if(!initialized)

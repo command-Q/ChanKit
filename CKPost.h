@@ -18,14 +18,14 @@
  *		@populate				Resolve data to finish constructing an object that was initialized by referencing a URL.
  *									This method returns 0 on success or an integer error code roughly corresponding to the relevant
  *									HTTP status code specification. This may be replaced with an NSError-based system in the future.
- *		@populate:(NSXMLNode*)	Finalizes construction of the object from an existing XML document or node. Called by @populate itself after
+ *		@populate:(DDXMLNode*)	Finalizes construction of the object from an existing XML document or node. Called by @populate itself after
  *									fetching the XML data.
  *
  *	Each aforementioned init method has a corresponding factory method.
  *	Keep in mind that these methods hit the network: 
  *		@initWithURL, @populate
  *	While these do not:
- *		@initByReferencingURL, @initWithXML, @populate:(NSXMLNode*)
+ *		@initByReferencingURL, @initWithXML, @populate:(DDXMLNode*)
  */
 
 
@@ -87,18 +87,18 @@ typedef struct {
 + (CKPost*)postReferencingURL:(NSURL*)url;
 - (id)initWithURL:(NSURL*)url;
 + (CKPost*)postFromURL:(NSURL*)url;
-- (id)initWithXML:(NSXMLNode*)doc threadContext:(CKThread*)thr;
-+ (CKPost*)postFromXML:(NSXMLNode*)doc threadContext:(CKThread*)thr;
+- (id)initWithXML:(DDXMLNode*)doc threadContext:(CKThread*)thr;
++ (CKPost*)postFromXML:(DDXMLNode*)doc threadContext:(CKThread*)thr;
 - (void)dealloc;
 - (int)populate;
-- (void)populate:(NSXMLNode*)doc;
+- (void)populate:(DDXMLNode*)doc;
 
 - (void)addAdminMessage:(NSString*)newcomment;
 - (NSString*)commentFilteringQuotes;
 - (BOOL)commentContains:(NSString*)astring;
 - (BOOL)quoted:(CKPost*)post;
 - (NSString*)description;
-- (NSXMLNode*)generateXML;
+- (DDXMLNode*)generateXML;
 
 - (BOOL)isEqual:(id)other;
 - (NSUInteger)hash;

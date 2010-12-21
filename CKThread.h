@@ -31,13 +31,13 @@
 
 - (id)initByReferencingURL:(NSURL*)url;
 + (CKThread*)threadReferencingURL:(NSURL*)url;
-- (id)initWithPage:(NSXMLDocument*)doc;
-+ (CKThread*)threadFromPage:(NSXMLDocument*)doc;
+- (id)initWithPage:(DDXMLDocument*)doc;
++ (CKThread*)threadFromPage:(DDXMLDocument*)doc;
 - (id)initWithURL:(NSURL*)url;
 + (CKThread*)threadFromURL:(NSURL*)url;
 - (void)dealloc;
 - (int)populate;
-- (void)populate:(NSXMLDocument*)doc;
+- (void)populate:(DDXMLDocument*)doc;
 
 - (CKPost*)postWithID:(int)idno;
 - (BOOL)isBy:(CKUser*)author;

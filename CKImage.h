@@ -12,17 +12,17 @@
 	NSString* name;
 	NSUInteger size;
 	NSString* MD5;
-	NSSize resolution;
+	CGSize resolution;
 	NSDate* timestamp;
 	CKImage* thumbnail;
 }
 @property(nonatomic,readonly,copy) NSURL* URL;
-@property(nonatomic,readonly,assign) NSImage* image;
+@property(nonatomic,readonly,assign) UIImage* image;
 @property(nonatomic,readwrite,copy) NSString* name;
 @property(nonatomic,readwrite,assign) NSUInteger size;
 @property(nonatomic,readonly,copy) NSString* formattedSize;
 @property(nonatomic,readwrite,copy) NSString* MD5;
-@property(nonatomic,readwrite,assign) NSSize resolution;
+@property(nonatomic,readwrite,assign) CGSize resolution;
 @property(nonatomic,readonly,assign) NSString* formattedResolution;
 @property(nonatomic,readwrite,copy) NSDate* timestamp;
 @property(nonatomic,readonly,assign) NSString* formattedTimestamp;
@@ -34,13 +34,13 @@
 + (CKImage*)imageReferencingURL:(NSURL*)url;
 - (id)initWithContentsOfURL:(NSURL*)url;
 + (CKImage*)imageWithContentsOfURL:(NSURL*)url;
-- (id)initWithXML:(NSXMLNode*)doc;
-+ (CKImage*)imageFromXML:(NSXMLNode*)doc;
+- (id)initWithXML:(DDXMLNode*)doc;
++ (CKImage*)imageFromXML:(DDXMLNode*)doc;
 - (void)dealloc;
 
 - (void)setMetadata:(NSDictionary*)meta;
 - (BOOL)load;
 - (NSString*)description;
-- (NSXMLNode*)XMLRepresentation;
+- (DDXMLNode*)XMLRepresentation;
 - (NSUInteger)hash;
 @end

@@ -45,8 +45,8 @@ typedef struct {
 + (CKUser*)userWithInfo:(NSDictionary*)info;
 - (id)initWithName:(NSString*)namestring;
 + (CKUser*)userNamed:(NSString*)namestring;
-- (id)initWithXML:(NSXMLNode*)doc;
-+ (CKUser*)userFromXML:(NSXMLNode*)doc;
+- (id)initWithXML:(DDXMLNode*)doc;
++ (CKUser*)userFromXML:(DDXMLNode*)doc;
 + (CKUser*)anonymous;
 - (void)dealloc;
 
@@ -54,5 +54,5 @@ typedef struct {
 - (BOOL)isEqual:(id)other;
 - (NSUInteger)hash;
 - (NSString*)description;
-- (NSXMLNode*)XMLRepresentation;
+- (DDXMLNode*)XMLRepresentation;
 @end

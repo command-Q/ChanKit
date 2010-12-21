@@ -36,12 +36,12 @@
 }
 + (CKPage*)pageFromURL:(NSURL*)url { return [[[self alloc] initWithURL:url] autorelease]; }
 
-- (id)initWithXML:(NSXMLDocument*)doc {
+- (id)initWithXML:(DDXMLDocument*)doc {
 	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]]))
 		[self populate:doc];
 	return self;
 }
-+ (CKPage*)pageFromXML:(NSXMLDocument*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }
++ (CKPage*)pageFromXML:(DDXMLDocument*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }
 
 - (void)dealloc {
 	[URL release];
@@ -52,14 +52,14 @@
 
 - (int)populate {
 	int error;
-	NSXMLDocument* doc;
+	DDXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
 	[self populate:doc];
 	return 0;
 }
 
-- (void)populate:(NSXMLDocument*)doc {
+- (void)populate:(DDXMLDocument*)doc {
 	index = [[[CKRecipe sharedRecipe] lookup:@"Page/Number/XML" inDocument:doc] intValue];
 	DLog(@"Index: %d",index);
 	[threads removeAllObjects];

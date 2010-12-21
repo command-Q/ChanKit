@@ -63,7 +63,7 @@
 
 - (int)populate {
 	int error;
-	NSXMLDocument* doc;
+	DDXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
 
@@ -158,7 +158,7 @@
 			if(done) return;
 
 			CKPost* current = [page newestPost];
-			if([current image] && [current.image.URL isEqualTo:url]) {
+			if([current image] && [current.image.URL isEqual:url]) {
 				[lock lock];
 				result = current;
 				[lock unlock];
@@ -166,7 +166,7 @@
 			}
 			NSComparisonResult newest = [[current date] compare:[img timestamp]];
 			current = [page oldestPost];
-			if([current image] && [current.image.URL isEqualTo:url]) {
+			if([current image] && [current.image.URL isEqual:url]) {
 				[lock lock];
 				result = current;
 				[lock unlock];
@@ -182,7 +182,7 @@
 					if(done) return;
 					//if([searched containsObject:thread]) continue;
 					current = [[thread posts] lastObject];
-					if([current image] && [current.image.URL isEqualTo:url]) {
+					if([current image] && [current.image.URL isEqual:url]) {
 						[lock lock];
 						result = current;
 						[lock unlock];
@@ -190,7 +190,7 @@
 					}
 					newest = [[current date] compare:[img timestamp]];
 					current = [[thread posts] objectAtIndex:0];
-					if([current image] && [current.image.URL isEqualTo:url]) {
+					if([current image] && [current.image.URL isEqual:url]) {
 						[lock lock];
 						result = current;
 						[lock unlock];
@@ -211,7 +211,7 @@
 						NSArray* candidates = [thread imagePosts];
 						NSUInteger idx;
 						if((idx = [candidates indexOfObjectPassingTest:^(id post, NSUInteger idx, BOOL *stop) {
-							return *stop = [[[(CKPost*)post image] URL] isEqualTo:url];
+							return *stop = [[[(CKPost*)post image] URL] isEqual:url];
 						}]) != NSNotFound) {
 							[lock lock];
 							result = [candidates objectAtIndex:idx];
@@ -274,7 +274,7 @@
 
 - (int)newestPostID {
 	int error;
-	NSXMLDocument* doc;
+	DDXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:boardroot]))
 		return error;
 	

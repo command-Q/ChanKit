@@ -5,6 +5,7 @@
  * 
  *	CKRecipe.h - Imageboard software definition singleton.
  */
+	#import "Common.h"
 
 @interface CKRecipe : NSObject {
 	NSDictionary* recipe;
@@ -18,13 +19,13 @@
 - (NSDictionary*)recipeNamed:(NSString*)name;
 - (NSDictionary*)recipeFile:(NSString*)path;
 - (int)detectSite:(NSURL*)URL;
-- (int)detectBoardSoftware:(NSXMLDocument*)doc;
+- (int)detectBoardSoftware:(DDXMLDocument*)doc;
 
 - (NSDictionary*)recipe;
 
 - (id)lookup:(NSString*)keyPath;
-- (NSString*)lookup:(NSString*)keyPath inDocument:(NSXMLNode*)doc;
-- (NSString*)lookup:(NSString*)keyPath inDocument:(NSXMLNode*)doc test:(id)test;
+- (NSString*)lookup:(NSString*)keyPath inDocument:(DDXMLNode*)doc;
+- (NSString*)lookup:(NSString*)keyPath inDocument:(DDXMLNode*)doc test:(id)test;
 
 - (NSArray*)supportedSites;
 - (NSArray*)supportedSoftware;

@@ -27,8 +27,8 @@
 	return [NSURL URLWithString:[NSString stringWithFormat:@"%@#%d",[self URLByDeletingFragment:original],idno]]; 
 }
 
-+ (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL{
-	if(!(*doc = [[[NSXMLDocument alloc] initWithContentsOfURL:URL options:NSXMLDocumentTidyHTML error:NULL] autorelease])) {
++ (int)fetchXML:(DDXMLDocument**)doc fromURL:(NSURL*)URL{
+	if(!(*doc = [[[DDXMLDocument alloc] initWithContentsOfURL:URL options:DDXMLDocumentTidyHTML error:NULL] autorelease])) {
 		DLog(@"404");
 		return CK_ERR_NOTFOUND;		
 	}

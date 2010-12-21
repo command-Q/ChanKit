@@ -9,12 +9,12 @@
  *	For details visit http://regexkit.sourceforge.net/RegexKitLite/
  */
 
-#import <ChanKit/Common.h>
-#import <ChanKit/CKRecipe.h>
-#import <ChanKit/CKUser.h>
-#import <ChanKit/CKPost.h>
-#import <ChanKit/CKPoster.h>
-#import <ChanKit/CKThread.h>
-#import <ChanKit/CKPage.h>
-#import <ChanKit/CKBoard.h>
-#import <ChanKit/CKChan.h>
+#import "Common.h"
+#import "CKRecipe.h"
+#import "CKUser.h"
+#import "CKPost.h"
+#import "CKPoster.h"
+#import "CKThread.h"
+#import "CKPage.h"
+#import "CKBoard.h"
+#import "CKChan.h"

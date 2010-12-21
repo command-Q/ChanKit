@@ -50,26 +50,26 @@
 }
 + (CKPoster*)posterForURL:(NSURL*)url { return [[[self alloc] initWithURL:url] autorelease]; }
 
-- (id)initWithXML:(NSXMLNode*)doc {
+- (id)initWithXML:(DDXMLNode*)doc {
 	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]]))
 		[self populate:doc];
 	return self;
 }
-+ (CKPoster*)posterForXML:(NSXMLNode*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }
++ (CKPoster*)posterForXML:(DDXMLNode*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }
 
 - (int)populate { 
 	int error;
-	NSXMLDocument* doc;
+	DDXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
 	[self populate:doc];
 	return 0;
 }
-- (void)populate:(NSXMLNode*)doc {
+- (void)populate:(DDXMLNode*)doc {
 	NSURL* captchaurl = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster/Captcha/URL" inDocument:doc]];
-	NSXMLDocument* captchadoc = [[[NSXMLDocument alloc] initWithContentsOfURL:captchaurl options:NSXMLDocumentTidyHTML error:nil] autorelease];
+	DDXMLDocument* captchadoc = [[[DDXMLDocument alloc] initWithContentsOfURL:captchaurl options:DDXMLDocumentTidyHTML error:nil] autorelease];
 	captcha.challenge = [[[CKRecipe sharedRecipe] lookup:@"Poster/Captcha/Challenge" inDocument:captchadoc] retain];
-	captcha.image = [[NSImage alloc] initWithContentsOfURL:
+	captcha.image = [[UIImage alloc] initWithContentsOfURL:
 					 [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster/Captcha/Image" inDocument:captchadoc] 
 							relativeToURL:captchaurl]];
 	action = [[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster/URL" inDocument:doc]] retain];
@@ -102,7 +102,7 @@
 
 - (NSString*)verification { return [captcha.verification copy]; }
 - (void)setVerification:(NSString*)ver { captcha.verification = [ver retain]; }
-- (NSImage*)captcha { return [captcha.image copy]; }
+- (UIImage*)captcha { return [captcha.image copy]; }
 
 - (BOOL)verify:(NSString*)captchaverification {
 	// Needs work
@@ -115,7 +115,7 @@
 	[crequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
 	[crequest setHTTPBody:[content dataUsingEncoding:NSASCIIStringEncoding]];
 	NSData* data = [NSURLConnection sendSynchronousRequest:crequest returningResponse:nil error:nil];
-	NSXMLDocument* response = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyHTML error:nil];
+	DDXMLDocument* response = [[DDXMLDocument alloc] initWithData:data options:DDXMLDocumentTidyHTML error:nil];
 	NSArray* nodes;
 	if(![nodes = [response nodesForXPath:@"/html/body/textarea/text()" error:nil] count])
 		return NO;
@@ -176,7 +176,7 @@
 	NSData* response = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
 	DLog(@"Response:\n%@",[[[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding] autorelease]);
 
-	NSXMLDocument* doc = [[[NSXMLDocument alloc] initWithData:response options:NSXMLDocumentTidyHTML error:nil] autorelease];
+	DDXMLDocument* doc = [[[DDXMLDocument alloc] initWithData:response options:DDXMLDocumentTidyHTML error:nil] autorelease];
 	*error = CK_POSTERR_SUCCESS;
 	if(!doc)
 		*error = CK_POSTERR_UNDEFINED;		

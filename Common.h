@@ -7,17 +7,20 @@
  */
 
 #import "RegexKitLite/RegexKitLite.h"
+#import "KissXML/DDXML.h"
 #import "CKUtil.h"
 
 #ifndef NSNewlineCharacter
 	#define	NSNewlineCharacter	0x000a
 #endif
 
-#define	CK_VERSION_MAJOR	0
-#define	CK_VERSION_MINOR	9
-#define	CK_VERSION_MICRO	0
+#define DDXMLDocumentTidyHTML	0
+
+#define	CK_VERSION_MAJOR		0
+#define	CK_VERSION_MINOR		9
+#define	CK_VERSION_MICRO		0
 #define	CK_VERSION_TAG		@"pre"
-#define	CK_VERSION_OS		@"OS X"
+#define	CK_VERSION_OS		@"iOS"
 
 #ifdef _DEBUG
 	// HTML parsing is extremely messy, so this function is used to dump a ton of data

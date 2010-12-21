@@ -23,11 +23,11 @@
 + (CKPage*)pageReferencingURL:(NSURL*)url;
 - (id)initWithURL:(NSURL*)url;
 + (CKPage*)pageFromURL:(NSURL*)url;
-- (id)initWithXML:(NSXMLDocument*)doc;
-+ (CKPage*)pageFromXML:(NSXMLDocument*)doc;
+- (id)initWithXML:(DDXMLDocument*)doc;
++ (CKPage*)pageFromXML:(DDXMLDocument*)doc;
 - (void)dealloc;
 - (int)populate;
-- (void)populate:(NSXMLDocument*)doc;
+- (void)populate:(DDXMLDocument*)doc;
 
 - (CKThread*)getThread:(int)index; // Replacement for objectAtIndex: which ensures a populated thread
 - (CKPost*)newestPost;
