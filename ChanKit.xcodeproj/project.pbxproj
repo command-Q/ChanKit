@@ -11,8 +11,6 @@
 		2700D57D0F5EC49900BEE0C3 /* CKPost.m in Sources */ = {isa = PBXBuildFile; fileRef = 2700D57B0F5EC49900BEE0C3 /* CKPost.m */; };
 		270AE90D125982AF0036E91B /* CKRecipe.h in Headers */ = {isa = PBXBuildFile; fileRef = 270AE90B125982AF0036E91B /* CKRecipe.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		270AE90E125982AF0036E91B /* CKRecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = 270AE90C125982AF0036E91B /* CKRecipe.m */; };
-		27240B3C128DD3FF008DEDCE /* CKCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 27240B3A128DD3FF008DEDCE /* CKCache.h */; };
-		27240B3D128DD3FF008DEDCE /* CKCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 27240B3B128DD3FF008DEDCE /* CKCache.m */; };
 		27240C0F128E7233008DEDCE /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 27240C0D128E7233008DEDCE /* RegexKitLite.m */; };
 		27240C10128E7233008DEDCE /* RegexKitLite.h in Headers */ = {isa = PBXBuildFile; fileRef = 27240C0E128E7233008DEDCE /* RegexKitLite.h */; };
 		273881E211E374E000953201 /* CKUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 273881E011E374E000953201 /* CKUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -31,8 +29,6 @@
 		277C73DD0F645FA0003B2E73 /* ChanKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 277C73DC0F645FA0003B2E73 /* ChanKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		278F387311E2BBFF00EDD5FE /* ChanKit.png in Resources */ = {isa = PBXBuildFile; fileRef = 278F387211E2BBFF00EDD5FE /* ChanKit.png */; };
 		278F38A411E2F3A500EDD5FE /* ChanKit_thumb.png in Resources */ = {isa = PBXBuildFile; fileRef = 278F38A311E2F3A500EDD5FE /* ChanKit_thumb.png */; };
-		27A367FA1297020F0021EC94 /* CKBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 27A367F81297020F0021EC94 /* CKBrowser.h */; };
-		27A367FB1297020F0021EC94 /* CKBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 27A367F91297020F0021EC94 /* CKBrowser.m */; };
 		27C00CAF12482F1400AE717E /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 27C00CAE12482F1400AE717E /* libicucore.dylib */; };
 		27EF3EB90F5ED5DF00603D3A /* CKUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 27EF3EB70F5ED5DF00603D3A /* CKUtil.h */; settings = {ATTRIBUTES = (); }; };
 		27EF3EBA0F5ED5DF00603D3A /* CKUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 27EF3EB80F5ED5DF00603D3A /* CKUtil.m */; };
@@ -66,8 +62,6 @@
 		270AE90B125982AF0036E91B /* CKRecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKRecipe.h; sourceTree = "<group>"; };
 		270AE90C125982AF0036E91B /* CKRecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKRecipe.m; sourceTree = "<group>"; };
 		270DCE2C102C463400912225 /* ChanKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ChanKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		27240B3A128DD3FF008DEDCE /* CKCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKCache.h; sourceTree = "<group>"; };
-		27240B3B128DD3FF008DEDCE /* CKCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKCache.m; sourceTree = "<group>"; };
 		27240C0D128E7233008DEDCE /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RegexKitLite.m; path = RegexKitLite/RegexKitLite.m; sourceTree = "<group>"; };
 		27240C0E128E7233008DEDCE /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegexKitLite.h; path = RegexKitLite/RegexKitLite.h; sourceTree = "<group>"; };
 		273881E011E374E000953201 /* CKUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKUser.h; sourceTree = "<group>"; };
@@ -86,8 +80,6 @@
 		277C73DC0F645FA0003B2E73 /* ChanKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChanKit.h; sourceTree = "<group>"; };
 		278F387211E2BBFF00EDD5FE /* ChanKit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ChanKit.png; sourceTree = "<group>"; };
 		278F38A311E2F3A500EDD5FE /* ChanKit_thumb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ChanKit_thumb.png; sourceTree = "<group>"; };
-		27A367F81297020F0021EC94 /* CKBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKBrowser.h; sourceTree = "<group>"; };
-		27A367F91297020F0021EC94 /* CKBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKBrowser.m; sourceTree = "<group>"; };
 		27C00CAE12482F1400AE717E /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		27EF3EB70F5ED5DF00603D3A /* CKUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKUtil.h; sourceTree = "<group>"; };
 		27EF3EB80F5ED5DF00603D3A /* CKUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKUtil.m; sourceTree = "<group>"; };
@@ -172,10 +164,6 @@
 				270AE90C125982AF0036E91B /* CKRecipe.m */,
 				27EF3EB70F5ED5DF00603D3A /* CKUtil.h */,
 				27EF3EB80F5ED5DF00603D3A /* CKUtil.m */,
-				27240B3A128DD3FF008DEDCE /* CKCache.h */,
-				27240B3B128DD3FF008DEDCE /* CKCache.m */,
-				27A367F81297020F0021EC94 /* CKBrowser.h */,
-				27A367F91297020F0021EC94 /* CKBrowser.m */,
 				273881E011E374E000953201 /* CKUser.h */,
 				273881E111E374E000953201 /* CKUser.m */,
 				27F360791288F0090091D109 /* CKImage.h */,
@@ -263,9 +251,7 @@
 				2772F64512870F0000C99973 /* CKPoster.h in Headers */,
 				27F3607B1288F0090091D109 /* CKImage.h in Headers */,
 				275ABC45128D60B600FA2066 /* Common.h in Headers */,
-				27240B3C128DD3FF008DEDCE /* CKCache.h in Headers */,
 				27240C10128E7233008DEDCE /* RegexKitLite.h in Headers */,
-				27A367FA1297020F0021EC94 /* CKBrowser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,9 +357,7 @@
 				270AE90E125982AF0036E91B /* CKRecipe.m in Sources */,
 				2772F64612870F0000C99973 /* CKPoster.m in Sources */,
 				27F3607C1288F0090091D109 /* CKImage.m in Sources */,
-				27240B3D128DD3FF008DEDCE /* CKCache.m in Sources */,
 				27240C0F128E7233008DEDCE /* RegexKitLite.m in Sources */,
-				27A367FB1297020F0021EC94 /* CKBrowser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,17 +9,22 @@
 #import "RegexKitLite/RegexKitLite.h"
 #import "CKUtil.h"
 
+#ifndef NSNewlineCharacter
+	#define	NSNewlineCharacter	0x000a
+#endif
+
 #define	CK_VERSION_MAJOR	0
 #define	CK_VERSION_MINOR	9
 #define	CK_VERSION_MICRO	0
 #define	CK_VERSION_TAG		@"pre"
+#define	CK_VERSION_OS		@"OS X"
 
 #ifdef _DEBUG
-// HTML parsing is extremely messy, so this function is used to dump a ton of data
-#define DLog(...) NSLog(__VA_ARGS__)
+	// HTML parsing is extremely messy, so this function is used to dump a ton of data
+	#define DLog(...) NSLog(__VA_ARGS__)
 #else 
-// Silence our fountain of logs
-#define DLog(...) 
+	// Silence our fountain of logs
+	#define DLog(...) 
 #endif
 
 // Document fetching error codes
@@ -43,7 +48,7 @@
 #define	CK_POSTERR_FLOOD			 1
 #define	CK_POSTERR_VERIFICATION		 2
 #define	CK_POSTERR_DUPLICATE		 3
-#define	CK_POSTERR_404				 4
+#define	CK_POSTERR_NOTFOUND			 4
 #define	CK_POSTERR_DISALLOWED		 5
 
 

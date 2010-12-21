@@ -191,7 +191,7 @@
 		<dict>
 			<key>Format</key>
 			<string>%@/res/%@#%@</string>
-			<key>404</key>
+			<key>NotFound</key>
 			<dict>
 				<key>Path</key>
 				<string>/html/body/table/tr/td/font/b/text()</string>

@@ -188,8 +188,8 @@
 		*error = CK_POSTERR_FLOOD;
 	else if([[CKRecipe sharedRecipe] lookup:@"Poster/Response/Disallowed" inDocument:doc])
 		*error = CK_POSTERR_DISALLOWED;
-	else if([[CKRecipe sharedRecipe] lookup:@"Poster/Response/404" inDocument:doc])
-		*error = CK_POSTERR_404;
+	else if([[CKRecipe sharedRecipe] lookup:@"Poster/Response/NotFound" inDocument:doc])
+		*error = CK_POSTERR_NOTFOUND;
 	else {
 		NSString* resboard = [[CKRecipe sharedRecipe] lookup:@"Poster/Response/URL" inDocument:doc];
 		NSString* resthread = [[CKRecipe sharedRecipe] lookup:@"Poster/Response/Thread" inDocument:doc];

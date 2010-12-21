@@ -41,7 +41,7 @@
 
 // The bunlde info dictionary is busted
 + (NSString*)version {
-	return [NSString stringWithFormat:@"%d.%d.%d%@",CK_VERSION_MAJOR,CK_VERSION_MINOR,CK_VERSION_MICRO,CK_VERSION_TAG];
+	return [NSString stringWithFormat:@"%d.%d.%d%@-%@",CK_VERSION_MAJOR,CK_VERSION_MINOR,CK_VERSION_MICRO,CK_VERSION_TAG,CK_VERSION_OS];
 }
 
 + (NSString*)generatePassword {

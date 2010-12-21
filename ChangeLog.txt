@@ -4,6 +4,7 @@ Version 0.9.0pre - 12/20/10 - Pre-0.9 Git import
 		Fix some massive retain errors and implement dealloc in all classes. This will probably result in various memleaks, let clang sort that out in the future.
 		Partial XML writing support using custom, ChanKit-native formatting.
 		Xcode's Clang 1.6 fixes RegexKitLite build issues, make it the default.
+		Upgrade RegexKitLite to latest SVN (r68).
 	CKImage:
 		CKImage class to ease iOS/OS X cross-compatibility, sanitize the metadata situation, abstract data retrieval and storage, and provide imageboard-relevant convenience methods.	
 	CKPoster:
