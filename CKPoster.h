@@ -17,8 +17,8 @@ typedef struct {
 } captcha_s;
 
 // Post attempt templates
-BOOL (^get)(int) = ^(int idno) { return (BOOL)((idno + 1) % (int)pow(10,(int)log10(idno)) == 0); };
-BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); };
+static BOOL (^get)(int) = ^(int idno) { return (BOOL)((idno + 1) % (int)pow(10,(int)log10(idno)) == 0); };
+static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); };
 
 @interface CKPoster : NSObject {
 	NSURL* URL;
