@@ -87,13 +87,15 @@ int main (int argc, const char * argv[]) {
 				[fileman createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:NULL];
 			if([fileman fileExistsAtPath:path]) {
 				NSLog(@"Dumping %d images to %@",thread.imagecount,path);
-				int i;
+				int i = 0;
 				for(CKPost* post in [thread imagePosts])
-					if(![fileman fileExistsAtPath:[path stringByAppendingPathComponent:post.image.name]] && ++i)
+					if(![fileman fileExistsAtPath:[path stringByAppendingPathComponent:post.image.name]]) {
 						[fileman createFileAtPath:[path stringByAppendingPathComponent:post.image.name]
 										 contents:post.image.data
 									   attributes:[NSDictionary dictionaryWithObject:post.image.timestamp
 																			  forKey:@"NSFileModificationDate"]];
+						i++;
+					}
 				
 				NSLog(@"Dump complete! Got %d images.",i);
 			}

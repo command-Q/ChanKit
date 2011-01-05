@@ -6,9 +6,6 @@
  *	Common.h - Global includes/defines.
  */
 
-#import "RegexKitLite/RegexKitLite.h"
-#import "CKUtil.h"
-
 #ifndef NSNewlineCharacter
 	#define	NSNewlineCharacter	0x000a
 #endif
