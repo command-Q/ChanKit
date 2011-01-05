@@ -13,7 +13,6 @@
 - (id)initByReferencingURL:(NSURL*)url {
 	if(self = [super init]) {
 		URL = [url retain];
-//		image = [[[NSImage alloc] initByReferencingURL:URL] autorelease];
 		name = [[URL lastPathComponent] retain];
 		timestamp = [[NSDate alloc] initWithTimeIntervalSince1970:[[name stringByMatching:@"\\d{10}"] floatValue]];
 		
@@ -71,6 +70,7 @@
 	return nil;
 }
 + (CKImage*)imageFromXML:(NSXMLNode*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }
+
 - (void)dealloc {
 	[URL release];
 	[image release];

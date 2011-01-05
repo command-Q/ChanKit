@@ -102,7 +102,7 @@
 
 - (NSString*)verification { return [captcha.verification copy]; }
 - (void)setVerification:(NSString*)ver { captcha.verification = [ver retain]; }
-- (CKImage*)captcha { return [captcha.image copy]; }
+- (CKImage*)captcha { return [captcha.image retain]; }
 
 - (BOOL)verify:(NSString*)captchaverification {
 	// Needs work

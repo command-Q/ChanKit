@@ -54,7 +54,7 @@
 }
 
 + (NSString*)MD5:(NSData*)data {
-	NSMutableString* MD5;
+	NSMutableString* MD5 = [[NSMutableString alloc] init];
 	unsigned char* result = malloc(sizeof(unsigned char)*CC_MD5_DIGEST_LENGTH);
 	CC_MD5([data bytes],[data length],result);
 	for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)

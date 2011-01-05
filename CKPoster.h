@@ -37,7 +37,7 @@ static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); 
 @property(nonatomic,readwrite,copy) NSString* comment;
 @property(nonatomic,readwrite,copy) NSString* file;
 @property(nonatomic,readwrite,copy) NSString* verification;
-@property(nonatomic,readonly,copy) CKImage* captcha;
+@property(nonatomic,readonly,retain) CKImage* captcha;
 
 - (id)initWithPostingDictionary:(NSDictionary*)dict;
 + (CKPoster*)posterWithDictionary:(NSDictionary*)dict;
