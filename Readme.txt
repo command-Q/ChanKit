@@ -1,5 +1,5 @@
 ChanKit - Mac OS X and iOS framework for interacting with imageboards.
-Copyright 2010 command-Q.org. All rights reserved. Contact: tab@command-q.org
+Copyright 2009-2011 command-Q.org. All rights reserved. Contact: tab@command-q.org
 This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.  See the License file for details.
 Version 0.9 - This is an early development version with minimal functionality.
 NOTE: This is a preview release. This means the API is not stable, feature complete, or guaranteed to work. Use at your own risk.
