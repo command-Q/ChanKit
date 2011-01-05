@@ -12,7 +12,7 @@
 // This struct will be deprecated in the near future as captchas will be handled by a class of their own.
 typedef struct {
 	NSString* challenge;
-	NSImage* image;
+	CKImage* image;
 	NSString* verification;
 } captcha_s;
 
@@ -37,7 +37,7 @@ static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); 
 @property(nonatomic,readwrite,copy) NSString* comment;
 @property(nonatomic,readwrite,copy) NSString* file;
 @property(nonatomic,readwrite,copy) NSString* verification;
-@property(nonatomic,readonly,copy) NSImage* captcha;
+@property(nonatomic,readonly,copy) CKImage* captcha;
 
 - (id)initWithPostingDictionary:(NSDictionary*)dict;
 + (CKPoster*)posterWithDictionary:(NSDictionary*)dict;
@@ -51,7 +51,6 @@ static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); 
 - (int)populate;
 - (void)populate:(NSXMLNode*)doc;
 
-- (NSImage*)captcha;
 - (BOOL)verify:(NSString*)captchaverification;
 - (void)prepare;
 - (CKPost*)post:(int*)error;

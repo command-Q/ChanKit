@@ -61,6 +61,7 @@ int main (int argc, const char * argv[]) {
 			  "\t-subject <string>\tPost subject (optional)\n"
 			  "\t-comment <string>\tComment to post (optional if uploading a file)\n"
 			  "\t-file <string>\tFile path to post (optional if posting a comment) or directory to dump\n"
+			  "\t-dubs YES\tTry to get doubles\n"
 			  "\n"
 			  "Random:\n"
 			  "\t-random YES\tGet a randomized post.\n"
@@ -106,7 +107,7 @@ int main (int argc, const char * argv[]) {
 	}
 	else if((url = [args stringForKey:@"post"])) {
 		int runs = 1;
-		NSArray* uploads;
+		NSArray* uploads = nil;
 		NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithObject:[NSURL URLWithString:url] forKey:@"URL"];
 		if([args stringForKey:@"name"])
 			[dict setObject:[args stringForKey:@"name"] forKey:@"Name"];
@@ -159,7 +160,7 @@ int main (int argc, const char * argv[]) {
 			NSString* captcha = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempfile length:strlen(tempfile)];
 			free(tempfile);
 			
-			[[poster.captcha TIFFRepresentation] writeToFile:captcha atomically:NO];
+			[poster.captcha.data writeToFile:captcha atomically:NO];
 			[[NSWorkspace sharedWorkspace] openFile:captcha];
 			
 			// This breaks in a loop as availableData is always set after the first instance
@@ -180,7 +181,10 @@ int main (int argc, const char * argv[]) {
 		int i = 0;
 		for(CKPoster* poster in posters) {
 			int err;
-			post = [poster post:&err];
+			if([args boolForKey:@"dubs"])
+				post = [poster post:&err attempt:dubs];
+			else
+				post = [poster post:&err];
 			switch(err) {
 				case CK_POSTERR_FLOOD:			NSLog(@"Error: Flood");		break;
 				case CK_POSTERR_DUPLICATE:		NSLog(@"Error: Duplicate");	break;
