@@ -192,7 +192,7 @@ int main (int argc, const char * argv[]) {
 				case CK_POSTERR_UNDEFINED:		NSLog(@"Error: Unknown");	break;
 				default:NSLog(@"%@\n%@",post.URL,post);
 			}
-			if(i++ < [posters count]) sleep(post.image ? 120 : 60); // These values need to be figured out
+			if(++i < [posters count]) sleep(post.image ? 120 : 60); // These values need to be figured out
 		}
 	}
 	else if([args boolForKey:@"random"]) {
