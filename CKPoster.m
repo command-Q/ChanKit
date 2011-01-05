@@ -69,7 +69,7 @@
 	NSURL* captchaurl = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster/Captcha/URL" inDocument:doc]];
 	NSXMLDocument* captchadoc = [[[NSXMLDocument alloc] initWithContentsOfURL:captchaurl options:NSXMLDocumentTidyHTML error:nil] autorelease];
 	captcha.challenge = [[[CKRecipe sharedRecipe] lookup:@"Poster/Captcha/Challenge" inDocument:captchadoc] retain];
-	captcha.image = [[NSImage alloc] initWithContentsOfURL:
+	captcha.image = [[CKImage alloc] initWithContentsOfURL:
 					 [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster/Captcha/Image" inDocument:captchadoc] 
 							relativeToURL:captchaurl]];
 	action = [[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster/URL" inDocument:doc]] retain];
