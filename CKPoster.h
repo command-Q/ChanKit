@@ -19,23 +19,23 @@ typedef struct {
 // Post attempt templates
 static BOOL (^get)(int) = ^(int idno) { return (BOOL)((idno + 1) % (int)pow(10,(int)log10(idno)) == 0); };
 static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); };
-
 @interface CKPoster : NSObject {
 	NSURL* URL;
 	NSURL* action;
 	CKUser* user;
 	NSString* subject;
 	NSString* comment;
-	NSString* file;
+	NSURL* file;
 	captcha_s captcha;
 	
 	CKBoard* board; // For dubs
-	NSMutableURLRequest* request;
+	ASIFormDataRequest* request;
 }
+@property(nonatomic,readwrite,copy) NSURL* URL;
 @property(nonatomic,readwrite,copy) CKUser* user;
 @property(nonatomic,readwrite,copy) NSString* subject;
 @property(nonatomic,readwrite,copy) NSString* comment;
-@property(nonatomic,readwrite,copy) NSString* file;
+@property(nonatomic,readwrite,copy) NSURL* file;
 @property(nonatomic,readwrite,copy) NSString* verification;
 @property(nonatomic,readonly,retain) CKImage* captcha;
 

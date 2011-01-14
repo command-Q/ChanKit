@@ -42,21 +42,21 @@
 
 - (id)initWithXML:(NSXMLNode*)doc {
 	NSString* url;
-	if((self = [super init]) && (url = [[CKRecipe sharedRecipe] lookup:@"Image/URL" inDocument:doc]) != nil) {
+	if((self = [super init]) && (url = [[CKRecipe sharedRecipe] lookup:@"Image.URL" inDocument:doc]) != nil) {
 		URL = [[NSURL alloc] initWithString:url];
-		name = [[[CKRecipe sharedRecipe] lookup:@"Image/Name" inDocument:doc] retain];
-		resolution = NSMakeSize([[[CKRecipe sharedRecipe] lookup:@"Image/Width" inDocument:doc] floatValue],
-						  [[[CKRecipe sharedRecipe] lookup:@"Image/Height" inDocument:doc] floatValue]);
+		name = [[[CKRecipe sharedRecipe] lookup:@"Image.Name" inDocument:doc] retain];
+		resolution = NSMakeSize([[[CKRecipe sharedRecipe] lookup:@"Image.Width" inDocument:doc] floatValue],
+						  [[[CKRecipe sharedRecipe] lookup:@"Image.Height" inDocument:doc] floatValue]);
 		NSString* turl;
-		if((turl = [[CKRecipe sharedRecipe] lookup:@"Image/Thumbnail" inDocument:doc]))
+		if((turl = [[CKRecipe sharedRecipe] lookup:@"Image.Thumbnail" inDocument:doc]))
 			thumbnail = [[CKImage alloc] initByReferencingURL:[NSURL URLWithString:turl]];
 		
-		if([[[CKRecipe sharedRecipe] lookup:@"Image/Measure" inDocument:doc] isEqualToString:@"MB"])
-			size = [[[CKRecipe sharedRecipe] lookup:@"Image/Size" inDocument:doc] floatValue] * 1048576;
+		if([[[CKRecipe sharedRecipe] lookup:@"Image.Measure" inDocument:doc] isEqualToString:@"MB"])
+			size = [[[CKRecipe sharedRecipe] lookup:@"Image.Size" inDocument:doc] floatValue] * 1048576;
 		else 
-			size = [[[CKRecipe sharedRecipe] lookup:@"Image/Size" inDocument:doc] floatValue] * 1024;
-		MD5 = [[[CKRecipe sharedRecipe] lookup:@"Image/MD5" inDocument:doc] retain];
-		timestamp = [[NSDate alloc] initWithTimeIntervalSince1970:[[[CKRecipe sharedRecipe] lookup:@"Image/Date" inDocument:doc] doubleValue]];
+			size = [[[CKRecipe sharedRecipe] lookup:@"Image.Size" inDocument:doc] floatValue] * 1024;
+		MD5 = [[[CKRecipe sharedRecipe] lookup:@"Image.MD5" inDocument:doc] retain];
+		timestamp = [[NSDate alloc] initWithTimeIntervalSince1970:[[[CKRecipe sharedRecipe] lookup:@"Image.Date" inDocument:doc] doubleValue]];
 
 		DLog(@"Image URL: %@",URL);
 		DLog(@"Image Name: %@",name);
@@ -112,7 +112,7 @@
 - (NSImage*)image {	return [[[NSImage alloc] initWithData:image] autorelease]; }
 - (NSData*)data { 
 	[self load];
-	return [image copy];
+	return image;
 }
 - (BOOL)load { 
 	if(!image)
@@ -127,11 +127,17 @@
 }
 - (NSString*)formattedTimestamp {
 	NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-	[formatter setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Dates/Format"]];
+	[formatter setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
 	return [formatter stringFromDate:timestamp];
 }
 - (NSString*)description {
 	return [NSString stringWithFormat:@"%cFile : %@-(%@, %@%@, %@)",
+			NSNewlineCharacter,[URL lastPathComponent],self.formattedSize,self.formattedResolution,
+			name ? [NSString stringWithFormat:@", %@",name] : @"",self.formattedTimestamp];
+}
+
+- (NSString*)prettyPrint {
+	return [NSString stringWithFormat:@"%cFile : \e[4;34m%@\e[0m-(%@, %@%@, %@)",
 			NSNewlineCharacter,[URL lastPathComponent],self.formattedSize,self.formattedResolution,
 			name ? [NSString stringWithFormat:@", %@",name] : @"",self.formattedTimestamp];
 }

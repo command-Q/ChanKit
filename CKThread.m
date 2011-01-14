@@ -30,7 +30,7 @@
 		DLog(@"Thread ID: %d",ID);
 		DLog(@"Thread URL: %@",URL);
 
-		[posts addObject:[[CKPost alloc] initByReferencingURL:URL]];
+		[posts addObject:[[[CKPost alloc] initByReferencingURL:URL] autorelease]];
 	}
 	return self;
 }
@@ -45,32 +45,32 @@
 
 - (id)initWithPage:(NSXMLDocument*)doc {
 	if(self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]]) {		
-		NSXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Thread/Root"] error:NULL] objectAtIndex:0];
+		NSXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Thread.Root"] error:NULL] objectAtIndex:0];
 		[root setURI:[URL absoluteString]];
 		NSArray* pre = [root nodesForXPath:
-						[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread/Preceding"],[NSNumber numberWithInt:ID]] error:NULL];
+						[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread.Preceding"],[NSNumber numberWithInt:ID]] error:NULL];
 		if([pre count])
 			for(int i = [(NSXMLNode*)[pre objectAtIndex:0] index]; i >= 0; i--)
 				[root removeChildAtIndex:i];
 		NSArray* post = [root nodesForXPath:
-						[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread/Following"],[NSNumber numberWithInt:ID]] error:NULL];
+						[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread.Following"],[NSNumber numberWithInt:ID]] error:NULL];
 		if([post count])
 			for(int i = [root childCount]-1; i >= [(NSXMLNode*)[post objectAtIndex:0] index]; i--)
 				[root removeChildAtIndex:i];
 
 		[[posts objectAtIndex:0] populate:root];
 
-		NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread/Trailing" inDocument:root] 
+		NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Trailing" inDocument:root] 
 						componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 
 		for(NSString* reply in replies) {
 			[doc setURI:[NSString stringWithFormat:@"%@#%@",URL,reply]];
-			[posts addObject:[[CKPost alloc] initWithXML:doc threadContext:self]];
+			[posts addObject:[[[CKPost alloc] initWithXML:doc threadContext:self] autorelease]];
 		}		
 
 		
-		postcount = [[[CKRecipe sharedRecipe] lookup:@"Thread/Omitted" inDocument:root] intValue] + [posts count];
-		imagecount = [[[CKRecipe sharedRecipe] lookup:@"Thread/OmittedImages" inDocument:root] intValue] + [[self imagePosts] count];
+		postcount = [[[CKRecipe sharedRecipe] lookup:@"Thread.Omitted" inDocument:root] intValue] + [posts count];
+		imagecount = [[[CKRecipe sharedRecipe] lookup:@"Thread.OmittedImages" inDocument:root] intValue] + [[self imagePosts] count];
 		DLog(@"Posts: %d",postcount);
 		DLog(@"Images: %d",imagecount);		
 	}
@@ -95,7 +95,7 @@
 }
 
 - (void)populate:(NSXMLDocument*)doc {
-	NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread/Replies" inDocument:doc] 
+	NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Replies" inDocument:doc] 
 						componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	if(!initialized)
 		for(CKPost* post in posts)
@@ -103,20 +103,20 @@
 	else if(postcount > 1) {
 		// Check if the structure of the thread has changed
 		CKPost* last = [posts lastObject];
-		int index = [[doc nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post/Indexes"] error:NULL] indexOfObject:
-					[[doc nodesForXPath:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post/Index"],last.IDString] error:NULL] 
+		int index = [[doc nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post.Indexes"] error:NULL] indexOfObject:
+					[[doc nodesForXPath:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],last.IDString] error:NULL] 
 					   objectAtIndex:0]]+1;
 		if(last.index != index)	//Something was deleted. Find it.
 			for(CKPost* post in posts)
-				if(![[doc nodesForXPath:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post/Index"],post.IDString] error:NULL] count])
+				if(![[doc nodesForXPath:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],post.IDString] error:NULL] count])
 					post.deleted = YES;
 		replies = [replies subarrayWithRange:NSMakeRange(index,[replies count]-index)];
 		// Right now we avoid a deep check for changes to posts, such as ban messages being placed, simply due to the extra processing time required
 	}
 	initialized = YES;
 	
-	self.sticky = [[CKRecipe sharedRecipe] lookup:@"Thread/Sticky" inDocument:doc] != nil;
-	self.closed = [[CKRecipe sharedRecipe] lookup:@"Thread/Closed" inDocument:doc] != nil;
+	self.sticky = [[CKRecipe sharedRecipe] lookup:@"Thread.Sticky" inDocument:doc] != nil;
+	self.closed = [[CKRecipe sharedRecipe] lookup:@"Thread.Closed" inDocument:doc] != nil;
 	DLog(@"Sticky: %d",self.sticky);
 	DLog(@"Closed: %d",self.closed);
 	
@@ -125,6 +125,7 @@
 		[doc setURI:[NSString stringWithFormat:@"%@#%@",URL,reply]];
 		CKPost* post = [[CKPost alloc] initWithXML:doc threadContext:self];
 		[posts insertObject:post atIndex:post.index];
+		[post release];
 	}
 	[doc setURI:URI]; // A bit messy
 	postcount = [posts count];
@@ -151,6 +152,13 @@
 		[self populate];
 	return [posts objectAtIndex:0]; 
 }
+
+- (NSArray*)replies {
+	if(!initialized)
+		[self populate];
+	return [posts subarrayWithRange:NSMakeRange(1,[posts count]-2)];
+}
+
 // Refresh the thread and return the most recent post
 - (CKPost*)latest {
 	[self populate];
@@ -190,12 +198,18 @@
 }
 
 - (NSString*)description {
+	NSString* delim = @"\n______________________________________________________________________________________________________________\n";
 	NSMutableString* desc = [NSMutableString stringWithFormat:@"%d posts and %d images",postcount,imagecount];
 	for(CKPost* post in posts) 
-		[desc appendFormat:@"\n"
-		 "______________________________________________________________________________________________________________"
-		 "\n%@",post];
-	return desc;
+		[desc appendFormat:@"%@%@",delim,post];
+	return [desc stringByAppendingString:delim];
+}
+- (NSString*)prettyPrint {
+	NSString* delim = @"\n\e[4m                                                                                                              \e[0m\n\n";
+	NSMutableString* desc = [NSMutableString stringWithFormat:@"%d posts and %d images",postcount,imagecount];
+	for(CKPost* post in posts) 
+		[desc appendFormat:@"%@%@",delim,[post prettyPrint]];
+	return [desc stringByAppendingString:delim];
 }
 - (BOOL)isEqual:(id)other { return [self hash] == [other hash]; }
 - (NSUInteger)hash { return [[posts objectAtIndex:0] hash]; }

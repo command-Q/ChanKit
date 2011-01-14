@@ -48,11 +48,11 @@
 - (id)initWithName:(NSString*)namestring {
 	if(self = [self init]) {
 		NSString* nm,*tp,*st;
-		if([(nm =[namestring stringByMatching:[[CKRecipe sharedRecipe] lookup:@"User/Name/TripString"] capture:1L]) length])
+		if([(nm =[namestring stringByMatching:[[CKRecipe sharedRecipe] lookup:@"User.Name.TripString"] capture:1L]) length])
 			name = [nm retain];
-		if([(tp =[namestring stringByMatching:[[CKRecipe sharedRecipe] lookup:@"User/Tripcode/Regex"]  capture:1L]) length])
+		if([(tp =[namestring stringByMatching:[[CKRecipe sharedRecipe] lookup:@"User.Tripcode.Regex"]  capture:1L]) length])
 			tripcode.trip = [tp retain];
-		if([(st =[namestring stringByMatching:[[CKRecipe sharedRecipe] lookup:@"User/SecureTripcode/Regex"]  capture:1L]) length])
+		if([(st =[namestring stringByMatching:[[CKRecipe sharedRecipe] lookup:@"User.SecureTripcode.Regex"]  capture:1L]) length])
 			tripcode.securetrip = [st retain];
 	}
 	return self;
@@ -71,23 +71,23 @@
 				ID = thread;
 			else 
 				ID = [[URL fragment] intValue];
-			NSString* rootpath = OP ?	[[CKRecipe sharedRecipe] lookup:@"Post/OP"] : 
-										[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post/Index"],[NSNumber numberWithInt:ID]];
+			NSString* rootpath = OP ?	[[CKRecipe sharedRecipe] lookup:@"Post.OP"] : 
+										[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],[NSNumber numberWithInt:ID]];
 			NSXMLElement* root = [[doc nodesForXPath:rootpath error:NULL] objectAtIndex:0];
 			
 			if(root && (self = [self initWithXML:root])) return self;
 			return nil;
 		}
-		name = [[[CKRecipe sharedRecipe] lookup:@"User/Name" inDocument:doc] retain];
+		name = [[[CKRecipe sharedRecipe] lookup:@"User.Name" inDocument:doc] retain];
 		DLog(@"Name: %@",name);
-		email = [[[CKRecipe sharedRecipe] lookup:@"User/Email" inDocument:doc] retain];
+		email = [[[CKRecipe sharedRecipe] lookup:@"User.Email" inDocument:doc] retain];
 		DLog(@"Email: %@",email);
-		tripcode.trip = [[[CKRecipe sharedRecipe] lookup:@"User/Tripcode" inDocument:doc] retain];
+		tripcode.trip = [[[CKRecipe sharedRecipe] lookup:@"User.Tripcode" inDocument:doc] retain];
 		DLog(@"Tripcode: %@",tripcode.trip);
-		tripcode.securetrip = [[[CKRecipe sharedRecipe] lookup:@"User/SecureTripcode" inDocument:doc] retain];
+		tripcode.securetrip = [[[CKRecipe sharedRecipe] lookup:@"User.SecureTripcode" inDocument:doc] retain];
 		DLog(@"Secure Tripcode: %@",tripcode.securetrip);
-		if		([[CKRecipe sharedRecipe] lookup:@"User/Authority/Admin" inDocument:doc]) privilege = CK_PRIV_ADMIN;
-		else if	([[CKRecipe sharedRecipe] lookup:@"User/Authority/Mod" inDocument:doc])	  privilege = CK_PRIV_MOD;		
+		if		([[CKRecipe sharedRecipe] lookup:@"User.Authority.Admin" inDocument:doc]) privilege = CK_PRIV_ADMIN;
+		else if	([[CKRecipe sharedRecipe] lookup:@"User.Authority.Mod" inDocument:doc])	  privilege = CK_PRIV_MOD;		
 		DLog(@"Privilege: %d",privilege);
 	}
 	return self;
@@ -155,29 +155,27 @@
 	}
 }
 
-- (NSData*)generatePostingData {
-	NSMutableString* data = [NSMutableString string];
-
-	NSMutableString* namestring = [NSMutableString string];
-	if(name) [namestring appendString:name];
-	if(tripcode.trip) [namestring appendFormat:@"#%@",tripcode.trip];
-	if(tripcode.securetrip) [namestring appendFormat:@"##%@",tripcode.securetrip];
-
-	if([namestring length]) [data appendFormat:@"\r\n--%@\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\n%@",CK_FORM_BOUNDARY,namestring];
-	if(email) [data appendFormat:@"\r\n--%@\r\nContent-Disposition: form-data; name=\"email\"\r\n\r\n%@",CK_FORM_BOUNDARY,email];
-	if(password) [data appendFormat:@"\r\n--%@\r\nContent-Disposition: form-data; name=\"pwd\"\r\n\r\n%@",CK_FORM_BOUNDARY,password];
-
-	return [data dataUsingEncoding:NSUTF8StringEncoding];
-
-}
-
 - (BOOL)isEqual:(id)other { return [self hash] == [other hash]; }
 - (NSUInteger)hash { return 31 * (31 * (31 * (31 + privilege) + [name hash]) + [tripcode.trip hash]) + [tripcode.securetrip hash]; }
 - (NSString*)description {
 	if(email) return [self.namestring stringByAppendingFormat:@" (mailto:%@)",email];
 	return self.namestring;
 }
-
+- (NSString*)prettyPrint {
+	NSMutableString* p = [NSMutableString string];
+	if(email) {
+		if(name) [p appendFormat:@"\e[4;1;34m%@\e[0m",name];
+		[p appendFormat:@"\e[4;34m%@\e[0m",self.tripstring];
+		if(privilege) [p appendFormat:@" \e[1;31m%@\e[0m",self.authority];
+		[p appendFormat:@" (mailto:%@%@\e[0m)",[email caseInsensitiveCompare:@"sage"] == NSOrderedSame ? @"\e[1;31m" : @"",email];
+	}
+	else {
+		if(name) [p appendFormat:@"\e[1;32m%@\e[0m",name];
+		[p appendFormat:@"\e[0;32m%@\e[0m",self.tripstring];
+		if(privilege) [p appendFormat:@" \e[1;31m%@\e[0m",self.authority];		
+	}
+	return p;
+}
 - (NSXMLNode*)XMLRepresentation {
 	NSXMLNode* xmlname = [NSXMLElement elementWithName:@"span" 
 											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:name]] 						

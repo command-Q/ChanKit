@@ -50,9 +50,9 @@ typedef struct {
 + (CKUser*)anonymous;
 - (void)dealloc;
 
-- (NSData*)generatePostingData;
 - (BOOL)isEqual:(id)other;
 - (NSUInteger)hash;
 - (NSString*)description;
+- (NSString*)prettyPrint;
 - (NSXMLNode*)XMLRepresentation;
 @end

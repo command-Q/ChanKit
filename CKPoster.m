@@ -20,7 +20,7 @@
 			else if([key isEqualToString:@"Comment"])
 				comment = [[dict objectForKey:key] retain];
 			else if([key isEqualToString:@"File"])
-				file = [[[dict objectForKey:key] stringByStandardizingPath] retain];
+				file = [[dict objectForKey:key] retain];
 			else if([key isEqualToString:@"Verification"]) {
 				captcha.challenge = [[dict objectForKey:key] retain];
 				captcha.verification = @"manual_challenge";
@@ -66,15 +66,26 @@
 	return 0;
 }
 - (void)populate:(NSXMLNode*)doc {
-	NSURL* captchaurl = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster/Captcha/URL" inDocument:doc]];
+	NSURL* captchaurl = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.URL" inDocument:doc]];
 	NSXMLDocument* captchadoc = [[[NSXMLDocument alloc] initWithContentsOfURL:captchaurl options:NSXMLDocumentTidyHTML error:nil] autorelease];
-	captcha.challenge = [[[CKRecipe sharedRecipe] lookup:@"Poster/Captcha/Challenge" inDocument:captchadoc] retain];
+	captcha.challenge = [[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.Challenge" inDocument:captchadoc] retain];
 	captcha.image = [[CKImage alloc] initWithContentsOfURL:
-					 [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster/Captcha/Image" inDocument:captchadoc] 
+					 [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.Image" inDocument:captchadoc] 
 							relativeToURL:captchaurl]];
-	action = [[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster/URL" inDocument:doc]] retain];
-	board = [[CKBoard alloc] initByReferencingURL:[[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Board/Location" inDocument:doc] 
-														 relativeToURL:URL] absoluteURL]];
+	action = [[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.URL" inDocument:doc]] retain];
+	int type = [[CKRecipe sharedRecipe] resourceKindForURL:URL];
+	NSURL* boardurl;
+	switch(type) {
+		case CK_RESOURCE_POST:
+		case CK_RESOURCE_THREAD:
+			board = [[CKBoard alloc] initByReferencingURL:
+					 [[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Board.Location" inDocument:doc] relativeToURL:URL] absoluteURL]];
+			break;
+		case CK_RESOURCE_BOARD:
+			board = [[CKBoard alloc] initByReferencingURL:URL];
+			break;
+		default:break;
+	}
 	DLog(@"Posting URL: %@",action);
 	DLog(@"Captcha Challenge: %@",captcha.challenge);
 }
@@ -95,29 +106,28 @@
 	[super dealloc];
 }
 
+@synthesize URL;
 @synthesize user;
 @synthesize subject;
 @synthesize comment;
 @synthesize file;
 
-- (NSString*)verification { return [captcha.verification copy]; }
+- (NSString*)verification { return captcha.verification; }
 - (void)setVerification:(NSString*)ver { captcha.verification = [ver retain]; }
 - (CKImage*)captcha { return [captcha.image retain]; }
 
 - (BOOL)verify:(NSString*)captchaverification {
 	// Needs work
-	NSString* content = [NSString stringWithFormat:@"recaptcha_challenge_field=%@&recaptcha_response_field=%@",
-						 captcha.challenge,captcha.verification];	
-	NSMutableURLRequest* crequest = [NSMutableURLRequest requestWithURL:
+	ASIFormDataRequest* crequest = [ASIFormDataRequest requestWithURL:
 		[NSURL URLWithString:@"http://www.google.com/recaptcha/api/noscript?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc"]];
-	[crequest setHTTPMethod:@"POST"];
-	[crequest setValue:[NSString stringWithFormat:@"%d",[content length]] forHTTPHeaderField:@"Content-Length"];
-	[crequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-	[crequest setHTTPBody:[content dataUsingEncoding:NSASCIIStringEncoding]];
-	NSData* data = [NSURLConnection sendSynchronousRequest:crequest returningResponse:nil error:nil];
-	NSXMLDocument* response = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyHTML error:nil];
-	NSArray* nodes;
-	if(![nodes = [response nodesForXPath:@"/html/body/textarea/text()" error:nil] count])
+	[crequest setPostValue:captcha.challenge forKey:@"recaptcha_challenge_field"];
+	[crequest setPostValue:captcha.verification forKey:@"recaptcha_response_field"];
+	[crequest startSynchronous];
+	if([crequest error]) return NO;
+	NSXMLDocument* response = [[NSXMLDocument alloc] initWithData:[crequest responseData] options:NSXMLDocumentTidyHTML error:nil];
+	NSArray* nodes = [response nodesForXPath:@"/html/body/textarea/text()" error:nil];
+	[response release];
+	if(![nodes count])
 		return NO;
 	captcha.challenge = [[nodes objectAtIndex:0] stringValue];
 	captcha.verification = @"manual_challenge";
@@ -125,36 +135,37 @@
 }
 
 - (void)prepare {
-	request = [[NSMutableURLRequest alloc] initWithURL:action];
-	[request setHTTPMethod:@"POST"];
-	[request addValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",CK_FORM_BOUNDARY] forHTTPHeaderField: @"Content-Type"];
-	[request addValue:[URL absoluteString] forHTTPHeaderField:@"Referer"];
-	NSMutableData* body = [NSMutableData data];
-	[body appendData:[user generatePostingData]];
-	
-	NSMutableString* data = [NSMutableString string];
-	// TODO: field names from recipe
-	if(subject) [data appendFormat:@"\r\n--%@\r\nContent-Disposition: form-data; name=\"sub\"\r\n\r\n%@",CK_FORM_BOUNDARY,subject];
-	if(comment) [data appendFormat:@"\r\n--%@\r\nContent-Disposition: form-data; name=\"com\"\r\n\r\n%@",CK_FORM_BOUNDARY,comment];
-	if(captcha.verification)
-		[data appendFormat:	@"\r\n--%@\r\nContent-Disposition: form-data; name=\"recaptcha_challenge_field\"\r\n\r\n%@"
-							 "\r\n--%@\r\nContent-Disposition: form-data; name=\"recaptcha_response_field\"\r\n\r\n%@",
-							CK_FORM_BOUNDARY,captcha.challenge,CK_FORM_BOUNDARY,captcha.verification];
-	[data appendFormat:@"\r\n--%@\r\nContent-Disposition: form-data; name=\"mode\"\r\n\r\nregist",CK_FORM_BOUNDARY];
-	if([[URL absoluteString] isMatchedByRegex:@"http://boards.4chan.org/.+/res/.+"])
-		[data appendFormat:@"\r\n--%@\r\nContent-Disposition: form-data; name=\"resto\"\r\n\r\n%@",
-							CK_FORM_BOUNDARY,[[URL absoluteString] stringByMatching:@".*/([^#]+)" capture:1L]];
-	
-	if(file) [data appendFormat:
-		 @"\r\n--%@\r\nContent-Disposition: form-data; name=\"upfile\"; filename=\"%@\"\r\nContent-Type: application/octet-stream\r\n\r\n",
-													CK_FORM_BOUNDARY,[file lastPathComponent]];
-	[body appendData:[data dataUsingEncoding:NSUTF8StringEncoding]];
-	DLog(@"POST Data:\n%@",[NSString stringWithUTF8String:[body bytes]]);
-	if(file) [body appendData:[NSData dataWithContentsOfFile:file]];
-	[body appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",CK_FORM_BOUNDARY] dataUsingEncoding:NSUTF8StringEncoding]];
+	request = [[ASIFormDataRequest alloc] initWithURL:action];
+	request.timeOutSeconds = CK_PROXY_TIMEOUT;
+	[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:&request];
+	[request addRequestHeader:@"Referer" value:[URL absoluteString]];
 
-	[request addValue:[NSString stringWithFormat:@"%d",[body length]] forHTTPHeaderField:@"Content-Length"];
-	[request setHTTPBody:body];
+	NSMutableString* namestring = [NSMutableString string];
+	if(user.name) [namestring appendString:user.name];
+	if(user.tripcode) [namestring appendFormat:@"#%@",user.tripcode];
+	if(user.securetrip) [namestring appendFormat:@"##%@",user.securetrip];
+
+	if([namestring length]) [request setPostValue:namestring forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Name"]];
+	if(user.email) [request setPostValue:user.email forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Email"]];
+	if(user.password) [request setPostValue:user.password forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Password"]];
+
+	if(subject) [request setPostValue:subject forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Subject"]];
+	if(comment) [request setPostValue:comment forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Comment"]];
+	if(file) [request setFile:[file path] forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.File"]];
+	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] != CK_RESOURCE_BOARD)
+		[request setPostValue:[NSString stringWithFormat:@"%d",[CKUtil parseThreadID:URL]] 
+					   forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Thread"]];
+
+	[[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Extra"] enumerateKeysAndObjectsUsingBlock:^(id key, id object, BOOL *stop){
+		[request setPostValue:object forKey:key];
+	}];
+	
+	[request setPostValue:@"regist" forKey:@"mode"];
+
+	if(captcha.verification) {
+		[request setPostValue:captcha.challenge forKey:@"recaptcha_challenge_field"];
+		[request setPostValue:captcha.verification forKey:@"recaptcha_response_field"];
+	}
 }
 
 - (CKPost*)post:(int*)error attempt:(BOOL (^)(int idno))test {
@@ -172,29 +183,40 @@
 
 - (CKPost*)post:(int*)error {
 	if(!request) [self prepare];
-	
-	NSData* response = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
+	[request startSynchronous];
+	if([request error]) {
+		NSLog(@"%@",[[request error] localizedDescription]);
+		*error = CK_POSTERR_NETWORK;
+		return nil;
+	}
+		
+	NSData* response = [request responseData];
 	DLog(@"Response:\n%@",[[[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding] autorelease]);
 
 	NSXMLDocument* doc = [[[NSXMLDocument alloc] initWithData:response options:NSXMLDocumentTidyHTML error:nil] autorelease];
-	*error = CK_POSTERR_SUCCESS;
+	int err;
+	if(!error) error = &err;
 	if(!doc)
 		*error = CK_POSTERR_UNDEFINED;		
-	else if([[CKRecipe sharedRecipe] lookup:@"Poster/Response/Captcha" inDocument:doc])
+	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Captcha" inDocument:doc])
 		*error = CK_POSTERR_VERIFICATION;
-	else if([[CKRecipe sharedRecipe] lookup:@"Poster/Response/Duplicate" inDocument:doc])
-		*error = CK_POSTERR_DUPLICATE;
-	else if([[CKRecipe sharedRecipe] lookup:@"Poster/Response/Flood" inDocument:doc])
+	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Flood" inDocument:doc])
 		*error = CK_POSTERR_FLOOD;
-	else if([[CKRecipe sharedRecipe] lookup:@"Poster/Response/Disallowed" inDocument:doc])
+	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Disallowed" inDocument:doc])
 		*error = CK_POSTERR_DISALLOWED;
-	else if([[CKRecipe sharedRecipe] lookup:@"Poster/Response/NotFound" inDocument:doc])
+	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.NotFound" inDocument:doc])
 		*error = CK_POSTERR_NOTFOUND;
+	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate" inDocument:doc]) {
+		*error = CK_POSTERR_DUPLICATE;
+		return [CKPost postFromURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate.URL" inDocument:doc]]];
+	}
 	else {
-		NSString* resboard = [[CKRecipe sharedRecipe] lookup:@"Poster/Response/URL" inDocument:doc];
-		NSString* resthread = [[CKRecipe sharedRecipe] lookup:@"Poster/Response/Thread" inDocument:doc];
-		NSString* respost = [[CKRecipe sharedRecipe] lookup:@"Poster/Response/Post" inDocument:doc];
-		NSString* resurl = [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Poster/Response/Format"],resboard,resthread,respost];
+		*error = CK_POSTERR_SUCCESS;
+		NSString* resboard = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.URL" inDocument:doc];
+		NSString* resthread = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Thread" inDocument:doc];
+		NSString* respost = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Post" inDocument:doc];
+		if(![resthread intValue]) resthread = respost;
+		NSString* resurl = [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Format"],resboard,resthread,respost];
 		DLog(@"Got Board: %@",resboard);
 		DLog(@"Got Thread: %@",resthread);
 		DLog(@"Got Post: %@",respost);

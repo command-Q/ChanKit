@@ -1,3 +1,34 @@
+Version 0.8.3 - 1/14/11
+	All:
+		Add ASIHTTPRequest plus proxying support (read: I got a 3 day ban on /g/). For now proxy settings go directly through NSUserDefaults. This is bad, but CKUtil wasn't really designed with a more elegant way to do this. It's a temporary solution.
+		Similarly preliminary handling of bans. Currently confined to a document fetch error code.
+		Clang got smarter -- fix some leaks.
+		Use block enumerations in some cases where foreach was previously.
+		Prettyprint descriptions for bash, just for the hell of it. No greentext yet.
+	CKRecipe:
+		Lookups now use NSObject's valueForKeyPath method, path delimiter changed to '.' accordingly.
+		Now automatically tries to detect software if a lookup method is called without previously running detection.
+		New certainty state -- CK_RECIPE_PRELIMINARY -- set during detection to avoid a stack overflow created by the former.
+		This singleton will likely be partially or wholly replaced by the planned CKDocument class, each instance of which will store its own definitions.
+	CKPoster:
+		Field HTTP keys moved to recipe.
+		Fix sefault when no error is sent to -post.
+		Now returns a post on duplicate image error, as the board does. It's a good idea to always check the error code.
+	CKPage:
+		-newestPost -> -mostRecentPost as per naming convention.
+	ChanParse:
+		-proxy flag.
+		Captcha images aren't tiff anymore, don't name them that.
+		Add some more post error states.
+		Use URLs instead of strings for path flags and UTIs to check upload images.
+		Flag to verify a list of proxies against a URL and print working/not-banned ones.
+		Image dumping can use a proxy list.
+		Image dumping can be resumed based on filenames present in the thread.
+		Image dumping can attach the dump progress to the post comment.
+	Other:
+		Miscellaneous changes (see previous git logs).
+		Re-establish the other arbitrary version numbering.
+
 Version 0.9.0pre - 12/20/10 - Pre-0.9 Git import
 	All:
 		Prefix header -> Common.h.
@@ -23,6 +54,7 @@ Version 0.9.0pre - 12/20/10 - Pre-0.9 Git import
 		Sanitize image dumping thanks to CKImage.
 	Other:
 		Miscellaneous changes and cleanup.
+
 Version 0.8.1 - 10/17/10
 	All:
 		CSA bug fixing

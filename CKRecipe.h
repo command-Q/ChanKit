@@ -30,4 +30,5 @@
 - (NSArray*)supportedSoftware;
 - (NSURL*)URLForSite:(NSString*)sitename;
 - (NSURL*)matchSite:(NSString*)site resourceKind:(int*)type;
+- (int)resourceKindForURL:(NSURL*)URL;
 @end

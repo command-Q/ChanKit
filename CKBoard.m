@@ -20,7 +20,7 @@
 	if(self = [self init]) {
 		URL = [url retain];
 		name = [[CKUtil parseBoard:URL] retain];
-		boardroot = [([[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Page/Number/URL"] capture:1L] intValue]
+		boardroot = [([[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Page.Number.URL"] capture:1L] intValue]
 					  ? [URL URLByDeletingLastPathComponent] : URL) retain];
 
 		DLog(@"URL: %@", URL);
@@ -67,27 +67,27 @@
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
 
-	int index  = [[[CKRecipe sharedRecipe] lookup:@"Page/Number/XML" inDocument:doc] intValue];
+	int index  = [[[CKRecipe sharedRecipe] lookup:@"Page.Number.XML" inDocument:doc] intValue];
 	if(boardroot) [boardroot release];
 	boardroot = [(index ? [URL URLByDeletingLastPathComponent] : URL) retain];
 	DLog(@"Board Root: %@", boardroot);		
 	
 	if(!title) {
-		title = [[[CKRecipe sharedRecipe] lookup:@"Board/Title" inDocument:doc test:boardroot] retain];
+		title = [[[CKRecipe sharedRecipe] lookup:@"Board.Title" inDocument:doc test:boardroot] retain];
 		DLog(@"Title: %@",title);
 	}
-	alternatetitle = [[[CKRecipe sharedRecipe] lookup:@"Board/AlternateTitle" inDocument:doc] retain];
+	alternatetitle = [[[CKRecipe sharedRecipe] lookup:@"Board.AlternateTitle" inDocument:doc] retain];
 	DLog(@"Alt Title: %@",alternatetitle);	
 
-	rules = [[[[CKRecipe sharedRecipe] lookup:@"Board/Rules" inDocument:doc]
+	rules = [[[[CKRecipe sharedRecipe] lookup:@"Board.Rules" inDocument:doc]
 				componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] retain];
 	DLog(@"Rules: %@",rules);
 	
 	[pages removeAllObjects];
-	for(NSString* page in [[[CKRecipe sharedRecipe] lookup:@"Board/Pages" inDocument:doc]
+	for(NSString* page in [[[CKRecipe sharedRecipe] lookup:@"Board.Pages" inDocument:doc]
 				componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
-		[pages addObject:[[CKPage alloc] initByReferencingURL:[boardroot URLByAppendingPathComponent:page]]];
-	[pages insertObject:[[CKPage alloc] initWithXML:doc] atIndex:index];
+		[pages addObject:[[[CKPage alloc] initByReferencingURL:[boardroot URLByAppendingPathComponent:page]] autorelease]];
+	[pages insertObject:[[[CKPage alloc] initWithXML:doc] autorelease] atIndex:index];
 	 
 	numpages = [pages count];
 	DLog(@"Pages: %d",numpages);
@@ -129,6 +129,7 @@
 		[queue addOperationWithBlock:^{[page populate];}];
 	[queue setSuspended:NO];
     [queue waitUntilAllOperationsAreFinished];
+	[queue release];
 	return pages;
 }
 
@@ -157,7 +158,7 @@
 			[lock unlock];
 			if(done) return;
 
-			CKPost* current = [page newestPost];
+			CKPost* current = [page mostRecentPost];
 			if([current image] && [current.image.URL isEqualTo:url]) {
 				[lock lock];
 				result = current;
@@ -226,7 +227,8 @@
 	
 	[queue setSuspended:NO];
     [queue waitUntilAllOperationsAreFinished];
-
+	[lock release];
+	[queue release];
 	return result;
 }
 
@@ -279,7 +281,7 @@
 		return error;
 	
 	int candidate, last = 0;
-	for(NSString* idstr in [[[CKRecipe sharedRecipe] lookup:@"Page/IDs" inDocument:doc] 
+	for(NSString* idstr in [[[CKRecipe sharedRecipe] lookup:@"Page.IDs" inDocument:doc] 
 							componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
 		if((candidate = [idstr intValue]) > last)
 			last = candidate;

@@ -131,40 +131,40 @@
 - (void)populate:(NSXMLNode*)doc {
 	if(![doc level]) {
 		// doc is root node
-		NSString* rootpath = OP ? [[CKRecipe sharedRecipe] lookup:@"Post/OP"] : 
-									[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post/Index"],self.IDString];
+		NSString* rootpath = OP ? [[CKRecipe sharedRecipe] lookup:@"Post.OP"] : 
+									[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],self.IDString];
 		NSArray* nodes = [doc nodesForXPath:rootpath error:NULL];
 		if([nodes count]) [self populate:[nodes objectAtIndex:0]];
 		return;
 	}
-	index = OP ? 0 : [[[doc rootDocument] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post/Indexes"] error:nil] indexOfObject:doc]+1;	
+	index = OP ? 0 : [[[doc rootDocument] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post.Indexes"] error:nil] indexOfObject:doc]+1;	
 	DLog(@"Index: %d",index);
 	
-	subject = [[[CKRecipe sharedRecipe] lookup:@"Post/Subject" inDocument:doc] retain];
+	subject = [[[CKRecipe sharedRecipe] lookup:@"Post.Subject" inDocument:doc] retain];
 	DLog(@"Subject: %@", subject);
 
 	NSDateFormatter* dateformat = [[[NSDateFormatter alloc] init] autorelease];
-	[dateformat setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Dates/Format"]];
-	NSString* datestr = [[CKRecipe sharedRecipe] lookup:@"Post/Date" inDocument:doc];
+	[dateformat setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
+	NSString* datestr = [[CKRecipe sharedRecipe] lookup:@"Post.Date" inDocument:doc];
 	if(!(date = [dateformat dateFromString:datestr])) {
-		[dateformat setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Dates/Alternate"]];
+		[dateformat setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Alternate"]];
 		date = [[dateformat dateFromString:datestr] retain];
 	}
 	DLog(@"Date: %@",date);
 
 	user = [[CKUser alloc] initWithXML:doc];
 
-	sticky = [[CKRecipe sharedRecipe] lookup:@"Post/Sticky" inDocument:doc] != nil;
-	closed = [[CKRecipe sharedRecipe] lookup:@"Post/Slosed" inDocument:doc] != nil;
+	sticky = [[CKRecipe sharedRecipe] lookup:@"Post.Sticky" inDocument:doc] != nil;
+	closed = [[CKRecipe sharedRecipe] lookup:@"Post.Slosed" inDocument:doc] != nil;
 	DLog(@"Sticky: %d",sticky);
 	DLog(@"Closed: %d",closed);
 	
 	image = [[CKImage alloc] initWithXML:doc];
 
-	comment = [[[CKRecipe sharedRecipe] lookup:@"Post/Comment" inDocument:doc] retain];
+	comment = [[[CKRecipe sharedRecipe] lookup:@"Post.Comment" inDocument:doc] retain];
 	DLog(@"Comment:\n%@",comment);
 
-	[adminmessages.values addObjectsFromArray:[[[CKRecipe sharedRecipe] lookup:@"Post/Admin" inDocument:doc] 
+	[adminmessages.values addObjectsFromArray:[[[CKRecipe sharedRecipe] lookup:@"Post.Admin" inDocument:doc] 
 					 componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]];
 	for(NSString* msg in adminmessages.values)
 		[adminmessages.ranges addObject:[NSValue valueWithRange:[comment rangeOfString:msg]]];
@@ -174,10 +174,10 @@
 	DLog(@"Admin Messages: %@",adminmessages.values);
 	
 	banned = [[adminmessages.values filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF = %@",
-														  [[CKRecipe sharedRecipe] lookup:@"Post/BanMessage"]]] count];
+														  [[CKRecipe sharedRecipe] lookup:@"Post.BanMessage"]]] count];
 	DLog(@"Banned: %d",banned);
 	
-	[inlinequotes.values addObjectsFromArray:[[[CKRecipe sharedRecipe] lookup:@"Post/InlineQuotes" inDocument:doc]
+	[inlinequotes.values addObjectsFromArray:[[[CKRecipe sharedRecipe] lookup:@"Post.InlineQuotes" inDocument:doc]
 					componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]];	
 	for(NSString* quote in inlinequotes.values)
 		[inlinequotes.ranges addObject:[NSValue valueWithRange:[comment rangeOfString:quote]]];
@@ -187,9 +187,9 @@
 	
 	//Quotes broken for now, problem with CKUtil
 	return;
-	NSArray* quoterefs = [[[CKRecipe sharedRecipe] lookup:@"Post/Quotes/URL" inDocument:doc] 
+	NSArray* quoterefs = [[[CKRecipe sharedRecipe] lookup:@"Post.Quotes.URL" inDocument:doc] 
 						 componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-	NSArray* quotestrings = [[[CKRecipe sharedRecipe] lookup:@"Post/Quotes/ID" inDocument:doc] 
+	NSArray* quotestrings = [[[CKRecipe sharedRecipe] lookup:@"Post.Quotes.ID" inDocument:doc] 
 						 componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	DLog(@"Quotes: %@",quotestrings);
 	// some bugs here
@@ -199,23 +199,23 @@
 		NSRange range;
 		NSString* qurl = [quoterefs objectAtIndex:i];
 		DLog(@"Quote URL: %@",qurl);		
-		int qid = [[qurl stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Quotes/ID"] capture:1L] intValue];
+		int qid = [[qurl stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.ID"] capture:1L] intValue];
 		NSUInteger idx;
 		if(NSNotFound == (idx = [quotes.values indexOfObjectPassingTest:^(id quote, NSUInteger ndx, BOOL *stop) {
 			return *stop = [quote ID] == qid;}])) {
 			if(qid == ID)
 				 // They quoted themself :|
 				post = self;
-			else if([qurl isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Quotes/CrossThread"]]) 
+			else if([qurl isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossThread"]]) 
 				// Same board, different thread
 				post = [CKPost postReferencingURL:[[URL URLByDeletingLastPathComponent] URLByAppendingPathComponent:qurl]];
-			else if([qurl isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Quotes/CrossBoard"]]) {
+			else if([qurl isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossBoard"]]) {
 				// Cross-board quote, we have to resolve it
 				NSXMLDocument* request = [[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString:qurl] 
 																			  options:NSXMLDocumentTidyHTML error:NULL] autorelease];
 				if(request)
 					post = [[CKPost alloc] initByReferencingURL:
-							[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Post/Redirect" inDocument:request]]];
+							[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Post.Redirect" inDocument:request]]];
 				else
 					DLog(@"Bad quote: %@",qurl);
 			}
@@ -270,21 +270,38 @@
 
 - (NSString*)description {
 	NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-	[formatter setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Dates/Format"]];
+	[formatter setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
 	NSMutableString* desc = [NSMutableString string];
 	if(subject) [desc appendFormat:@"%@ ",subject];
 	[desc appendFormat:@"%@ %@ No.%d ",user,[formatter stringFromDate:date],ID];
 	if(banned) [desc appendString:@"☠"];
 	if(deleted) [desc appendString:@"⌫"];
-	if(closed) [desc appendString:@"⦸"];
+	if(closed) [desc appendString:@"⦸✖"];
 	if(sticky) [desc appendString:@"☌"];
 	if(image) [desc appendString:[image description]];
-	if(comment) [desc appendFormat:@"%c%@",NSNewlineCharacter,comment];
+	if(comment) [desc appendFormat:@"\n%@",comment];
 	return desc;
 }
 
+- (NSString*)prettyPrint {
+	NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
+	[formatter setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
+	NSMutableString* desc = [NSMutableString string];
+	if(subject) [desc appendFormat:@"\e[1;34m%@\e[0m ",subject];
+	[desc appendFormat:@"%@ %@ No.%d ",[user prettyPrint],[formatter stringFromDate:date],ID];
+	if(banned) [desc appendString:@"\e[0;31m☠\e[0m"];
+	if(deleted) [desc appendString:@"\e[0;31m⌫\e[0m"];
+	if(closed) [desc appendString:@"⦸\e[0;31m✖\e[0m"];
+	if(sticky) [desc appendString:@"\e[0;33m☌\e[0m"];
+	if(image) [desc appendString:[image prettyPrint]];
+	if(comment) [desc appendFormat:@"\n\n\t%@",
+				 [[comment componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] 
+				  componentsJoinedByString:@"\n\t"]];
+	return desc;	
+}
+
 - (NSString*)commentFilteringQuotes {
-	return [comment stringByReplacingOccurrencesOfRegex:[[CKRecipe sharedRecipe] lookup:@"Quotes/Regex"] withString:[NSString string]];
+	return [comment stringByReplacingOccurrencesOfRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.Regex"] withString:[NSString string]];
 }
 
 - (BOOL)commentContains:(NSString*)astring {
@@ -304,7 +321,7 @@
 												  attributes:[NSArray arrayWithObject:
 															  [NSXMLNode attributeWithName:@"class" stringValue:@"subject"]]];
 	
-	NSMutableArray* piecemeal;
+	NSMutableArray* piecemeal = [NSMutableArray array];
 	NSUInteger lastend = 0;
 	NSUInteger len = [comment length];
 	for(NSUInteger i = 0; i < quotes.count; i++) {

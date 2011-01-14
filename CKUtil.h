@@ -11,17 +11,20 @@
 
 @interface CKUtil : NSObject 
 
-+ (NSString*)parseBoard:(NSURL*)url;
-+ (NSString*)parseBoardFromString:(NSString*)url;
++ (NSString*)parseBoard:(NSURL*)URL;
++ (NSString*)parseBoardFromString:(NSString*)URL;
 
-+ (int)parseThreadID:(NSURL*)aurl;
-+ (NSURL*)URLByDeletingFragment:(NSURL*)aurl;
++ (int)parseThreadID:(NSURL*)URL;
++ (NSURL*)URLByDeletingFragment:(NSURL*)URL;
 + (NSURL*)changePost:(NSURL*)original toPost:(int)idno;
 
++ (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy;
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL;
 + (NSString*)version;
 
 + (NSString*)generatePassword;
 + (NSString*)MD5:(NSData*)data;
 
++ (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest**)request;
++ (BOOL)checkBan:(NSXMLDocument*)doc;
 @end

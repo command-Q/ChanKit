@@ -24,6 +24,7 @@
 @property(nonatomic,readonly,assign) int postcount;
 @property(nonatomic,readonly,assign) int imagecount;
 @property(nonatomic,readonly,retain) CKPost* OP;
+@property(nonatomic,readonly,retain) NSArray* replies;
 @property(nonatomic,readonly,retain) CKPost* latest;
 @property(nonatomic,readwrite,assign) BOOL sticky;
 @property(nonatomic,readwrite,assign) BOOL closed;
@@ -49,6 +50,8 @@
 - (NSArray*)imagePosts;
 - (NSArray*)images;
 
+- (NSString*)description;
+- (NSString*)prettyPrint;
 - (BOOL)isEqual:(id)other;
 - (NSUInteger)hash;
 @end

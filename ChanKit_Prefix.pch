@@ -9,6 +9,8 @@
 #ifdef __OBJC__
 	#import <Cocoa/Cocoa.h>
 	#import "RegexKitLite/RegexKitLite.h"
+	#import "ASIHTTPRequest/ASIHTTPRequest.h"
+	#import "ASIHTTPRequest/ASIFormDataRequest.h"
 	#import "CKUtil.h"
 	#import "Common.h"
 #endif

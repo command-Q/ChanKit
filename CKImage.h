@@ -41,6 +41,7 @@
 - (void)setMetadata:(NSDictionary*)meta;
 - (BOOL)load;
 - (NSString*)description;
+- (NSString*)prettyPrint;
 - (NSXMLNode*)XMLRepresentation;
 - (NSUInteger)hash;
 @end

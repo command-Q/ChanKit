@@ -30,7 +30,7 @@
 - (void)populate:(NSXMLDocument*)doc;
 
 - (CKThread*)getThread:(int)index; // Replacement for objectAtIndex: which ensures a populated thread
-- (CKPost*)newestPost;
+- (CKPost*)mostRecentPost;
 - (CKPost*)oldestPost;
 - (NSTimeInterval)rangeOfPosts;
 

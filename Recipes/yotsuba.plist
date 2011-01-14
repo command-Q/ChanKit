@@ -187,6 +187,28 @@
 	</dict>
 	<key>Poster</key>
 	<dict>
+		<key>Fields</key>
+		<dict>
+			<key>Name</key>
+			<string>name</string>
+			<key>Email</key>
+			<string>email</string>
+			<key>Password</key>
+			<string>pwd</string>
+			<key>Subject</key>
+			<string>sub</string>
+			<key>Comment</key>
+			<string>com</string>
+			<key>Thread</key>
+			<string>resto</string>
+			<key>File</key>
+			<string>upfile</string>
+			<key>Extra</key>
+			<dict>
+				<key>mode</key>
+				<string>regist</string>
+			</dict>
+		</dict>
 		<key>Response</key>
 		<dict>
 			<key>Format</key>
@@ -208,9 +230,11 @@
 			<key>Duplicate</key>
 			<dict>
 				<key>Path</key>
-				<string>/html/body/table/tr/td/font/b/text()</string>
+				<string>/html/body/table/tr/td/font/b/a/text()</string>
 				<key>Regex</key>
-				<string>Error: (Duplicate file entry detected\.).*</string>
+				<string>(Error: Duplicate file entry detected\.)</string>
+				<key>URL</key>
+				<string>/html/body/table/tr/td/font/b/a[1]/@href</string>
 			</dict>
 			<key>Captcha</key>
 			<dict>
@@ -358,27 +382,52 @@
 		<key>Logo</key>
 		<string>\&apos;(.*logo.png)\&apos;</string>
 	</dict>
-	<key>Quotes</key>
+	<key>Special</key>
 	<dict>
-		<key>Format</key>
-		<string>&gt;&gt;%d</string>
-		<key>CrossBoardFormat</key>
-		<string>&gt;&gt;&gt;/%@/%d</string>
-		<key>ID</key>
-		<string>[#=](.+)</string>
-		<key>CrossThread</key>
-		<string>.+#.+</string>
-		<key>CrossBoard</key>
-		<string>[^\?]+\?[^=]+=</string>
-		<key>Regex</key>
-		<string>&gt;&gt;\d+\s*|&gt;&gt;&gt;/\w+/\d+\s*</string>
+		<key>Ban</key>
+		<dict>
+			<key>Identifier</key>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/img[@alt=&quot;Banned&quot;]/@src</string>
+			<key>Board</key>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[1]/text()</string>
+			<key>Reason</key>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[2]/text()</string>
+			<key>From</key>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[3]/text()</string>
+			<key>To</key>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[4]/text()</string>
+			<key>IP</key>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[6]/text()</string>
+			<key>Name</key>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/span[@class=&quot;trip&quot;]/text()</string>
+			<key>Comment</key>
+			<string>Since parsing is based on location of bolded text, it only works with a single board and ban reason for the moment.</string>
+		</dict>
 	</dict>
-	<key>Dates</key>
+	<key>Definitions</key>
 	<dict>
-		<key>Format</key>
-		<string>MM/dd/yy(EEE)HH:mm:ss</string>
-		<key>Alternate</key>
-		<string>MM/dd/yy(EEE)HH:mm</string>
+		<key>Dates</key>
+		<dict>
+			<key>Format</key>
+			<string>MM/dd/yy(EEE)HH:mm:ss</string>
+			<key>Alternate</key>
+			<string>MM/dd/yy(EEE)HH:mm</string>
+		</dict>
+		<key>Quotes</key>
+		<dict>
+			<key>Format</key>
+			<string>&gt;&gt;%d</string>
+			<key>CrossBoardFormat</key>
+			<string>&gt;&gt;&gt;/%@/%d</string>
+			<key>ID</key>
+			<string>[#=](.+)</string>
+			<key>CrossThread</key>
+			<string>.+#.+</string>
+			<key>CrossBoard</key>
+			<string>[^\?]+\?[^=]+=</string>
+			<key>Regex</key>
+			<string>&gt;&gt;\d+\s*|&gt;&gt;&gt;/\w+/\d+\s*</string>
+		</dict>
 	</dict>
 </dict>
 </plist>

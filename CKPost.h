@@ -98,6 +98,7 @@ typedef struct {
 - (BOOL)commentContains:(NSString*)astring;
 - (BOOL)quoted:(CKPost*)post;
 - (NSString*)description;
+- (NSString*)prettyPrint;
 - (NSXMLNode*)generateXML;
 
 - (BOOL)isEqual:(id)other;

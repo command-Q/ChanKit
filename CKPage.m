@@ -20,7 +20,7 @@
 	if(self = [self init]) {
 		URL = [url retain];
 		board = [[CKUtil parseBoard:URL] retain];
-		index = [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Page/Number/URL"] capture:1L] intValue];
+		index = [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Page.Number.URL"] capture:1L] intValue];
 		DLog(@"URL: %@", URL);
 		DLog(@"Board: %@", board);
 		DLog(@"Index: %d",index);
@@ -60,13 +60,13 @@
 }
 
 - (void)populate:(NSXMLDocument*)doc {
-	index = [[[CKRecipe sharedRecipe] lookup:@"Page/Number/XML" inDocument:doc] intValue];
+	index = [[[CKRecipe sharedRecipe] lookup:@"Page.Number.XML" inDocument:doc] intValue];
 	DLog(@"Index: %d",index);
 	[threads removeAllObjects];
 	NSString* URI = [doc URI];
-	for(NSString* href in [[[CKRecipe sharedRecipe] lookup:@"Page/Threads" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+	for(NSString* href in [[[CKRecipe sharedRecipe] lookup:@"Page.Threads" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
 		[doc setURI:[[(index ? [URL URLByDeletingLastPathComponent] : URL) URLByAppendingPathComponent:href] absoluteString]];		
-		[threads addObject:[[CKThread alloc] initWithPage:doc]];		
+		[threads addObject:[[[CKThread alloc] initWithPage:doc] autorelease]];		
 	}
 	[doc setURI:URI];
 	DLog(@"Threads: %d",[threads count]);
@@ -84,22 +84,38 @@
 	return [threads objectAtIndex:idx];
 }
 
-- (CKPost*)newestPost {
+- (CKPost*)mostRecentPost {
 	CKPost* result = [[CKPost alloc] init];
-	CKPost* candidate;
+	CKPost* candidate = nil;
 	for(CKThread* thread in threads)
 		if((candidate = [[thread posts] lastObject]).ID > result.ID)
 			result = candidate;
-	return result;
+	return [result autorelease];
 }
 - (CKPost*)oldestPost {
 	CKPost* result = [[[threads objectAtIndex:0] posts] objectAtIndex:0];
-	CKPost* candidate;
+	CKPost* candidate = nil;
 	for(int i = 1; i < [threads count]; i++)
 		if((candidate = [[[threads objectAtIndex:i] posts] objectAtIndex:0]).ID < result.ID)
 			result = candidate;
 	return result;	
 }
-- (NSTimeInterval)rangeOfPosts { return [[[self newestPost] date] timeIntervalSinceDate:[[self oldestPost] date]]; }
+- (NSTimeInterval)rangeOfPosts { return [[[self mostRecentPost] date] timeIntervalSinceDate:[[self oldestPost] date]]; }
+
+- (NSString*)prettyPrint {
+	NSString* opdelim = @"\e[4m\t\t                                                                                                                         \e[0m\n";
+	NSString* replydelim = @"\n\t\t|\e[4m                                                                                                                        \e[0m\n";
+	NSMutableString* print = [NSMutableString string];
+	for(CKThread* t in threads) {
+		int disp = fmin([t.posts count] - 5,1);
+		[print appendFormat:@"\n%@\n%@\n%@\t\t|\n\t\t| %d posts and %d images",
+		 opdelim,[[t.posts objectAtIndex:0] prettyPrint],opdelim,t.postcount,t.imagecount];
+		for(CKPost* p in [[t posts] subarrayWithRange:NSMakeRange(disp,[t.posts count] - disp)])
+			[print appendFormat:@"%@\t\t|\n\t\t| %@",replydelim,
+			 [[[p prettyPrint] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]
+			  componentsJoinedByString:@"\n\t\t| "]];
+	}
+	return [print stringByAppendingString:replydelim];
+}
 
 @end
