@@ -7,6 +7,8 @@
  *
  *	ChanKit includes RegexKitLite, a lightweight, iOS-compatible regular expression library. 
  *	For details visit http://regexkit.sourceforge.net/RegexKitLite/
+ *	And ASIHTTPRequest, a robust CFNetwork-based replacement for NSURLRequest
+ *	See http://allseeing-i.com/ASIHTTPRequest
  */
 
 #import <ChanKit/Common.h>
