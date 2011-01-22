@@ -13,13 +13,6 @@ int randint(int max) { return random()/(double)RAND_MAX * (double)max; }
 int main (int argc, const char * argv[]) {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 
-	NSURL* url;
-	CKChan* chan;
-	CKBoard* board;
-	CKPage* page;
-	CKThread* thread;
-	CKPost* post;
-	
 	NSUserDefaults* args = [NSUserDefaults standardUserDefaults];
 	if(![[args volatileDomainForName:NSArgumentDomain] count]) {
 		NSLog( @"ChanParse - ChanKit test interface.\n"
@@ -27,10 +20,10 @@ int main (int argc, const char * argv[]) {
 			  "\tFramework version %@\n"
 			  "\n"
 			  "Usage: \tChanParse -chan -board -page -thread -post\n"
-			  "\t\tChanParse -url <URL> -dump\n"
-			  "\t\tChanParse -post <URL> -name -trip -strip -email -password -subject -comment -file\n"
-			  "\t\tChanParse -random YES\n"
-			  "\t\tChanParse -filter <path> -against <URL>\n"
+			  "\tChanParse -url <URL> -watch -dump\n"
+			  "\tChanParse -post <URL> -name -trip -strip -email -password -subject -comment -file\n"
+			  "\tChanParse -random YES\n"
+			  "\tChanParse -filter <path> -against <URL>\n"
 			  "\n"
 			  "Supported sites: %@\n"
 			  "Supported board software: %@\n"
@@ -48,6 +41,8 @@ int main (int argc, const char * argv[]) {
 			  "\n"
 			  "\t-url <URL>\tA thread to print\n"
 			  "\t-dump <path>\tPath to dump images to (optional)\n"
+			  "\t-watch YES\tInstead of exiting, watch and print changes to thread until it 404s (optional - global setting)\n"
+			  "\t\t(YES must be passed to work with NSUserDefaults, we don't really want getopt for this tiny sample app.)\n"
 			  "\n"
 			  "Post:\n"
 			  "\n"
@@ -67,7 +62,6 @@ int main (int argc, const char * argv[]) {
 			  "\n"
 			  "Random:\n"
 			  "\t-random YES\tGet a randomized post.\n"
-			  "\t\t(YES must be passed to work with NSUserDefaults, we don't really want getopt for this tiny sample app.)\n"
 			  "\n"
 			  "Proxy:\n"
 			  "\t-proxy <URL>\tGet/post using a proxy ([http|https|socks]://host:port) - global setting\n"
@@ -79,7 +73,7 @@ int main (int argc, const char * argv[]) {
 			  [[[CKRecipe sharedRecipe] supportedSoftware] componentsJoinedByString:@", "]);
 		
 		// This would already be handled by the argument defaults, but it's a good demo of the kit's convenience methods
-		post = [[[[[[CKChan chanNamed:@"4chan"] boardNamed:@"g"] getPage:0] threads] objectAtIndex:0] latest];
+		CKPost* post = [[[[CKChan chanNamed:@"4chan"] boardNamed:@"g"] getPage:0] newestPost];
 		NSLog(@"%@\n%@",post.URL,[post prettyPrint]);
 		[pool drain];
 		return 0;
@@ -93,45 +87,46 @@ int main (int argc, const char * argv[]) {
 		NSLog(@"Using proxy %@",[args URLForKey:@"CKProxySetting"]);
 	}
 	
+	NSURL* url = nil;
+	id resource = nil;
+	int images = 0;
+	NSFileManager* fileman = [[NSFileManager alloc] init];
+	NSURL* path = nil;
+	
 	if([args stringForKey:@"url"]) {
 		url = [NSURL URLWithString:[args stringForKey:@"url"]];
-		id resource;
 		switch ([[CKRecipe sharedRecipe] resourceKindForURL:url]) {
-			case CK_RESOURCE_POST:	resource = [CKPost postFromURL:url];	break;
-			case CK_RESOURCE_THREAD:resource = [CKThread threadFromURL:url];break;
-			case CK_RESOURCE_BOARD:	resource = [CKPage pageFromURL:url];	break;
+			case CK_RESOURCE_POST:	resource = [CKPost postFromURL:url];		break;
+			case CK_RESOURCE_THREAD:resource = [CKThread threadFromURL:url];	break;
+			case CK_RESOURCE_BOARD:	resource = [CKPage pageFromURL:url];		break;
 			default: resource = nil; break;
 		}
 		if(resource) {
-			NSLog(@"\n%@",[resource prettyPrint]);
-	
-			NSURL* path;
-			NSFileManager* fileman = [NSFileManager defaultManager];
-			if([resource isKindOfClass:[CKThread class]] && (path = [args URLForKey:@"dump"]) && [fileman fileExistsAtPath:[path path]]) {
-				path = [path URLByAppendingPathComponent:[NSString stringWithFormat:@"/%@/%d",thread.board,thread.ID]];
-				if(![fileman fileExistsAtPath:[path path]])
-					[fileman createDirectoryAtPath:[path path] withIntermediateDirectories:YES attributes:nil error:NULL];
-				if([fileman fileExistsAtPath:[path path]]) {
-					NSLog(@"Dumping %d images to %@",thread.imagecount,[path path]);
-					int i = 0;
-					for(CKPost* post in [resource imagePosts])
-						if(![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:post.image.name] path]]) {
-							[fileman createFileAtPath:[[path URLByAppendingPathComponent:post.image.name] path]
-											 contents:post.image.data
-										   attributes:[NSDictionary dictionaryWithObject:post.image.timestamp
-																				  forKey:@"NSFileModificationDate"]];
-							i++;
+			// NSLog isn't really seamless with this
+			[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:[[resource prettyPrint] dataUsingEncoding:NSUTF8StringEncoding]];
+			if([resource isKindOfClass:[CKThread class]] && (path = [args URLForKey:@"dump"])) {
+				path = [path URLByAppendingPathComponent:[NSString stringWithFormat:@"/%@/%d",[resource board],[resource ID]]];
+				NSError* err;
+				if([fileman createDirectoryAtPath:[path path] withIntermediateDirectories:YES attributes:nil error:&err]) {
+					NSLog(@"Dumping %d images to %@",[resource imagecount],[path path]);
+					for(CKImage* image in [resource images])
+						if(![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:image.name] path]]) {
+							[fileman createFileAtPath:[[path URLByAppendingPathComponent:image.name] path]
+											 contents:image.data
+										   attributes:[NSDictionary dictionaryWithObject:image.timestamp forKey:@"NSFileModificationDate"]];
+							images++;
 						}
-					
-					NSLog(@"Dump complete! Got %d images.",i);
-				}		
-				else NSLog(@"Directory error");
-			}
+					NSLog(@"Dump complete! Got %d images.",images);
+				}
+				else NSLog(@"Directory error; path cannot be created at %@\n%@",path,[err localizedDescription]);
+			}			
 		}
 		else NSLog(@"404");
 	}
 	else if([args stringForKey:@"post"]) {
 		url = [NSURL URLWithString:[args stringForKey:@"post"]];
+		CKPost* post = [CKPost postFromURL:url];
+		NSLog(@"Responding to post:\n%@",[post prettyPrint]);
 		int runs = 1;
 		NSArray* uploads = nil;
 		NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithObject:url forKey:@"URL"];
@@ -161,6 +156,9 @@ int main (int argc, const char * argv[]) {
 																			 error:NULL];
 			runs = [uploads count];
 		}
+		if(!post.OP) [dict setObject:[NSString stringWithFormat:@">>%d\n%@",post.ID,[dict objectForKey:@"Comment"]] forKey:@"Comment"];
+		[dict setObject:[CKUtil generatePassword] forKey:@"Password"]; // Use a single password for dumps
+		 
 		NSArray* previousimages = [NSArray array];
 		if([args boolForKey:@"resume"])
 			previousimages = [[CKThread threadFromURL:url] images];
@@ -229,11 +227,11 @@ int main (int argc, const char * argv[]) {
 				else current.comment = progress;
 			}
 			if([proxies count] && !(i  % [proxies count])) firstpost = [NSDate date];
-			int sleeptime = 30;
+			struct timespec sleep = {30,0};
 			if(i == [posters count] - 1 || [proxies count] && 
 										((i + 1) % [proxies count] || [[NSDate date] timeIntervalSinceDate:firstpost] >= 60)) 
-			   sleeptime = 0;
-			else if(current.file) sleeptime = 60;
+				sleep.tv_sec = 0;
+			else if(current.file) sleep.tv_sec = 60;
 			NSURL* proxy;
 			if([proxies count]) {
 				proxy = [NSURL URLWithString:[proxies objectAtIndex:i % [proxies count]]];
@@ -249,31 +247,32 @@ int main (int argc, const char * argv[]) {
 			else
 				post = [current post:&err];
 			switch(err) {
-				case CK_POSTERR_FLOOD:			NSLog(@"Error: Flood");					sleeptime += sleeptime ? 30 : 0;	break;
-				case CK_POSTERR_VERIFICATION:	NSLog(@"Error: Captcha");													break;
-				case CK_POSTERR_DISALLOWED:		NSLog(@"Error: Comment Disallowed");	error = YES;						break;
-				case CK_POSTERR_NETWORK:		NSLog(@"Error: Network");				/*error = YES;*/					break;
-				case CK_POSTERR_NOTFOUND:		NSLog(@"Error: 404");					error = YES;						break;
-				case CK_POSTERR_UNDEFINED:		NSLog(@"Error: Unknown");				/*error = YES;*/					break;
-				case CK_POSTERR_DUPLICATE:		NSLog(@"Error: Duplicate");													
-				default:NSLog(@"%@\n%@",post.URL,[post prettyPrint]);
+				case CK_ERR_SUCCESS:			NSLog(@"%@\n%@",post.URL,[post prettyPrint]);	resource = post;						break;
+				case CK_POSTERR_FLOOD:			NSLog(@"Error: Flood");							sleep.tv_sec += sleep.tv_sec ? 30 : 0;	break;
+				case CK_POSTERR_VERIFICATION:	NSLog(@"Error: Captcha");						sleep.tv_sec = 0;						break;
+				case CK_POSTERR_DUPLICATE:		NSLog(@"Error: Duplicate");						sleep.tv_sec = 0;						break;	
+				case CK_ERR_NETWORK:			NSLog(@"Error: Network");						sleep.tv_sec = 0;						break;
+				case CK_POSTERR_DISALLOWED:		NSLog(@"Error: Comment Disallowed");			error = YES;							break;
+				case CK_POSTERR_NOTFOUND:		NSLog(@"Error: 404");							error = YES;							break;
+				case CK_ERR_UNDEFINED:
+				default:						NSLog(@"Error: %d Unknown",err);
 			}
 			if(post.OP) //Reply to ourself
 				[posters makeObjectsPerformSelector:@selector(setURL:) withObject:post.URL];
-			sleep(sleeptime);
+			nanosleep(&sleep,NULL);
 		}
 	}
 	else if([args boolForKey:@"random"]) {
 		srandom(time(NULL));
 		NSArray* supported = [[CKRecipe sharedRecipe] supportedSites];
-		chan = [CKChan chanNamed:[supported objectAtIndex:randint([supported count])]];
+		CKChan* chan = [CKChan chanNamed:[supported objectAtIndex:randint([supported count])]];
 		NSString* name;
 		do name = [[chan.boards objectAtIndex:randint([chan.boards count])] name];
 		while([name isEqualToString:@"f"]); // This sure is ugly
-		board = [chan boardNamed:name];
-		page = [board getPage:randint(board.numpages)];
-		thread = [page getThread:randint([page.threads count])];
-		post = [thread.posts objectAtIndex:randint(thread.postcount)];
+		CKBoard* board = [chan boardNamed:name];
+		CKPage* page = [board getPage:randint(board.numpages)];
+		CKThread* thread = [page getThread:randint([page.threads count])];
+		CKPost* post = [thread.posts objectAtIndex:randint(thread.postcount)];
 		NSLog(@"%@\n%@",post.URL,[post prettyPrint]);
 	}
 	else if([args URLForKey:@"filter"] && [args stringForKey:@"against"]) {
@@ -302,27 +301,86 @@ int main (int argc, const char * argv[]) {
 	else {
 		if(![args stringForKey:@"chan"])  [args setObject:@"4chan" forKey:@"chan"];
 		if(![args stringForKey:@"board"]) [args setObject:@"g" forKey:@"board"];
-		if(![args stringForKey:@"post"])  [args setInteger:-1 forKey:@"post"];
 		
 		int index;
+		CKChan* chan;
+		CKBoard* board;
+		CKPage* page;
+		CKThread* thread;
 		if(!(chan = [CKChan chanNamed:[args stringForKey:@"chan"]]))
 			NSLog(@"The site %@ is unsupported!",[args stringForKey:@"chan"]);
 		else if(!(board = [chan boardNamed:[args stringForKey:@"board"]]))
 			NSLog(@"%@ doesn't appear to have a board named %@.",[args stringForKey:@"chan"],[args stringForKey:@"board"]);
-		else if(!(page = [board getPage:[args integerForKey:@"page"]]))
+		else if(!(resource = page = [board getPage:[args integerForKey:@"page"]]))
 			NSLog(@"There's no page numbered %d.",[args integerForKey:@"page"]);
-		else if(!(thread = [page getThread:[args integerForKey:@"thread"]]))
+		else if([args objectForKey:@"thread"] && !(resource = thread = [page getThread:[args integerForKey:@"thread"]]))
 			NSLog(@"There doesn't seem to be a thread with index %d.",[args integerForKey:@"thread"]);
-		else if((index = [args integerForKey:@"post"]) > thread.postcount)
+		else if([args objectForKey:@"post"] && ((index = [args integerForKey:@"post"]) > thread.postcount || 
+				!(resource = index < 0 ? thread.latest : [thread.posts objectAtIndex:index])))
 				NSLog(@"There's no post at index %d.",index);
-		else {
-			if(index < 0)
-				post = thread.latest;
-			else post = [thread.posts objectAtIndex:index];		
-			NSLog(@"%@\n%@",post.URL,[post prettyPrint]);			
-		}
+		else
+			NSLog(@"%@\n%@",[resource URL],[resource prettyPrint]);			
 	}	
 	
+	if(resource && [args boolForKey:@"watch"] && ([resource isKindOfClass:[CKThread class]] || [resource isKindOfClass:[CKPost class]])) {
+		// This mess ladies and gentlemen wonderfully illustrates the need for the CKBrowser delegate
+		int lastindex;
+		int watchimages = 0;
+		struct timespec sleep = {10,0};
+		NSString* delim = @"\e[4m                                                                                                              \e[0m\n";
+		int fetchresult; // If we populate in the loop header the autorelease pool won't do any good
+		CKThread* thread;
+		CKPost* post;
+		BOOL postscope;
+		if([resource isKindOfClass:[CKPost class]]) {
+			postscope = YES;
+			thread = [[CKThread alloc] initWithURL:url];
+			// In case the thread structure has changed since
+			lastindex = [thread.posts indexOfObjectPassingTest:^(id obj, NSUInteger idx, BOOL *stop) {
+				return *stop = [obj ID] == [resource ID];
+			}];
+			post = [[thread.posts objectAtIndex:lastindex] retain];
+			lastindex++;
+			[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:[delim dataUsingEncoding:NSUTF8StringEncoding]];
+		}
+		else {
+			postscope = NO;
+			thread = [resource retain];
+			lastindex = thread.postcount;
+			post = [thread.OP retain];
+		}
+		do {
+			NSAutoreleasePool* loop = [[NSAutoreleasePool alloc] init];
+			NSArray* updates = [thread postsFromIndex:lastindex];
+			if([updates count]) {
+				if(postscope)
+					updates = [updates objectsAtIndexes:[updates indexesOfObjectsPassingTest:^(id p, NSUInteger idx, BOOL *stop) { 
+						return [p quoted:post]; 
+					}]];
+				for(CKPost* p in updates) {
+					[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
+					 [[NSString stringWithFormat:@"\n%@%@",[p prettyPrint],delim] dataUsingEncoding:NSUTF8StringEncoding]];
+					if(path && p.image && ![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:p.image.name] path]]) {
+						[fileman createFileAtPath:[[path URLByAppendingPathComponent:p.image.name] path]
+										 contents:p.image.data
+									   attributes:[NSDictionary dictionaryWithObject:p.image.timestamp forKey:@"NSFileModificationDate"]];
+						watchimages++;
+					}
+				}
+				lastindex = [thread postcount];						
+			}
+			else nanosleep(&sleep,NULL);
+			fetchresult = [thread populate];
+			[loop drain];
+		} while(fetchresult != CK_ERR_NOTFOUND && !post.deleted);
+		int duration = [[NSDate date] timeIntervalSinceDate:post.date];
+		NSLog(@"Thread or post removed, was up for %02d:%02d:%02d",duration/3600,duration/60%60,duration%60);
+		if(path) NSLog(@"Got an additional %d images, %d in all.",watchimages,images+watchimages);
+		
+		[post release];
+		[thread release];
+	}
+	[fileman release];	
 	[args removeObjectForKey:@"CKProxySetting"]; // Don't want this to be archived
 	[pool drain];
     return 0;
