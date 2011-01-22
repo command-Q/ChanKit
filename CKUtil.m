@@ -35,8 +35,12 @@
 	[CKUtil setProxy:proxy onRequest:&fetch];
 	[fetch startSynchronous];
 	if([fetch error]) {
-		DLog(@"404");
-		return CK_ERR_NOTFOUND;		
+		DLog(@"%@",[[fetch error] localizedDescription]);
+		return CK_ERR_NETWORK;
+	}
+	if([fetch responseStatusCode] >= 400) {
+		DLog(@"%@",[fetch responseStatusMessage]);
+		return [fetch responseStatusCode];
 	}
 	*doc = [[[NSXMLDocument alloc] initWithData:[fetch responseData] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
 	[*doc setURI:[[fetch url] absoluteString]];

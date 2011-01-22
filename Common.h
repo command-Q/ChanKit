@@ -25,6 +25,9 @@
 #endif
 
 // Document fetching error codes
+#define	CK_ERR_UNDEFINED	 -1
+#define	CK_ERR_SUCCESS		  0
+#define CK_ERR_NETWORK		  6
 #define CK_ERR_NOTFOUND		404
 #define CK_ERR_PARSER		406
 #define	CK_ERR_UNSUPPORTED	415
@@ -42,15 +45,11 @@
 #define	CK_RECIPE_URLMATCH				 1
 #define	CK_RECIPE_XMLMATCH				 2
 
-#define	CK_POSTERR_UNDEFINED			-1
-#define	CK_POSTERR_SUCCESS				 0
 #define	CK_POSTERR_FLOOD				 1
 #define	CK_POSTERR_VERIFICATION			 2
 #define	CK_POSTERR_DUPLICATE			 3
 #define	CK_POSTERR_NOTFOUND				 4
 #define	CK_POSTERR_DISALLOWED			 5
-#define	CK_POSTERR_NETWORK				 6
-
 
 #define CK_RESOURCE_UNDEFINED			 0
 #define CK_RESOURCE_IMAGE				 1

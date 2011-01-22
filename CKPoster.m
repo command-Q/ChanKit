@@ -188,9 +188,13 @@
 	if(!request) [self prepare];
 	[request startSynchronous];
 	if([request error]) {
-		NSLog(@"%@",[[request error] localizedDescription]);
-		*error = CK_POSTERR_NETWORK;
+		DLog(@"%@",[[request error] localizedDescription]);
+		*error = CK_ERR_NETWORK;
 		return nil;
+	}
+	if([request responseStatusCode] >= 400) {
+		DLog(@"%@",[request responseStatusMessage]);
+		*error = [request responseStatusCode];
 	}
 		
 	NSData* response = [request responseData];
@@ -200,7 +204,7 @@
 	int err;
 	if(!error) error = &err;
 	if(!doc)
-		*error = CK_POSTERR_UNDEFINED;		
+		*error = CK_ERR_UNDEFINED;		
 	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Captcha" inDocument:doc])
 		*error = CK_POSTERR_VERIFICATION;
 	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Flood" inDocument:doc])
@@ -214,7 +218,7 @@
 		return [CKPost postFromURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate.URL" inDocument:doc]]];
 	}
 	else {
-		*error = CK_POSTERR_SUCCESS;
+		*error = CK_ERR_SUCCESS;
 		NSString* resboard = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.URL" inDocument:doc];
 		NSString* resthread = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Thread" inDocument:doc];
 		NSString* respost = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Post" inDocument:doc];
@@ -226,7 +230,7 @@
 		DLog(@"URL: %@",resurl);
 		if(resthread && respost && resboard)
 			return [CKPost postFromURL:[NSURL URLWithString:resurl]];
-		*error = CK_POSTERR_UNDEFINED;
+		*error = CK_ERR_UNDEFINED;
 	}
 	return nil;
 }
