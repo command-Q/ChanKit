@@ -12,7 +12,7 @@
 
 #define	CK_VERSION_MAJOR	0
 #define	CK_VERSION_MINOR	8
-#define	CK_VERSION_MICRO	3
+#define	CK_VERSION_MICRO	4
 #define	CK_VERSION_TAG		@""
 #define	CK_VERSION_OS		@"OS X"
 

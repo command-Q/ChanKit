@@ -1,3 +1,21 @@
+Version 0.8.4 - 1/21/11
+	All:
+		Prefer forward declarations (@class) over imports everywhere possible. This also fixes a build error with client apps that don't independently include ASIHTTPRequest.
+	CKPost:
+		Calculate index based on ID numbers rather than the entire XMLNode object, and respond more appropriately in the event of a  deletion.
+		Replace the broken quote parsing with a dramatically faster method that uses the thread context when parsing for a whole thread. 4-5x faster on large threads than the previous blind parsing method and not measurably slower than no quote parsing at all. The problem of re-parsing data already in memory is meant to be solved on a larger scale by the undeveloped CKCache branch.
+	CKThread:
+		Fix the completely broken repopulating as efficiently as possible.
+	CKPage:
+		mostRecentPost: back to newestPost:, because I misinterpreted the clang warning about methods starting with 'new' . _.
+	ChanParse:
+		In lieu of CKBrowser, a new -watch flag that locks the application and progressively prints updates to a thread until it 404s. This also works when used in combination with the -dump flag.
+		Since quotes are fixed, the -watch flag may also be used on posts to watch for responses.
+		If the -watch flag is used when posting, the above behaviors will be used.
+		Rework the navigation flags to print at the lowest level specified, instead of digging for a post in all cases.
+	Other:
+		Fix some critical bugs that made their way into the last version, including not returning an error on 404.
+
 Version 0.8.3 - 1/14/11
 	All:
 		Add ASIHTTPRequest plus proxying support (read: I got a 3 day ban on /g/). For now proxy settings go directly through NSUserDefaults. This is bad, but CKUtil wasn't really designed with a more elegant way to do this. It's a temporary solution.
@@ -15,7 +33,7 @@ Version 0.8.3 - 1/14/11
 		Fix sefault when no error is sent to -post.
 		Now returns a post on duplicate image error, as the board does. It's a good idea to always check the error code.
 	CKPage:
-		-newestPost -> -mostRecentPost as per naming convention.
+		newestPost: -> mostRecentPost: as per naming convention.
 	ChanParse:
 		-proxy flag.
 		Captcha images aren't tiff anymore, don't name them that.
