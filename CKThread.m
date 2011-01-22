@@ -99,21 +99,31 @@
 - (void)populate:(NSXMLDocument*)doc {
 	NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Replies" inDocument:doc] 
 						componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+	__block NSUInteger deleted = [[posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.deleted = YES"]] count];
 	if(!initialized)
 		for(CKPost* post in posts)
 			[post populate:doc];
 	else if(postcount > 1) {
 		// Check if the structure of the thread has changed
-		CKPost* last = [posts lastObject];
-		int index = [[doc nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post.Indexes"] error:NULL] indexOfObject:
-					[[doc nodesForXPath:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],last.IDString] error:NULL] 
-					   objectAtIndex:0]]+1;
-		if(last.index != index)	//Something was deleted. Find it.
-			for(CKPost* post in posts)
-				if(![[doc nodesForXPath:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],post.IDString] error:NULL] count])
-					post.deleted = YES;
-		replies = [replies subarrayWithRange:NSMakeRange(index,[replies count]-index)];
 		// Right now we avoid a deep check for changes to posts, such as ban messages being placed, simply due to the extra processing time required
+		// The old method was quite broken. This one isn't very pretty, but it's efficient.
+		__block NSUInteger lastcommon = 0, deletedsince = deleted;
+		[posts enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+			if(!idx) return;
+			if([obj deleted]) deletedsince--;
+			else {
+				NSUInteger index = [replies indexOfObject:[obj IDString]];
+				if(index == NSNotFound) {
+					[obj setDeleted:YES];
+					deleted++;
+				}
+				else {
+					if(!lastcommon) lastcommon = index + 1;
+					*stop = index == idx - deletedsince - 1;	
+				}
+			}
+		}];
+		replies = [replies subarrayWithRange:NSMakeRange(lastcommon,[replies count]-lastcommon)];
 	}
 	initialized = YES;
 	
@@ -126,7 +136,7 @@
 	for(NSString* reply in replies) {
 		[doc setURI:[NSString stringWithFormat:@"%@#%@",URL,reply]];
 		CKPost* post = [[CKPost alloc] initWithXML:doc threadContext:self];
-		[posts insertObject:post atIndex:post.index];
+		[posts insertObject:post atIndex:post.index+deleted];
 		[post release];
 	}
 	[doc setURI:URI]; // A bit messy
