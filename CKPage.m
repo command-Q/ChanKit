@@ -86,23 +86,24 @@
 	return [threads objectAtIndex:idx];
 }
 
-- (CKPost*)mostRecentPost {
-	CKPost* result = [[CKPost alloc] init];
-	CKPost* candidate = nil;
+- (CKPost*)newestPost {
+	CKPost* result = nil;
+	CKPost* candidate;
 	for(CKThread* thread in threads)
 		if((candidate = [[thread posts] lastObject]).ID > result.ID)
+			// Clang, stop complaining about this
 			result = candidate;
-	return [result autorelease];
+	return result;
 }
 - (CKPost*)oldestPost {
 	CKPost* result = [[[threads objectAtIndex:0] posts] objectAtIndex:0];
-	CKPost* candidate = nil;
+	CKPost* candidate;
 	for(int i = 1; i < [threads count]; i++)
 		if((candidate = [[[threads objectAtIndex:i] posts] objectAtIndex:0]).ID < result.ID)
 			result = candidate;
 	return result;	
 }
-- (NSTimeInterval)rangeOfPosts { return [[[self mostRecentPost] date] timeIntervalSinceDate:[[self oldestPost] date]]; }
+- (NSTimeInterval)rangeOfPosts { return [[[self newestPost] date] timeIntervalSinceDate:[[self oldestPost] date]]; }
 
 - (NSString*)prettyPrint {
 	NSString* opdelim = @"\e[4m\t\t                                                                                                                         \e[0m\n";

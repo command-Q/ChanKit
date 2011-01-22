@@ -162,7 +162,7 @@
 			[lock unlock];
 			if(done) return;
 
-			CKPost* current = [page mostRecentPost];
+			CKPost* current = [page newestPost];
 			if([current image] && [current.image.URL isEqualTo:url]) {
 				[lock lock];
 				result = current;
