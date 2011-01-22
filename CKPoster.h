@@ -6,8 +6,9 @@
  *	CKPoster.h - Posting data to the board.
  */
 
-#import "CKPost.h"
-#import "CKBoard.h"
+@class CKPost;
+@class CKBoard;
+@class ASIFormDataRequest; // Prevent build errors from the request ivar
 
 // This struct will be deprecated in the near future as captchas will be handled by a class of their own.
 typedef struct {

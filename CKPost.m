@@ -6,6 +6,8 @@
  *	CKPost.m - Data from a single post. Core building block of the framework.
  */
 
+#import "CKUser.h"
+#import "CKImage.h"
 #import "CKPost.h"
 #import "CKThread.h"
 

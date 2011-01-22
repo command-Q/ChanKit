@@ -6,6 +6,10 @@
  *	CKBoard.m - Board object. May be initialized from any page on the board.
  */
 
+#import "CKImage.h"
+#import "CKPost.h"
+#import "CKThread.h"
+#import "CKPage.h"
 #import "CKBoard.h"
 
 @implementation CKBoard

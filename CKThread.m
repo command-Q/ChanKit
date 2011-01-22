@@ -8,6 +8,8 @@
 
 
 #import "CKThread.h"
+#import "CKPost.h"
+#import "CKUser.h"
 
 @implementation CKThread
 

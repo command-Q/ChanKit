@@ -6,7 +6,8 @@
  *	CKThread.h - Thread object. May be initialized from thread XML or preinitialized from page XML.
  */
 
-#import "CKPost.h"
+@class CKPost;
+@class CKUser;
 
 @interface CKThread : NSObject {
 	NSURL* URL;

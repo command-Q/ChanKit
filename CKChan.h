@@ -7,7 +7,8 @@
  *			   All other objects can be navigated to from here.
  */
 
-#import "CKBoard.h"
+@class CKImage;
+@class CKBoard;
 
 @interface CKChan : NSObject {
 	NSURL* URL;

@@ -11,6 +11,7 @@
 
 #import <ChanKit/Common.h>
 #import <ChanKit/CKRecipe.h>
+#import <ChanKit/CKImage.h>
 #import <ChanKit/CKUser.h>
 #import <ChanKit/CKPost.h>
 #import <ChanKit/CKPoster.h>

@@ -6,7 +6,8 @@
  *	CKPage.h - A single page.
  */
 
-#import "CKThread.h"
+@class CKPost;
+@class CKThread;
 
 @interface CKPage : NSObject {
 	NSURL* URL;

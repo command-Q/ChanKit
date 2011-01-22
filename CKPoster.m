@@ -6,8 +6,11 @@
  *	CKPoster.m - Posting data to the board.
  */
 
-#import "CKPoster.h"
+#import "CKUser.h"
+#import "CKImage.h"
+#import "CKPost.h"
 #import "CKBoard.h"
+#import "CKPoster.h"
 
 @implementation CKPoster
 

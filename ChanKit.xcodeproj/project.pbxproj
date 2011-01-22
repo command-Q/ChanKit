@@ -39,6 +39,7 @@
 		2798116012DE6306003632F7 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2798115F12DE6306003632F7 /* libz.dylib */; };
 		2798116412DE6325003632F7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2798116312DE6325003632F7 /* SystemConfiguration.framework */; };
 		27C00CAF12482F1400AE717E /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 27C00CAE12482F1400AE717E /* libicucore.dylib */; };
+		27C33F2C12E2859600229C1F /* ASIHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 2798113712DE629E003632F7 /* ASIHTTPRequest.h */; };
 		27EF3EB90F5ED5DF00603D3A /* CKUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 27EF3EB70F5ED5DF00603D3A /* CKUtil.h */; settings = {ATTRIBUTES = (); }; };
 		27EF3EBA0F5ED5DF00603D3A /* CKUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 27EF3EB80F5ED5DF00603D3A /* CKUtil.m */; };
 		27F29CC3126A37980064DD6B /* Recipes in Resources */ = {isa = PBXBuildFile; fileRef = 27F29CC2126A37980064DD6B /* Recipes */; };
@@ -310,6 +311,7 @@
 				2772F64512870F0000C99973 /* CKPoster.h in Headers */,
 				27F3607B1288F0090091D109 /* CKImage.h in Headers */,
 				275ABC45128D60B600FA2066 /* Common.h in Headers */,
+				27C33F2C12E2859600229C1F /* ASIHTTPRequest.h in Headers */,
 				27240C10128E7233008DEDCE /* RegexKitLite.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

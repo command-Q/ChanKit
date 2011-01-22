@@ -28,9 +28,8 @@
  *		@initByReferencingURL, @initWithXML, @populate:(NSXMLNode*)
  */
 
-
-#import "CKUser.h"
-#import "CKImage.h"
+@class CKUser;
+@class CKImage;
 @class CKThread;
 
 // Not so sure about this

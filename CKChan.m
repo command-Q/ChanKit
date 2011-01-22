@@ -7,8 +7,9 @@
  *			   All other objects can be navigated to from here.
  */
 
+#import "CKImage.h"
+#import "CKBoard.h"
 #import "CKChan.h"
-
 
 @implementation CKChan
 

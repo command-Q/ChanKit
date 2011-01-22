@@ -6,6 +6,8 @@
  *	CKUtil.m - Utility string/URL/network methods. Globally included.
  */
 
+#import <CommonCrypto/CommonDigest.h>
+#import "CKRecipe.h"
 #import "CKUtil.h"
 
 @implementation CKUtil

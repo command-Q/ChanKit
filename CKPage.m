@@ -6,6 +6,8 @@
  *	CKPage.m - A single page.
  */
 
+#import "CKPost.h"
+#import "CKThread.h"
 #import "CKPage.h"
 
 @implementation CKPage

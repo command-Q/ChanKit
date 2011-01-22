@@ -12,5 +12,6 @@
 	#import "ASIHTTPRequest/ASIHTTPRequest.h"
 	#import "ASIHTTPRequest/ASIFormDataRequest.h"
 	#import "CKUtil.h"
+	#import "CKRecipe.h"
 	#import "Common.h"
 #endif

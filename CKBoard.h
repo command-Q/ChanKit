@@ -6,7 +6,8 @@
  *	CKBoard.m - Board object. May be initialized from any page on the board.
  */
 
-#import "CKPage.h"
+@class CKPost;
+@class CKPage;
 
 @interface CKBoard : NSObject {
 	NSURL* URL;
