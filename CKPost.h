@@ -36,7 +36,7 @@
 typedef struct {
 	NSMutableArray* values;	//NSString or CKPost
 	NSMutableArray* ranges;	//NSValue (NSRange)
-	//The two arrays should always be equal in size, but if one is smaller, we store that to avoid bad accesses
+	//The two arrays should always be equal in size, but if one is smaller, store that to avoid bad accesses
 	NSUInteger count;	
 } ranges_s;
 
@@ -86,16 +86,17 @@ typedef struct {
 + (CKPost*)postReferencingURL:(NSURL*)url;
 - (id)initWithURL:(NSURL*)url;
 + (CKPost*)postFromURL:(NSURL*)url;
-- (id)initWithXML:(NSXMLNode*)doc threadContext:(CKThread*)thr;
-+ (CKPost*)postFromXML:(NSXMLNode*)doc threadContext:(CKThread*)thr;
+- (id)initWithXML:(NSXMLNode*)doc threadContext:(CKThread*)context;
++ (CKPost*)postFromXML:(NSXMLNode*)doc threadContext:(CKThread*)context;
 - (void)dealloc;
 - (int)populate;
-- (void)populate:(NSXMLNode*)doc;
+- (void)populate:(NSXMLNode*)doc threadContext:(CKThread*)context;
 
 - (void)addAdminMessage:(NSString*)newcomment;
 - (NSString*)commentFilteringQuotes;
 - (BOOL)commentContains:(NSString*)astring;
 - (BOOL)quoted:(CKPost*)post;
+- (NSString*)quoteRelativeToPost:(CKPost*)post;
 - (NSString*)description;
 - (NSString*)prettyPrint;
 - (NSXMLNode*)generateXML;

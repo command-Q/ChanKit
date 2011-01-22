@@ -93,16 +93,12 @@
 }
 + (CKPost*)postFromURL:(NSURL*)url { return [[[self alloc] initWithURL:url] autorelease]; }
 
-- (id)initWithXML:(NSXMLNode*)doc threadContext:(CKThread*)thr {
-	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]])) {
-	/*	CKPost* inthread;
-		if((inthread = [thr postWithID:ID])) return self = [inthread retain];
-		thread = thr.ID;
-	*/	[self populate:doc];
-	}
+- (id)initWithXML:(NSXMLNode*)doc threadContext:(CKThread*)context {
+	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]]))
+		[self populate:doc threadContext:context];
 	return self;
 }
-+ (CKPost*)postFromXML:(NSXMLNode*)doc threadContext:(CKThread*)thr { return [[[self alloc] initWithXML:doc threadContext:thr] autorelease]; }
++ (CKPost*)postFromXML:(NSXMLNode*)doc threadContext:(CKThread*)context { return [[[self alloc] initWithXML:doc threadContext:context] autorelease]; }
 
 - (void)dealloc {
 	[URL release];
@@ -126,17 +122,19 @@
 	NSXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
-	[self populate:doc];
+	[self populate:doc threadContext:nil];
+	if(deleted) return CK_ERR_NOTFOUND;
 	return 0;
 }
 
-- (void)populate:(NSXMLNode*)doc {
+- (void)populate:(NSXMLNode*)doc threadContext:(CKThread*)context {
 	if(![doc level]) {
 		// doc is root node
 		NSString* rootpath = OP ? [[CKRecipe sharedRecipe] lookup:@"Post.OP"] : 
 									[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],self.IDString];
 		NSArray* nodes = [doc nodesForXPath:rootpath error:NULL];
-		if([nodes count]) [self populate:[nodes objectAtIndex:0]];
+		if([nodes count]) [self populate:[nodes objectAtIndex:0] threadContext:context];
+		else deleted = YES; // Unless a bogus URL was sent, but that's the client's problem; it shouldn't ever happen internally.
 		return;
 	}
 	index = OP ? 0 : [[[doc rootDocument] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post.Indexes"] error:nil] indexOfObject:doc]+1;	
@@ -165,84 +163,81 @@
 
 	comment = [[[CKRecipe sharedRecipe] lookup:@"Post.Comment" inDocument:doc] retain];
 	DLog(@"Comment:\n%@",comment);
-
-	[adminmessages.values addObjectsFromArray:[[[CKRecipe sharedRecipe] lookup:@"Post.Admin" inDocument:doc] 
-					 componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]];
-	for(NSString* msg in adminmessages.values)
-		[adminmessages.ranges addObject:[NSValue valueWithRange:[comment rangeOfString:msg]]];
-	if((adminmessages.count = [adminmessages.values count]) > [adminmessages.ranges count])
-		adminmessages.count = [adminmessages.ranges count];
-
+	
+	NSUInteger last = 0;
+	for(NSString* msg in [[[CKRecipe sharedRecipe] lookup:@"Post.Admin" inDocument:doc] 
+						  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+		[adminmessages.values addObject:msg];
+		NSRange range = [comment rangeOfString:msg options:0 range:NSMakeRange(last,[comment length] - last)];
+		[adminmessages.ranges addObject:[NSValue valueWithRange:range]];
+		adminmessages.count++;
+		last = range.location + range.length;
+	}
 	DLog(@"Admin Messages: %@",adminmessages.values);
 	
 	banned = [[adminmessages.values filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF = %@",
 														  [[CKRecipe sharedRecipe] lookup:@"Post.BanMessage"]]] count];
 	DLog(@"Banned: %d",banned);
 	
-	[inlinequotes.values addObjectsFromArray:[[[CKRecipe sharedRecipe] lookup:@"Post.InlineQuotes" inDocument:doc]
-					componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]];	
-	for(NSString* quote in inlinequotes.values)
-		[inlinequotes.ranges addObject:[NSValue valueWithRange:[comment rangeOfString:quote]]];
-	if((inlinequotes.count = [inlinequotes.values count]) > [inlinequotes.ranges count])
-		inlinequotes.count = [inlinequotes.ranges count];
+	last = 0;
+	for(NSString* quote in [[[CKRecipe sharedRecipe] lookup:@"Post.InlineQuotes" inDocument:doc] 
+						  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+		[inlinequotes.values addObject:quote];
+		NSRange range = [comment rangeOfString:quote options:0 range:NSMakeRange(last,[comment length] - last)];
+		[inlinequotes.ranges addObject:[NSValue valueWithRange:range]]; 
+		inlinequotes.count++;
+		last = range.location + range.length;
+	}
 	DLog(@"Inline Quotes: %@",inlinequotes.values);
-	
-	//Quotes broken for now, problem with CKUtil
-	return;
-	NSArray* quoterefs = [[[CKRecipe sharedRecipe] lookup:@"Post.Quotes.URL" inDocument:doc] 
-						 componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-	NSArray* quotestrings = [[[CKRecipe sharedRecipe] lookup:@"Post.Quotes.ID" inDocument:doc] 
-						 componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-	DLog(@"Quotes: %@",quotestrings);
-	// some bugs here
-	// also do other links
-	for(int i = 0; i < [quoterefs count]; i++) {
-		CKPost* post;
-		NSRange range;
-		NSString* qurl = [quoterefs objectAtIndex:i];
-		DLog(@"Quote URL: %@",qurl);		
-		int qid = [[qurl stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.ID"] capture:1L] intValue];
-		NSUInteger idx;
-		if(NSNotFound == (idx = [quotes.values indexOfObjectPassingTest:^(id quote, NSUInteger ndx, BOOL *stop) {
-			return *stop = [quote ID] == qid;}])) {
-			if(qid == ID)
-				 // They quoted themself :|
-				post = self;
-			else if([qurl isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossThread"]]) 
-				// Same board, different thread
-				post = [CKPost postReferencingURL:[[URL URLByDeletingLastPathComponent] URLByAppendingPathComponent:qurl]];
-			else if([qurl isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossBoard"]]) {
-				// Cross-board quote, we have to resolve it
-				NSXMLDocument* request = [[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL URLWithString:qurl] 
-																			  options:NSXMLDocumentTidyHTML error:NULL] autorelease];
-				if(request)
-					post = [[CKPost alloc] initByReferencingURL:
-							[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Post.Redirect" inDocument:request]]];
-				else
-					DLog(@"Bad quote: %@",qurl);
+
+	for(NSXMLNode* quote in [doc nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post.Quotes.XML"] error:NULL]) {
+		NSString* href = [[CKRecipe sharedRecipe] lookup:@"Post.Quotes.URL" inDocument:quote];
+		NSString* text = [[CKRecipe sharedRecipe] lookup:@"Post.Quotes.ID" inDocument:quote];
+		// A URL will pop up here for cross-board links, so we have to check that it actually goes somewhere. Thanks Yotsuba!
+		if(href && text) {
+			CKPost* post;
+			NSRange range;
+			int qid = [[href stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.ID"] capture:1L] intValue];
+			DLog(@"Quote %d: %@",qid,href);
+			NSUInteger idx = [quotes.values indexOfObjectWithOptions:NSEnumerationReverse passingTest:^(id q, NSUInteger ndx, BOOL *stop) {
+				return *stop = [q ID] == qid;
+			}];
+			if(idx == NSNotFound) {
+				if((post = [context postWithID:qid])); // Use this, don't do anything 
+				else if(qid == ID) // They quoted themself :|
+					post = self;
+				else if([href isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossThread"]]) 
+					// Same board, different thread
+					post = [CKPost postReferencingURL:[[URL URLByDeletingLastPathComponent] URLByAppendingPathComponent:href]];
+				else if([href isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossBoard"]]) {
+					// Cross-board quote, we have to resolve it
+					NSXMLDocument* request;
+					if(![CKUtil fetchXML:&request fromURL:[NSURL URLWithString:href]])
+						post = [CKPost postReferencingURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Post.Redirect" inDocument:request]]];
+					else DLog(@"Bad quote: %@",href);
+				}
+				else {
+					// Regular quote
+					NSString* uri = [[doc rootDocument] URI];
+					[[doc rootDocument] setURI:[[CKUtil changePost:URL toPost:qid] absoluteString]];
+					post = [CKPost postFromXML:[doc rootDocument] threadContext:context];
+					[[doc rootDocument] setURI:uri];
+				}
+				range = [comment rangeOfString:text];
 			}
 			else {
-				// Regular quote
-				NSString* uri = [[doc rootDocument] URI];
-				[[doc rootDocument] setURI:[[CKUtil changePost:URL toPost:qid] absoluteString]];
-			//	post = [[CKPost alloc] initWithXML:[doc rootDocument] threadContext:thread];
-				[[doc rootDocument] setURI:uri];
+				post = [quotes.values objectAtIndex:idx];
+				NSRange previous = [[quotes.ranges objectAtIndex:idx] rangeValue];
+				last = previous.location + previous.length;
+				range = [comment rangeOfString:text options:0 range:NSMakeRange(last,[comment length] - last)];
 			}
-			range = [comment rangeOfString:[quotestrings objectAtIndex:i]];
+			if(post) {
+				[quotes.values addObject:post];
+				[quotes.ranges addObject:[NSValue valueWithRange:range]];
+				quotes.count++;
+			}
 		}
-		else {
-			post = [quotes.values objectAtIndex:idx];
-			NSRange previous = [[quotes.ranges objectAtIndex:idx] rangeValue];
-			NSUInteger start = previous.location + previous.length;
-			range = [comment rangeOfString:[quotestrings objectAtIndex:i] options:0 range:NSMakeRange(start,[comment length] - start)];
-		}
-		if(post) {
-			[quotes.values addObject:post];
-			[quotes.ranges addObject:[NSValue valueWithRange:range]];			
-		}
-	}
-	if((quotes.count = [quotes.values count]) > [quotes.ranges count])
-		quotes.count = [quotes.ranges count];
+	}	
 }
 
 @synthesize URL;
@@ -296,10 +291,31 @@
 	if(closed) [desc appendString:@"⦸\e[0;31m✖\e[0m"];
 	if(sticky) [desc appendString:@"\e[0;33m☌\e[0m"];
 	if(image) [desc appendString:[image prettyPrint]];
-	if(comment) [desc appendFormat:@"\n\n\t%@",
-				 [[comment componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] 
+	if(comment) {
+		NSMutableString* formatted = [NSMutableString stringWithString:comment];
+		for(int i = 0; i < quotes.count; i++) {
+			NSRange range = [[quotes.ranges objectAtIndex:i] rangeValue];
+			[formatted replaceCharactersInRange:NSMakeRange(range.location+i*11,range.length) withString:
+			 [NSString stringWithFormat:@"\e[4;31m%@\e[0m",[[quotes.values objectAtIndex:i] quoteRelativeToPost:self]]];
+		}
+		// This is completely obscene but it's the shortest way to deal with this jacked up attributed string situation
+		for(int i = 0; i < inlinequotes.count; i++) {
+			NSUInteger start = [[inlinequotes.ranges objectAtIndex:i] rangeValue].location + i * 11;
+			[formatted replaceCharactersInRange:[formatted rangeOfString:[inlinequotes.values objectAtIndex:i]
+										options:0 range:NSMakeRange(start,[formatted length]-start)]
+									 withString:[NSString stringWithFormat:@"\e[0;32m%@\e[0m",[inlinequotes.values objectAtIndex:i]]];
+		}
+		for(int i = 0; i < adminmessages.count; i++) {
+			NSUInteger start = [[adminmessages.ranges objectAtIndex:i] rangeValue].location + i * 11;
+			[formatted replaceCharactersInRange:[formatted rangeOfString:[adminmessages.values objectAtIndex:i]
+										options:0 range:NSMakeRange(start,[formatted length]-start)]
+									 withString:[NSString stringWithFormat:@"\e[1;31m%@\e[0m",[adminmessages.values objectAtIndex:i]]];
+		}
+		[desc appendFormat:@"\n\n\t%@",
+				 [[formatted componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] 
 				  componentsJoinedByString:@"\n\t"]];
-	return desc;	
+	}
+	return [desc stringByAppendingString:@"\n"];	
 }
 
 - (NSString*)commentFilteringQuotes {
@@ -312,6 +328,12 @@
 
 - (BOOL)quoted:(CKPost*)post {
 	return [quotes.values indexOfObjectPassingTest:^(id quote, NSUInteger idx, BOOL *stop){return *stop = [quote ID] == [post ID];}] != NSNotFound;
+}
+
+- (NSString*)quoteRelativeToPost:(CKPost*)post {
+	if([board isEqualToString:post.board])
+		return [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.Format"],ID];
+	return [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossBoardFormat"],board,ID];	
 }
 
 - (NSXMLNode*)generateXML {

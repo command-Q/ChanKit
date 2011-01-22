@@ -165,15 +165,17 @@
 	NSMutableString* p = [NSMutableString string];
 	if(email) {
 		if(name) [p appendFormat:@"\e[4;1;34m%@\e[0m",name];
-		[p appendFormat:@"\e[4;34m%@\e[0m",self.tripstring];
-		if(privilege) [p appendFormat:@" \e[1;31m%@\e[0m",self.authority];
-		[p appendFormat:@" (mailto:%@%@\e[0m)",[email caseInsensitiveCompare:@"sage"] == NSOrderedSame ? @"\e[1;31m" : @"",email];
+		if(tripcode.trip || tripcode.securetrip) [p appendFormat:@" \e[4;34m%@\e[0m",self.tripstring];
 	}
 	else {
 		if(name) [p appendFormat:@"\e[1;32m%@\e[0m",name];
-		[p appendFormat:@"\e[0;32m%@\e[0m",self.tripstring];
-		if(privilege) [p appendFormat:@" \e[1;31m%@\e[0m",self.authority];		
+		if(tripcode.trip || tripcode.securetrip) [p appendFormat:@" \e[0;32m%@\e[0m",self.tripstring];
 	}
+	switch(privilege) {
+		case CK_PRIV_ADMIN:	[p appendFormat:@" \e[1;31m%@\e[0m",self.authority]; break;
+		case CK_PRIV_MOD:	[p appendFormat:@" \e[1;35m%@\e[0m",self.authority]; break;
+	}
+	if(email) [p appendFormat:@" (mailto:%@%@\e[0m)",[email caseInsensitiveCompare:@"sage"] == NSOrderedSame ? @"\e[1;31m" : @"",email];
 	return p;
 }
 - (NSXMLNode*)XMLRepresentation {

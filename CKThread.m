@@ -60,7 +60,7 @@
 			for(int i = [root childCount]-1; i >= [(NSXMLNode*)[post objectAtIndex:0] index]; i--)
 				[root removeChildAtIndex:i];
 
-		[[posts objectAtIndex:0] populate:root];
+		[(CKPost*)[posts objectAtIndex:0] populate:root threadContext:nil];
 
 		NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Trailing" inDocument:root] 
 						componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
@@ -102,7 +102,7 @@
 	__block NSUInteger deleted = [[posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.deleted = YES"]] count];
 	if(!initialized)
 		for(CKPost* post in posts)
-			[post populate:doc];
+			[post populate:doc threadContext:self];
 	else if(postcount > 1) {
 		// Check if the structure of the thread has changed
 		// Right now we avoid a deep check for changes to posts, such as ban messages being placed, simply due to the extra processing time required
@@ -217,10 +217,10 @@
 	return [desc stringByAppendingString:delim];
 }
 - (NSString*)prettyPrint {
-	NSString* delim = @"\n\e[4m                                                                                                              \e[0m\n\n";
-	NSMutableString* desc = [NSMutableString stringWithFormat:@"%d posts and %d images",postcount,imagecount];
+	NSString* delim = @"\e[4m                                                                                                              \e[0m\n";
+	NSMutableString* desc = [NSMutableString stringWithFormat:@"%d posts and %d images\n",postcount,imagecount];
 	for(CKPost* post in posts) 
-		[desc appendFormat:@"%@%@",delim,[post prettyPrint]];
+		[desc appendFormat:@"%@\n%@",delim,[post prettyPrint]];
 	return [desc stringByAppendingString:delim];
 }
 - (BOOL)isEqual:(id)other { return [self hash] == [other hash]; }
