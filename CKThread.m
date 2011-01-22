@@ -197,7 +197,7 @@
 }
 
 - (NSArray*)postsFromIndex:(int)idex {
-	DLog(@"Getting posts from index: %d to length: %d",idex,[posts count] - idex);
+	if(idex > [posts count]) return [NSArray array];
 	return [posts subarrayWithRange:NSMakeRange(idex, [posts count] - idex)];
 }
 

@@ -44,7 +44,7 @@ typedef struct {
 	NSURL* URL;
 	int ID;
 	int thread;
-	int index;
+	NSUInteger index;
 	NSString* board;
 	CKUser* user;
 	CKImage* image;
@@ -63,7 +63,7 @@ typedef struct {
 @property(nonatomic,readonly,copy) NSURL* URL;
 @property(nonatomic,readonly,assign) int ID;
 @property(nonatomic,readonly,assign) int thread;
-@property(nonatomic,readonly,assign) int index;
+@property(nonatomic,readonly,assign) NSUInteger index;
 @property(nonatomic,readonly,copy) NSString* board;
 @property(nonatomic,readonly,copy) CKUser* user;
 @property(nonatomic,readonly,copy) CKImage* image;

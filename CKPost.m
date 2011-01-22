@@ -137,25 +137,34 @@
 		else deleted = YES; // Unless a bogus URL was sent, but that's the client's problem; it shouldn't ever happen internally.
 		return;
 	}
-	index = OP ? 0 : [[[doc rootDocument] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post.Indexes"] error:nil] indexOfObject:doc]+1;	
+	if(!OP) {
+		// It would be nice if this could simply be taken from the xmlnode's index, thank Yotsuba and tidy's throwing out empty elements
+		if((index = [[[[CKRecipe sharedRecipe] lookup:@"Thread.Replies" inDocument:[doc rootDocument]]
+					  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] indexOfObject:self.IDString]) == NSNotFound) {		
+			deleted = YES;
+			return;
+		}
+		index++;
+	}
 	DLog(@"Index: %d",index);
 	
 	subject = [[[CKRecipe sharedRecipe] lookup:@"Post.Subject" inDocument:doc] retain];
 	DLog(@"Subject: %@", subject);
 
-	NSDateFormatter* dateformat = [[[NSDateFormatter alloc] init] autorelease];
+	NSDateFormatter* dateformat = [[NSDateFormatter alloc] init];
 	[dateformat setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
 	NSString* datestr = [[CKRecipe sharedRecipe] lookup:@"Post.Date" inDocument:doc];
-	if(!(date = [dateformat dateFromString:datestr])) {
+	if(!(date = [[dateformat dateFromString:datestr] retain])) {
 		[dateformat setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Alternate"]];
 		date = [[dateformat dateFromString:datestr] retain];
 	}
+	[dateformat release];
 	DLog(@"Date: %@",date);
 
 	user = [[CKUser alloc] initWithXML:doc];
 
 	sticky = [[CKRecipe sharedRecipe] lookup:@"Post.Sticky" inDocument:doc] != nil;
-	closed = [[CKRecipe sharedRecipe] lookup:@"Post.Slosed" inDocument:doc] != nil;
+	closed = [[CKRecipe sharedRecipe] lookup:@"Post.Closed" inDocument:doc] != nil;
 	DLog(@"Sticky: %d",sticky);
 	DLog(@"Closed: %d",closed);
 	

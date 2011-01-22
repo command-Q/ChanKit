@@ -47,6 +47,7 @@
 			<array>
 				<string>./span[ends-with(@class,&quot;postername&quot;)]/text()</string>
 				<string>./span[ends-with(@class,&quot;postername&quot;)]/a[@class=&quot;linkmail&quot;]/text()</string>
+				<string>./span[ends-with(@class,&quot;postername&quot;)][1]/span/text()</string>
 			</array>
 			<key>TripString</key>
 			<string>([^!]*+)!?</string>
@@ -152,8 +153,6 @@
 		<string>/html/body/form</string>
 		<key>Index</key>
 		<string>/html/body/form/table/tr/td[@id=&quot;%@&quot;]</string>
-		<key>Indexes</key>
-		<string>/html/body/form/table/tr/td[@id]</string>
 		<key>Redirect</key>
 		<dict>
 			<key>Path</key>
@@ -167,14 +166,26 @@
 		<string>./text()[string-length() &gt; 1]</string>
 		<key>Comment</key>
 		<string>./blockquote</string>
+		<key>RawComment</key>
+		<string>./blockquote/text()</string>
 		<key>Admin</key>
 		<string>./blockquote/b/text()</string>
 		<key>Quotes</key>
 		<dict>
+			<key>XML</key>
+			<string>./blockquote/a[@class=&quot;quotelink&quot;]</string>
 			<key>URL</key>
-			<string>./blockquote/a[@class=&quot;quotelink&quot;]/@href</string>
+			<string>./@href</string>
 			<key>ID</key>
-			<string>./blockquote/a[@class=&quot;quotelink&quot;]/text()</string>
+			<dict>
+				<key>Path</key>
+				<array>
+					<string>./font[@class=&quot;unkfunc&quot;]/text()</string>
+					<string>./text()</string>
+				</array>
+				<key>Regex</key>
+				<string>(&gt;&gt;\d+|&gt;&gt;&gt;/\w+/\d+)</string>
+			</dict>
 		</dict>
 		<key>InlineQuotes</key>
 		<string>./blockquote/font/text()</string>
