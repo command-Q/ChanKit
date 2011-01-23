@@ -8,7 +8,7 @@
 
 #import <ChanKit/ChanKit.h>
 
-int randint(int max) { return random()/(double)RAND_MAX * (double)max; }
+int randint(int max) { return random()/(RAND_MAX+1.0)*max; }
 
 int main (int argc, const char * argv[]) {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
