@@ -106,17 +106,17 @@
 - (NSTimeInterval)rangeOfPosts { return [[[self newestPost] date] timeIntervalSinceDate:[[self oldestPost] date]]; }
 
 - (NSString*)prettyPrint {
-	NSString* opdelim = @"\e[4m\t\t                                                                                                                         \e[0m\n";
-	NSString* replydelim = @"\n\t\t|\e[4m                                                                                                                        \e[0m\n";
+	NSString* opdelim = @"\e[4m\t                                                                                                                         \e[0m\n";
+	NSString* replydelim = @"\n\t|\e[4m                                                                                                                        \e[0m\n";
 	NSMutableString* print = [NSMutableString string];
 	for(CKThread* t in threads) {
 		int disp = fmin([t.posts count] - 5,1);
-		[print appendFormat:@"\n%@\n%@\n%@\t\t|\n\t\t| %d posts and %d images",
+		[print appendFormat:@"\n%@\n%@\n%@\t| %d posts and %d images",
 		 opdelim,[[t.posts objectAtIndex:0] prettyPrint],opdelim,t.postcount,t.imagecount];
 		for(CKPost* p in [[t posts] subarrayWithRange:NSMakeRange(disp,[t.posts count] - disp)])
-			[print appendFormat:@"%@\t\t|\n\t\t| %@",replydelim,
+			[print appendFormat:@"%@\t| %@",replydelim,
 			 [[[p prettyPrint] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]
-			  componentsJoinedByString:@"\n\t\t| "]];
+			  componentsJoinedByString:@"\n\t| "]];
 	}
 	return [print stringByAppendingString:replydelim];
 }

@@ -114,14 +114,21 @@
 			<key>Path</key>
 			<string>./a/img/@alt</string>
 			<key>Regex</key>
-			<string>([^ ]+)</string>
+			<string>([\d\.^ ]+) </string>
 		</dict>
 		<key>Measure</key>
 		<dict>
 			<key>Path</key>
 			<string>./a/img/@alt</string>
 			<key>Regex</key>
-			<string>[^ ]+ (.*)</string>
+			<string>\d+ (.*)</string>
+		</dict>
+		<key>Spoiler</key>
+		<dict>
+			<key>Path</key>
+			<string>./a/img/@alt</string>
+			<key>Regex</key>
+			<string>(Spoiler Image, )</string>
 		</dict>
 		<key>MD5</key>
 		<string>./a/img/@md5</string>
@@ -189,6 +196,8 @@
 		</dict>
 		<key>InlineQuotes</key>
 		<string>./blockquote/font/text()</string>
+		<key>Spoilers</key>
+		<string>./blockquote/span[@class=&quot;spoiler&quot;]/text()</string>
 		<key>Sticky</key>
 		<string>./img[@alt=&quot;sticky&quot;]</string>
 		<key>Closed</key>

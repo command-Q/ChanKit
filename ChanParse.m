@@ -103,7 +103,8 @@ int main (int argc, const char * argv[]) {
 		}
 		if(resource) {
 			// NSLog isn't really seamless with this
-			[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:[[resource prettyPrint] dataUsingEncoding:NSUTF8StringEncoding]];
+			[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
+			 [[[resource prettyPrint] stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
 			if([resource isKindOfClass:[CKThread class]] && (path = [args URLForKey:@"dump"])) {
 				path = [path URLByAppendingPathComponent:[NSString stringWithFormat:@"/%@/%d",[resource board],[resource ID]]];
 				NSError* err;
@@ -327,7 +328,7 @@ int main (int argc, const char * argv[]) {
 		int lastindex;
 		int watchimages = 0;
 		struct timespec sleep = {10,0};
-		NSString* delim = @"\e[4m                                                                                                              \e[0m\n";
+		NSString* delim = @"\n\e[4m                                                                                                              \e[0m\n";
 		int fetchresult; // If we populate in the loop header the autorelease pool won't do any good
 		CKThread* thread;
 		CKPost* post;

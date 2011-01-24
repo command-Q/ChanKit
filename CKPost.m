@@ -22,6 +22,8 @@
 		adminmessages.ranges = [[NSMutableArray alloc] init];
 		inlinequotes.values = [[NSMutableArray alloc] init];
 		inlinequotes.ranges = [[NSMutableArray alloc] init];
+		spoilers.values = [[NSMutableArray alloc] init];
+		spoilers.ranges = [[NSMutableArray alloc] init];
 	}
 	return self;
 }
@@ -199,6 +201,17 @@
 	}
 	DLog(@"Inline Quotes: %@",inlinequotes.values);
 
+	last = 0;
+	for(NSString* spoiler in [[[CKRecipe sharedRecipe] lookup:@"Post.Spoilers" inDocument:doc] 
+						  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+		[spoilers.values addObject:spoiler];
+		NSRange range = [comment rangeOfString:spoiler options:0 range:NSMakeRange(last,[comment length] - last)];
+		[spoilers.ranges addObject:[NSValue valueWithRange:range]]; 
+		spoilers.count++;
+		last = range.location + range.length;
+	}
+	DLog(@"Spoilers: %@",spoilers.values);
+
 	for(NSXMLNode* quote in [doc nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post.Quotes.XML"] error:NULL]) {
 		NSString* href = [[CKRecipe sharedRecipe] lookup:@"Post.Quotes.URL" inDocument:quote];
 		NSString* text = [[CKRecipe sharedRecipe] lookup:@"Post.Quotes.ID" inDocument:quote];
@@ -267,6 +280,7 @@
 
 - (NSArray*)quotes { return quotes.values; }
 - (NSArray*)inlinequotes { return inlinequotes.values; }
+- (NSArray*)spoilers { return spoilers.values; }
 - (NSArray*)adminmessages { return adminmessages.values; }
 - (void)addAdminMessage:(NSString*)newcomment {
 	//todo
@@ -320,11 +334,17 @@
 										options:0 range:NSMakeRange(start,[formatted length]-start)]
 									 withString:[NSString stringWithFormat:@"\e[1;31m%@\e[0m",[adminmessages.values objectAtIndex:i]]];
 		}
+		for(int i = 0; i < spoilers.count; i++) {
+			NSUInteger start = [[spoilers.ranges objectAtIndex:i] rangeValue].location + i * 11;
+			[formatted replaceCharactersInRange:[formatted rangeOfString:[spoilers.values objectAtIndex:i]
+										options:0 range:NSMakeRange(start,[formatted length]-start)]
+									 withString:[NSString stringWithFormat:@"\e[40;30m%@\e[0m",[spoilers.values objectAtIndex:i]]];
+		}
 		[desc appendFormat:@"\n\n\t%@",
 				 [[formatted componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] 
 				  componentsJoinedByString:@"\n\t"]];
 	}
-	return [desc stringByAppendingString:@"\n"];	
+	return desc;	
 }
 
 - (NSString*)commentFilteringQuotes {

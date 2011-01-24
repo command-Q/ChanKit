@@ -50,20 +50,20 @@
 		NSString* turl;
 		if((turl = [[CKRecipe sharedRecipe] lookup:@"Image.Thumbnail" inDocument:doc]))
 			thumbnail = [[CKImage alloc] initByReferencingURL:[NSURL URLWithString:turl]];
-		
+		size = [[[CKRecipe sharedRecipe] lookup:@"Image.Size" inDocument:doc] floatValue] * 1024;
 		if([[[CKRecipe sharedRecipe] lookup:@"Image.Measure" inDocument:doc] isEqualToString:@"MB"])
-			size = [[[CKRecipe sharedRecipe] lookup:@"Image.Size" inDocument:doc] floatValue] * 1048576;
-		else 
-			size = [[[CKRecipe sharedRecipe] lookup:@"Image.Size" inDocument:doc] floatValue] * 1024;
+			size *= 1024;
 		MD5 = [[[CKRecipe sharedRecipe] lookup:@"Image.MD5" inDocument:doc] retain];
 		timestamp = [[NSDate alloc] initWithTimeIntervalSince1970:[[[CKRecipe sharedRecipe] lookup:@"Image.Date" inDocument:doc] doubleValue]];
-
+		spoiler = (BOOL)[[CKRecipe sharedRecipe] lookup:@"Image.Spoiler" inDocument:doc];
+		
 		DLog(@"Image URL: %@",URL);
 		DLog(@"Image Name: %@",name);
 		DLog(@"Image Timestamp: %@",name);
 		DLog(@"Image Resolution: %0.0fx%0.0f",resolution.width,resolution.height);
 		DLog(@"Image Size: %u bytes",size);
 		DLog(@"Image MD5: %@",MD5);
+		DLog(@"Image is spoiler: %d",spoiler);
 
 		return self;
 	}
@@ -88,6 +88,7 @@
 @synthesize resolution;
 @synthesize timestamp;
 @synthesize thumbnail;
+@synthesize spoiler;
 
 - (void)setMetadata:(NSDictionary*)meta {
 	for(NSString* key in meta) {
@@ -101,6 +102,8 @@
 			MD5 = [[meta objectForKey:key] retain];
 		else if([key isEqualToString:@"Timestamp"])
 			timestamp = [[meta objectForKey:key] retain];
+		else if([key isEqualToString:@"Spoiler"])
+			spoiler = [[meta objectForKey:key] boolValue];
 	}
 }
 
@@ -120,7 +123,7 @@
 	return self.isLoaded;
 }
 - (NSString*)formattedSize {
-	return size > 1048576 ? [NSString stringWithFormat:@"%.2f MB",size/1048576.0] : [NSString stringWithFormat:@"%.2f KB",size/1024.0];
+	return size > 1048576 ? [NSString stringWithFormat:@"%.2f MB",size/1048576.0] : [NSString stringWithFormat:@"%u KB",size/1024];
 }
 - (NSString*)formattedResolution {
 	return [NSString stringWithFormat:@"%0.0fx%0.0f",resolution.width,resolution.height];
@@ -131,14 +134,14 @@
 	return [formatter stringFromDate:timestamp];
 }
 - (NSString*)description {
-	return [NSString stringWithFormat:@"%cFile : %@-(%@, %@%@, %@)",
-			NSNewlineCharacter,[URL lastPathComponent],self.formattedSize,self.formattedResolution,
+	return [NSString stringWithFormat:@"%cFile : %@-(%@%@, %@%@, %@)",
+			NSNewlineCharacter,[URL lastPathComponent],spoiler ? @"Spoiler Image, " : @"",self.formattedSize,self.formattedResolution,
 			name ? [NSString stringWithFormat:@", %@",name] : @"",self.formattedTimestamp];
 }
 
 - (NSString*)prettyPrint {
-	return [NSString stringWithFormat:@"%cFile : \e[4;34m%@\e[0m-(%@, %@%@, %@)",
-			NSNewlineCharacter,[URL lastPathComponent],self.formattedSize,self.formattedResolution,
+	return [NSString stringWithFormat:@"%cFile : \e[4;34m%@\e[0m-(%@%@, %@%@, %@)",
+			NSNewlineCharacter,[URL lastPathComponent],spoiler ? @"Spoiler Image, " : @"",self.formattedSize,self.formattedResolution,
 			name ? [NSString stringWithFormat:@", %@",name] : @"",self.formattedTimestamp];
 }
 

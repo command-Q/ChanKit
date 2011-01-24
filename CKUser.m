@@ -165,7 +165,7 @@
 	NSMutableString* p = [NSMutableString string];
 	if(email) {
 		if(name) [p appendFormat:@"\e[4;1;34m%@\e[0m",name];
-		if(tripcode.trip || tripcode.securetrip) [p appendFormat:@" \e[4;34m%@\e[0m",self.tripstring];
+		if(tripcode.trip || tripcode.securetrip) [p appendFormat:@"\e[4;34m %@\e[0m",self.tripstring];
 	}
 	else {
 		if(name) [p appendFormat:@"\e[1;32m%@\e[0m",name];

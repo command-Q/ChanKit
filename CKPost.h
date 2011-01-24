@@ -54,6 +54,7 @@ typedef struct {
 	ranges_s quotes;
 	ranges_s inlinequotes;
 	ranges_s adminmessages;
+	ranges_s spoilers;
 	BOOL OP;
 	BOOL sticky;
 	BOOL closed;
@@ -73,6 +74,7 @@ typedef struct {
 @property(nonatomic,readonly,copy) NSArray* adminmessages;
 @property(nonatomic,readonly,copy) NSArray* quotes;
 @property(nonatomic,readonly,copy) NSArray* inlinequotes;
+@property(nonatomic,readonly,copy) NSArray* spoilers;
 @property(nonatomic,readonly,assign) BOOL OP;
 @property(nonatomic,readwrite,assign) BOOL sticky;
 @property(nonatomic,readwrite,assign) BOOL closed;

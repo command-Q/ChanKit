@@ -15,6 +15,7 @@
 	NSSize resolution;
 	NSDate* timestamp;
 	CKImage* thumbnail;
+	BOOL spoiler;
 }
 @property(nonatomic,readonly,copy) NSURL* URL;
 @property(nonatomic,readonly,assign) NSImage* image;
@@ -29,6 +30,7 @@
 @property(nonatomic,readwrite,assign) CKImage* thumbnail;
 @property(nonatomic,readonly,assign) BOOL isLoaded;
 @property(nonatomic,readonly,copy) NSData* data;
+@property(nonatomic,readwrite,assign) BOOL spoiler;
 
 - (id)initByReferencingURL:(NSURL*)url;
 + (CKImage*)imageReferencingURL:(NSURL*)url;

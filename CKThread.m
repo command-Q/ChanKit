@@ -217,10 +217,10 @@
 	return [desc stringByAppendingString:delim];
 }
 - (NSString*)prettyPrint {
-	NSString* delim = @"\e[4m                                                                                                              \e[0m\n";
-	NSMutableString* desc = [NSMutableString stringWithFormat:@"%d posts and %d images\n",postcount,imagecount];
+	NSString* delim = @"\n\e[4m                                                                                                              \e[0m\n";
+	NSMutableString* desc = [NSMutableString stringWithFormat:@"%d posts and %d images",postcount,imagecount];
 	for(CKPost* post in posts) 
-		[desc appendFormat:@"%@\n%@",delim,[post prettyPrint]];
+		[desc appendFormat:@"%@%@",delim,[post prettyPrint]];
 	return [desc stringByAppendingString:delim];
 }
 - (BOOL)isEqual:(id)other { return [self hash] == [other hash]; }
