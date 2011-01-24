@@ -64,19 +64,12 @@
 		if(![doc level]) {
 			// doc is root node
 			NSURL* URL = [NSURL URLWithString:[doc URI]];
-			int thread = [CKUtil parseThreadID:URL];
-			BOOL OP;
-			int ID;
-			if((OP = ![URL fragment] || [[[URL fragment] stringByMatching:@"\\d+"] intValue] == thread)) 
-				ID = thread;
-			else 
-				ID = [[URL fragment] intValue];
-			NSString* rootpath = OP ?	[[CKRecipe sharedRecipe] lookup:@"Post.OP"] : 
+			int ID = [CKUtil parsePostID:URL];
+			NSString* rootpath = ID == [CKUtil parseThreadID:URL] ? [[CKRecipe sharedRecipe] lookup:@"Post.OP"] : 
 										[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],[NSNumber numberWithInt:ID]];
-			NSXMLElement* root = [[doc nodesForXPath:rootpath error:NULL] objectAtIndex:0];
-			
-			if(root && (self = [self initWithXML:root])) return self;
-			return nil;
+			NSArray* nodes = [doc nodesForXPath:rootpath error:NULL];
+			if(![nodes count]) return nil;
+			doc = [nodes objectAtIndex:0];
 		}
 		name = [[[CKRecipe sharedRecipe] lookup:@"User.Name" inDocument:doc] retain];
 		DLog(@"Name: %@",name);

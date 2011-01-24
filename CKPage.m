@@ -22,7 +22,7 @@
 	if(self = [self init]) {
 		URL = [url retain];
 		board = [[CKUtil parseBoard:URL] retain];
-		index = [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Page.Number.URL"] capture:1L] intValue];
+		index = [CKUtil parsePage:URL];
 		DLog(@"URL: %@", URL);
 		DLog(@"Board: %@", board);
 		DLog(@"Index: %d",index);
@@ -62,7 +62,7 @@
 }
 
 - (void)populate:(NSXMLDocument*)doc {
-	index = [[[CKRecipe sharedRecipe] lookup:@"Page.Number.XML" inDocument:doc] intValue];
+	index = [[[CKRecipe sharedRecipe] lookup:@"Page.Number" inDocument:doc] integerValue];
 	DLog(@"Index: %d",index);
 	[threads removeAllObjects];
 	NSString* URI = [doc URI];

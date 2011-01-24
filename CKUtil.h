@@ -10,10 +10,12 @@
 
 @interface CKUtil : NSObject 
 
++ (int)parsePostID:(NSURL*)URL;
++ (int)parseThreadID:(NSURL*)URL;
++ (int)parsePage:(NSURL*)URL;
 + (NSString*)parseBoard:(NSURL*)URL;
 + (NSString*)parseBoardFromString:(NSString*)URL;
-
-+ (int)parseThreadID:(NSURL*)URL;
++ (NSString*)parseBoardRoot:(NSURL*)URL;
 + (NSURL*)URLByDeletingFragment:(NSURL*)URL;
 + (NSURL*)changePost:(NSURL*)original toPost:(int)idno;
 

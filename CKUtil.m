@@ -12,17 +12,34 @@
 
 @implementation CKUtil
 
++ (int)parsePostID:(NSURL*)URL { 
+	int res = [[CKRecipe sharedRecipe] resourceKindForURL:URL];
+	switch(res) {
+		case CK_RESOURCE_POST:
+			return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Post"] capture:1L] integerValue];
+		case CK_RESOURCE_THREAD:
+			return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Thread"] capture:1L] integerValue];
+		default: return -1;
+	}	
+}
 + (int)parseThreadID:(NSURL*)URL { 
 	int res = [[CKRecipe sharedRecipe] resourceKindForURL:URL];
 	if(res != CK_RESOURCE_POST && res != CK_RESOURCE_THREAD) return -1;
-	return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Thread.ID"] capture:1L] intValue]; 
+	return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Thread"] capture:1L] integerValue]; 
+}
++ (int)parsePage:(NSURL*)URL {
+	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] != CK_RESOURCE_BOARD) return -1;
+	return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Page"] capture:1L] integerValue]; 
 }
 + (NSString*)parseBoard:(NSURL*)URL { 
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] == CK_RESOURCE_UNDEFINED) return nil;
-	return [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Board.Name"] capture:1L]; 
+	return [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Board"] capture:1L]; 
 }
 + (NSString*)parseBoardFromString:(NSString*)URL { return [self parseBoard:[NSURL URLWithString:URL]]; }
-
++ (NSString*)parseBoardRoot:(NSURL*)URL { 
+	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] == CK_RESOURCE_UNDEFINED) return nil;
+	return [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.BoardRoot"] capture:1L]; 
+}
 + (NSURL*)URLByDeletingFragment:(NSURL*)URL { 
 	return [NSURL URLWithString:[[URL absoluteString] stringByMatching:@"[^#]+"]]; 
 }

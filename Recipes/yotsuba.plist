@@ -307,8 +307,6 @@
 	</dict>
 	<key>Thread</key>
 	<dict>
-		<key>ID</key>
-		<string>.*/([^#]+)</string>
 		<key>Root</key>
 		<string>/html/body/form</string>
 		<key>Replies</key>
@@ -341,12 +339,7 @@
 	<key>Page</key>
 	<dict>
 		<key>Number</key>
-		<dict>
-			<key>URL</key>
-			<string>.*/([^/]*)</string>
-			<key>XML</key>
-			<string>/html/body/form/table[@class=&quot;pages&quot;]/tr/td/b/text()</string>
-		</dict>
+		<string>/html/body/form/table[@class=&quot;pages&quot;]/tr/td/b/text()</string>
 		<key>Threads</key>
 		<string>/html/body/form/span[starts-with(@id,&quot;nothread&quot;)]/a[not(@class=&quot;quotejs&quot;)]/@href</string>
 		<key>IDs</key>
@@ -356,8 +349,6 @@
 	<dict>
 		<key>Location</key>
 		<string>/html/body/form/span/a[text()=&quot;Return&quot;]/@href</string>
-		<key>Name</key>
-		<string>[^/]+/([^/]+)</string>
 		<key>Title</key>
 		<string>/html/body/div[@id=&quot;header&quot;]/span[@id=&quot;navtop&quot;]/a[@href=&quot;%@&quot;]/@title</string>
 		<key>AlternateTitle</key>

@@ -24,8 +24,7 @@
 	if(self = [self init]) {
 		URL = [url retain];
 		name = [[CKUtil parseBoard:URL] retain];
-		boardroot = [([[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Page.Number.URL"] capture:1L] intValue]
-					  ? [URL URLByDeletingLastPathComponent] : URL) retain];
+		boardroot = [[CKUtil parseBoardRoot:URL] retain];
 
 		DLog(@"URL: %@", URL);
 		DLog(@"Board: %@", name);		
@@ -71,11 +70,7 @@
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
 
-	int index  = [[[CKRecipe sharedRecipe] lookup:@"Page.Number.XML" inDocument:doc] intValue];
-	if(boardroot) [boardroot release];
-	boardroot = [(index ? [URL URLByDeletingLastPathComponent] : URL) retain];
-	DLog(@"Board Root: %@", boardroot);		
-	
+	int index  = [[[CKRecipe sharedRecipe] lookup:@"Page.Number" inDocument:doc] integerValue];	
 	if(!title) {
 		title = [[[CKRecipe sharedRecipe] lookup:@"Board.Title" inDocument:doc test:boardroot] retain];
 		DLog(@"Title: %@",title);

@@ -73,11 +73,8 @@
 		URL = [url retain];
 		board = [[CKUtil parseBoard:URL] retain];
 		thread = [CKUtil parseThreadID:URL];
-		if((OP = ![URL fragment] || [[[URL fragment] stringByMatching:@"\\d+"] intValue] == thread)) 
-			ID = thread;
-		else 
-			ID = [[URL fragment] intValue];
-		
+		ID = [CKUtil parsePostID:URL];
+		OP = ID == thread;
 		DLog(@"URL: %@",URL);
 		DLog(@"Board: %@",board);
 		DLog(@"Thread ID: %d",thread);
