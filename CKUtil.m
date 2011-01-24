@@ -43,9 +43,6 @@
 + (NSURL*)URLByDeletingFragment:(NSURL*)URL { 
 	return [NSURL URLWithString:[[URL absoluteString] stringByMatching:@"[^#]+"]]; 
 }
-+ (NSURL*)changePost:(NSURL*)original toPost:(int)idno{
-	return [NSURL URLWithString:[NSString stringWithFormat:@"%@#%d",[self URLByDeletingFragment:original],idno]]; 
-}
 
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy {
 	ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];

@@ -102,6 +102,7 @@ int main (int argc, const char * argv[]) {
 			default: resource = nil; break;
 		}
 		if(resource) {
+			NSLog(@"%@",[resource URL]);
 			// NSLog isn't really seamless with this
 			[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
 			 [[[resource prettyPrint] stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];

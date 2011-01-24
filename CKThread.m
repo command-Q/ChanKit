@@ -92,6 +92,13 @@
 	NSXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
+	// Check that a redirect page didn't slip through
+	NSString* redirect;
+	if((redirect = [[CKRecipe sharedRecipe] lookup:@"Post.Redirect" inDocument:doc])) {
+		if((self = [self initByReferencingURL:[NSURL URLWithString:redirect]]))
+			return [self populate];
+		return CK_ERR_UNDEFINED;
+	}
 	[self populate:doc];
 	return 0;
 }
@@ -100,9 +107,14 @@
 	NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Replies" inDocument:doc] 
 						componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	__block NSUInteger deleted = [[posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.deleted = YES"]] count];
-	if(!initialized)
+	if(!initialized) {
 		for(CKPost* post in posts)
 			[post populate:doc threadContext:self];
+		// This would work just as well for repopulating a thread and look nicer, but it's terribly less efficient
+		replies = [replies objectsAtIndexes:[replies indexesOfObjectsPassingTest:^(id obj, NSUInteger idx, BOOL *stop) {
+			return (BOOL)![self postWithID:[obj integerValue]];
+		}]];
+	}
 	else if(postcount > 1) {
 		// Check if the structure of the thread has changed
 		// Right now we avoid a deep check for changes to posts, such as ban messages being placed, simply due to the extra processing time required
@@ -126,7 +138,6 @@
 		replies = [replies subarrayWithRange:NSMakeRange(lastcommon,[replies count]-lastcommon)];
 	}
 	initialized = YES;
-	
 	self.sticky = [[CKRecipe sharedRecipe] lookup:@"Thread.Sticky" inDocument:doc] != nil;
 	self.closed = [[CKRecipe sharedRecipe] lookup:@"Thread.Closed" inDocument:doc] != nil;
 	DLog(@"Sticky: %d",self.sticky);

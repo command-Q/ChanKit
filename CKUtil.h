@@ -17,7 +17,6 @@
 + (NSString*)parseBoardFromString:(NSString*)URL;
 + (NSString*)parseBoardRoot:(NSURL*)URL;
 + (NSURL*)URLByDeletingFragment:(NSURL*)URL;
-+ (NSURL*)changePost:(NSURL*)original toPost:(int)idno;
 
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy;
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL;

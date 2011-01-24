@@ -121,6 +121,13 @@
 	NSXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
+	// Check that a redirect page didn't slip through
+	NSString* redirect;
+	if((redirect = [[CKRecipe sharedRecipe] lookup:@"Post.Redirect" inDocument:doc])) {
+		if((self = [self initByReferencingURL:[NSURL URLWithString:redirect]]))
+			return [self populate];
+		return CK_ERR_UNDEFINED;
+	}
 	[self populate:doc threadContext:nil];
 	if(deleted) return CK_ERR_NOTFOUND;
 	return 0;
@@ -216,6 +223,7 @@
 		if(href && text) {
 			CKPost* post;
 			NSRange range;
+			NSString* xthread;
 			int qid = [[href stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.ID"] capture:1L] intValue];
 			DLog(@"Quote %d: %@",qid,href);
 			NSUInteger idx = [quotes.values indexOfObjectWithOptions:NSEnumerationReverse passingTest:^(id q, NSUInteger ndx, BOOL *stop) {
@@ -225,20 +233,17 @@
 				if((post = [context postWithID:qid])); // Use this, don't do anything 
 				else if(qid == ID) // They quoted themself :|
 					post = self;
-				else if([href isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossThread"]]) 
+				else if([href isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossBoard"]])
+					// Cross-board quote, it will be resolved on the first call to populate:
+					post = [CKPost postReferencingURL:[NSURL URLWithString:href]];
+				else if((xthread = [href stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossThread"] capture:1L]))
 					// Same board, different thread
-					post = [CKPost postReferencingURL:[[URL URLByDeletingLastPathComponent] URLByAppendingPathComponent:href]];
-				else if([href isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossBoard"]]) {
-					// Cross-board quote, we have to resolve it
-					NSXMLDocument* request;
-					if(![CKUtil fetchXML:&request fromURL:[NSURL URLWithString:href]])
-						post = [CKPost postReferencingURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Post.Redirect" inDocument:request]]];
-					else DLog(@"Bad quote: %@",href);
-				}
+					// When populating from a page, all quotes are treated as such
+					post = [CKPost postReferencingURL:[NSURL URLWithString:xthread relativeToURL:URL]];
 				else {
 					// Regular quote
 					NSString* uri = [[doc rootDocument] URI];
-					[[doc rootDocument] setURI:[[CKUtil changePost:URL toPost:qid] absoluteString]];
+					[[doc rootDocument] setURI:[[NSURL URLWithString:href relativeToURL:URL] absoluteString]];
 					post = [CKPost postFromXML:[doc rootDocument] threadContext:context];
 					[[doc rootDocument] setURI:uri];
 				}
