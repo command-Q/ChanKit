@@ -17,17 +17,18 @@
 				<array>
 					<string>www.4chan.org</string>
 					<string>boards.4chan.org</string>
+					<string>sys.4chan.org</string>
 				</array>
 				<key>Regex</key>
 				<dict>
 					<key>Image</key>
-					<string>http://images.4chan.org/\w+/src/\d+\.\w+</string>
+					<string>http://images\.4chan\.org/\w+/src/\d+\.\w+</string>
 					<key>Post</key>
-					<string>http://boards.4chan.org/\w+/res/\d+#q?\d+</string>
+					<string>http://boards\.4chan\.org/\w+/res/\d+#q?\d+|http://sys\.4chan\.org/\w+/imgboard\.php\?res=\d+</string>
 					<key>Thread</key>
-					<string>http://boards.4chan.org/\w+/res/\d+</string>
+					<string>http://boards\.4chan\.org/\w+/res/\d+</string>
 					<key>Board</key>
-					<string>http://boards.4chan.org/\w+/\d*</string>
+					<string>http://boards\.4chan\.org/\w+/\d*</string>
 				</dict>
 			</dict>
 		</array>
@@ -426,6 +427,19 @@
 	</dict>
 	<key>Definitions</key>
 	<dict>
+		<key>URL</key>
+		<dict>
+			<key>BoardRoot</key>
+			<string>^(.*\\.[^/]+/[^/]+/)</string>
+			<key>Board</key>
+			<string>\.[^/]+/(\w+)/</string>
+			<key>Page</key>
+			<string>\.[^/]+/\w+/(\d+)$</string>
+			<key>Thread</key>
+			<string>/(\d+)[#q\d]*$</string>
+			<key>Post</key>
+			<string>[#=q](\d+)$</string>
+		</dict>
 		<key>Dates</key>
 		<dict>
 			<key>Format</key>
@@ -440,9 +454,9 @@
 			<key>CrossBoardFormat</key>
 			<string>&gt;&gt;&gt;/%@/%d</string>
 			<key>ID</key>
-			<string>[#=](.+)</string>
+			<string>[#=](\d+)</string>
 			<key>CrossThread</key>
-			<string>.+#.+</string>
+			<string>(\d+#\d+)</string>
 			<key>CrossBoard</key>
 			<string>[^\?]+\?[^=]+=</string>
 			<key>Regex</key>
