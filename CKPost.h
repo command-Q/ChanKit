@@ -80,7 +80,7 @@ typedef struct {
 @property(nonatomic,readwrite,assign) BOOL closed;
 @property(nonatomic,readwrite,assign) BOOL banned;
 @property(nonatomic,readwrite,assign) BOOL deleted;
-@property(nonatomic,readonly,copy) NSString* IDString;
+@property(nonatomic,readonly,retain) NSString* IDString;
 
 - (id)initTestPost;
 + (CKPost*)testPost;

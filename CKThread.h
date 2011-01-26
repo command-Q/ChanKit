@@ -30,6 +30,7 @@
 @property(nonatomic,readwrite,assign) BOOL sticky;
 @property(nonatomic,readwrite,assign) BOOL closed;
 @property(nonatomic,readonly,assign) BOOL initialized;
+@property(nonatomic,readonly,retain) NSString* IDString;
 
 - (id)initByReferencingURL:(NSURL*)url;
 + (CKThread*)threadReferencingURL:(NSURL*)url;

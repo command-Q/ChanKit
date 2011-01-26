@@ -107,7 +107,7 @@ int main (int argc, const char * argv[]) {
 			[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
 			 [[[resource prettyPrint] stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
 			if([resource isKindOfClass:[CKThread class]] && (path = [args URLForKey:@"dump"])) {
-				path = [path URLByAppendingPathComponent:[NSString stringWithFormat:@"/%@/%d",[resource board],[resource ID]]];
+				path = [[path URLByAppendingPathComponent:[resource board]] URLByAppendingPathComponent:[resource IDString]];
 				NSError* err;
 				if([fileman createDirectoryAtPath:[path path] withIntermediateDirectories:YES attributes:nil error:&err]) {
 					NSLog(@"Dumping %d images to %@",[resource imagecount],[path path]);

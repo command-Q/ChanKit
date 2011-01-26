@@ -170,6 +170,8 @@
 - (void)setSticky:(BOOL)stickiness { self.OP.sticky = stickiness; }
 - (void)setClosed:(BOOL)locked { self.OP.closed = locked; }
 
+- (NSString*)IDString { return [NSString stringWithFormat:@"%d",ID]; }
+
 - (CKPost*)OP { 
 	if(!initialized)
 		[self populate];
