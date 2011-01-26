@@ -39,7 +39,7 @@
 + (CKPoster*)posterWithDictionary:(NSDictionary*)dict { return [[[self alloc] initWithPostingDictionary:dict] autorelease]; }
 
 - (id)initByReferencingURL:(NSURL*)url {
-	if(self = [super init]) {
+	if((self = [super init])) {
 		URL = [url retain];
 		DLog(@"URL: %@",URL);
 	}

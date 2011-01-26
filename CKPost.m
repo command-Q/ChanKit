@@ -15,7 +15,7 @@
 
 // Object methods
 - (id)init {
-	if(self = [super init]) {
+	if((self = [super init])) {
 		quotes.values = [[NSMutableArray alloc] init];
 		quotes.ranges = [[NSMutableArray alloc] init];
 		adminmessages.values = [[NSMutableArray alloc] init];
@@ -29,7 +29,7 @@
 }
 
 - (id)initTestPost {
-	if(self = [self init]) {
+	if((self = [self init])) {
 		ID = 1;
 		thread = 0;
 		index = 0;

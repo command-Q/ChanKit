@@ -14,13 +14,13 @@
 @implementation CKThread
 
 - (id)init {
-	if(self = [super init])
+	if((self = [super init]))
 		posts = [[NSMutableArray alloc] init];
 	return self;
 }
 
 - (id)initByReferencingURL:(NSURL*)url {
-	if(self = [self init]) {
+	if((self = [self init])) {
 		URL = [[CKUtil URLByDeletingFragment:url] retain];
 		board = [[CKUtil parseBoard:URL] retain];
 		ID = [CKUtil parseThreadID:URL];
@@ -46,7 +46,7 @@
 + (CKThread*)threadFromURL:(NSURL*)url { return [[[self alloc] initWithURL:url] autorelease]; }
 
 - (id)initWithPage:(NSXMLDocument*)doc {
-	if(self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]]) {		
+	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]])) {		
 		NSXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Thread.Root"] error:NULL] objectAtIndex:0];
 		[root setURI:[URL absoluteString]];
 		NSArray* pre = [root nodesForXPath:

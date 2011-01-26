@@ -11,7 +11,7 @@
 @implementation CKUser
 
 - (id)init {
-	if(self = [super init]) {
+	if((self = [super init])) {
 		privilege = CK_PRIV_NORMAL;
 		password = [[CKUtil generatePassword] retain]; 
 	}
@@ -19,7 +19,7 @@
 }
 
 - (id)initWithUserInfo:(NSDictionary*)info {
-	if(self = [self init]) {
+	if((self = [self init])) {
 		for(NSString* key in info) {
 			if([key isEqualToString:@"Name"])
 				name = [[info objectForKey:key] retain];
@@ -46,7 +46,7 @@
 + (CKUser*)userWithInfo:(NSDictionary*)info { return [[[self alloc] initWithUserInfo:info] autorelease]; }
 
 - (id)initWithName:(NSString*)namestring {
-	if(self = [self init]) {
+	if((self = [self init])) {
 		NSString* nm,*tp,*st;
 		if([(nm =[namestring stringByMatching:[[CKRecipe sharedRecipe] lookup:@"User.Name.TripString"] capture:1L]) length])
 			name = [nm retain];
@@ -60,7 +60,7 @@
 + (CKUser*)userNamed:(NSString*)namestring { return [[[self alloc] initWithName:namestring] autorelease]; }
 
 - (id)initWithXML:(NSXMLNode*)doc {
-	if(self = [self init]) {
+	if((self = [self init])) {
 		if(![doc level]) {
 			// doc is root node
 			NSURL* URL = [NSURL URLWithString:[doc URI]];

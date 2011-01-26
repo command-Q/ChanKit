@@ -11,7 +11,7 @@
 @implementation CKImage
 
 - (id)initByReferencingURL:(NSURL*)url {
-	if(self = [super init]) {
+	if((self = [super init])) {
 		URL = [url retain];
 		name = [[URL lastPathComponent] retain];
 		timestamp = [[NSDate alloc] initWithTimeIntervalSince1970:[[name stringByMatching:@"\\d{10}"] floatValue]];

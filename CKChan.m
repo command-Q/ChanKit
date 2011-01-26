@@ -14,13 +14,13 @@
 @implementation CKChan
 
 - (id)init {
-	if(self = [super init])
+	if((self = [super init]))
 		boards = [[NSMutableArray alloc] init];
 	return self;
 }
 
 - (id)initWithURL:(NSURL*)url {
-	if(self = [self init]) {
+	if((self = [self init])) {
 		URL = [url retain];
 		DLog(@"URL: %@",URL);
 

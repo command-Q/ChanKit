@@ -15,13 +15,13 @@
 @implementation CKBoard
 
 - (id)init {
-	if(self = [super init])
+	if((self = [super init]))
 		pages = [[NSMutableArray alloc] init];
 	return self;
 }
 
 - (id)initByReferencingURL:(NSURL*)url {
-	if(self = [self init]) {
+	if((self = [self init])) {
 		URL = [url retain];
 		name = [[CKUtil parseBoard:URL] retain];
 		boardroot = [[CKUtil parseBoardRoot:URL] retain];

@@ -13,13 +13,13 @@
 @implementation CKPage
 
 - (id)init {
-	if(self = [super init])
+	if((self = [super init]))
 		threads = [[NSMutableArray alloc] init];
 	return self;
 }
 
 - (id)initByReferencingURL:(NSURL*)url {
-	if(self = [self init]) {
+	if((self = [self init])) {
 		URL = [url retain];
 		board = [[CKUtil parseBoard:URL] retain];
 		index = [CKUtil parsePage:URL];
