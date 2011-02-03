@@ -48,14 +48,9 @@
 	ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
 	[CKUtil setProxy:proxy onRequest:&fetch];
 	[fetch startSynchronous];
-	if([fetch error]) {
-		DLog(@"%@",[[fetch error] localizedDescription]);
-		return CK_ERR_NETWORK;
-	}
-	if([fetch responseStatusCode] >= 400) {
-		DLog(@"%@",[fetch responseStatusMessage]);
-		return [fetch responseStatusCode];
-	}
+	int error;
+	if((error = [CKUtil validateResponse:fetch]) != CK_ERR_SUCCESS)
+		return error;
 	*doc = [[[NSXMLDocument alloc] initWithData:[fetch responseData] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
 	[*doc setURI:[[fetch url] absoluteString]];
 	if([[CKRecipe sharedRecipe] certainty] == CK_RECIPE_NOMATCH && [[CKRecipe sharedRecipe] detectBoardSoftware:*doc] <= 0) {
@@ -66,8 +61,7 @@
 		DLog(@"Banned!");
 		return CK_ERR_BANNED;
 	}
-	
-	return 0;	
+	return CK_ERR_SUCCESS;	
 }
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL {
 	return [CKUtil fetchXML:doc fromURL:URL throughProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"]]; // Very bad!
@@ -84,6 +78,18 @@
 		return YES;
 	}
 	return NO;
+}
+
++ (int)validateResponse:(ASIHTTPRequest*)response {
+	if([response error]) {
+		DLog(@"%@",[[response error] localizedDescription]);
+		return CK_ERR_NETWORK;
+	}
+	if([response responseStatusCode] >= 400) {
+		DLog(@"%@",[response responseStatusMessage]);
+		return [response responseStatusCode];
+	}
+	return CK_ERR_SUCCESS;
 }
 
 // The bunlde info dictionary is busted

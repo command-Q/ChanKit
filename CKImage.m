@@ -122,14 +122,8 @@
 		ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
 		[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:&fetch];
 		[fetch startSynchronous];
-		if([fetch error]) {
-			DLog(@"%@",[[fetch error] localizedDescription]);
+		if([CKUtil validateResponse:fetch] != CK_ERR_SUCCESS)
 			return NO;
-		}
-		if([fetch responseStatusCode] >= 400) {
-			DLog(@"%@",[fetch responseStatusMessage]);
-			return NO;
-		}
 		image = [[fetch responseData] retain];
 	}
 	return self.isLoaded;

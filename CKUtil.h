@@ -10,6 +10,8 @@
 
 @interface CKUtil : NSObject 
 
++ (NSString*)version;
+
 + (int)parsePostID:(NSURL*)URL;
 + (int)parseThreadID:(NSURL*)URL;
 + (int)parsePage:(NSURL*)URL;
@@ -20,11 +22,11 @@
 
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy;
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL;
-+ (NSString*)version;
++ (int)validateResponse:(ASIHTTPRequest*)response;
++ (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest**)request;
++ (BOOL)checkBan:(NSXMLDocument*)doc;
 
 + (NSString*)generatePassword;
 + (NSString*)MD5:(NSData*)data;
 
-+ (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest**)request;
-+ (BOOL)checkBan:(NSXMLDocument*)doc;
 @end

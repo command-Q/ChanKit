@@ -127,14 +127,8 @@
 	[crequest setPostValue:captcha.challenge forKey:@"recaptcha_challenge_field"];
 	[crequest setPostValue:captcha.verification forKey:@"recaptcha_response_field"];
 	[crequest startSynchronous];
-	if([crequest error]) {
-		DLog(@"%@",[[crequest error] localizedDescription]);
+	if([CKUtil validateResponse:crequest] != CK_ERR_SUCCESS)
 		return NO;
-	}
-	if([crequest responseStatusCode] >= 400) {
-		DLog(@"%@",[crequest responseStatusMessage]);
-		return NO;
-	}
 	NSXMLDocument* response = [[NSXMLDocument alloc] initWithData:[crequest responseData] options:NSXMLDocumentTidyHTML error:nil];
 	NSArray* nodes = [response nodesForXPath:@"/html/body/textarea/text()" error:nil];
 	[response release];
@@ -195,22 +189,11 @@
 - (CKPost*)post:(int*)error {
 	if(!request) [self prepare];
 	[request startSynchronous];
-	if([request error]) {
-		DLog(@"%@",[[request error] localizedDescription]);
-		*error = CK_ERR_NETWORK;
+	if((*error = [CKUtil validateResponse:request]) == CK_ERR_NETWORK) // Bail
 		return nil;
-	}
-	if([request responseStatusCode] >= 400) {
-		DLog(@"%@",[request responseStatusMessage]);
-		*error = [request responseStatusCode];
-	}
-		
 	NSData* response = [request responseData];
 	DLog(@"Response:\n%@",[[[NSString alloc] initWithData:response encoding:NSUTF8StringEncoding] autorelease]);
-
 	NSXMLDocument* doc = [[[NSXMLDocument alloc] initWithData:response options:NSXMLDocumentTidyHTML error:nil] autorelease];
-	int err;
-	if(!error) error = &err;
 	if(!doc)
 		*error = CK_ERR_UNDEFINED;		
 	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Captcha" inDocument:doc])
