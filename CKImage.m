@@ -118,8 +118,20 @@
 	return image;
 }
 - (BOOL)load { 
-	if(!image)
-		image = [[NSURLConnection sendSynchronousRequest:[NSMutableURLRequest requestWithURL:URL] returningResponse:nil error:nil] retain];
+	if(!image) {
+		ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
+		[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:&fetch];
+		[fetch startSynchronous];
+		if([fetch error]) {
+			DLog(@"%@",[[fetch error] localizedDescription]);
+			return false;
+		}
+		if([fetch responseStatusCode] >= 400) {
+			DLog(@"%@",[fetch responseStatusMessage]);
+			return false;
+		}
+		image = [[fetch responseData] retain];
+	}
 	return self.isLoaded;
 }
 - (NSString*)formattedSize {
