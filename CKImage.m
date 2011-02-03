@@ -124,11 +124,11 @@
 		[fetch startSynchronous];
 		if([fetch error]) {
 			DLog(@"%@",[[fetch error] localizedDescription]);
-			return false;
+			return NO;
 		}
 		if([fetch responseStatusCode] >= 400) {
 			DLog(@"%@",[fetch responseStatusMessage]);
-			return false;
+			return NO;
 		}
 		image = [[fetch responseData] retain];
 	}
