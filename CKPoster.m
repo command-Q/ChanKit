@@ -123,10 +123,18 @@
 	// Needs work
 	ASIFormDataRequest* crequest = [ASIFormDataRequest requestWithURL:
 		[NSURL URLWithString:@"http://www.google.com/recaptcha/api/noscript?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc"]];
+	[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:&crequest];
 	[crequest setPostValue:captcha.challenge forKey:@"recaptcha_challenge_field"];
 	[crequest setPostValue:captcha.verification forKey:@"recaptcha_response_field"];
 	[crequest startSynchronous];
-	if([crequest error]) return NO;
+	if([crequest error]) {
+		DLog(@"%@",[[crequest error] localizedDescription]);
+		return NO;
+	}
+	if([crequest responseStatusCode] >= 400) {
+		DLog(@"%@",[crequest responseStatusMessage]);
+		return NO;
+	}
 	NSXMLDocument* response = [[NSXMLDocument alloc] initWithData:[crequest responseData] options:NSXMLDocumentTidyHTML error:nil];
 	NSArray* nodes = [response nodesForXPath:@"/html/body/textarea/text()" error:nil];
 	[response release];
