@@ -7,6 +7,7 @@
  */
 
 #import <CommonCrypto/CommonDigest.h>
+#import "NSData+Base64/NSData+Base64.h"
 #import "CKRecipe.h"
 #import "CKUtil.h"
 
@@ -107,12 +108,9 @@
 }
 
 + (NSString*)MD5:(NSData*)data {
-	NSMutableString* MD5 = [[NSMutableString alloc] init];
-	unsigned char* result = malloc(sizeof(unsigned char)*CC_MD5_DIGEST_LENGTH);
+	unsigned char result[CC_MD5_DIGEST_LENGTH];
 	CC_MD5([data bytes],[data length],result);
-	for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
-		[MD5 appendFormat:@"%02X",result[i]];
-	return MD5;
+	return [[NSData dataWithBytes:result length:CC_MD5_DIGEST_LENGTH] base64EncodedString];
 }
 
 + (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest**)request {

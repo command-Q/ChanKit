@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2700D57C0F5EC49900BEE0C3 /* CKPost.h in Headers */ = {isa = PBXBuildFile; fileRef = 2700D57A0F5EC49900BEE0C3 /* CKPost.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2700D57D0F5EC49900BEE0C3 /* CKPost.m in Sources */ = {isa = PBXBuildFile; fileRef = 2700D57B0F5EC49900BEE0C3 /* CKPost.m */; };
+		2704222F12FB716B004B4CB4 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 2704222D12FB716B004B4CB4 /* NSData+Base64.m */; };
+		2704223012FB716B004B4CB4 /* NSData+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = 2704222E12FB716B004B4CB4 /* NSData+Base64.h */; };
 		270AE90D125982AF0036E91B /* CKRecipe.h in Headers */ = {isa = PBXBuildFile; fileRef = 270AE90B125982AF0036E91B /* CKRecipe.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		270AE90E125982AF0036E91B /* CKRecipe.m in Sources */ = {isa = PBXBuildFile; fileRef = 270AE90C125982AF0036E91B /* CKRecipe.m */; };
 		27240C0F128E7233008DEDCE /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 27240C0D128E7233008DEDCE /* RegexKitLite.m */; };
@@ -69,6 +71,8 @@
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		2700D57A0F5EC49900BEE0C3 /* CKPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKPost.h; sourceTree = "<group>"; };
 		2700D57B0F5EC49900BEE0C3 /* CKPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKPost.m; sourceTree = "<group>"; };
+		2704222D12FB716B004B4CB4 /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSData+Base64.m"; path = "NSData+Base64/NSData+Base64.m"; sourceTree = "<group>"; };
+		2704222E12FB716B004B4CB4 /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+Base64.h"; path = "NSData+Base64/NSData+Base64.h"; sourceTree = "<group>"; };
 		270AE90B125982AF0036E91B /* CKRecipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKRecipe.h; sourceTree = "<group>"; };
 		270AE90C125982AF0036E91B /* CKRecipe.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKRecipe.m; sourceTree = "<group>"; };
 		270DCE2C102C463400912225 /* ChanKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ChanKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -220,6 +224,7 @@
 		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2704222C12FB7150004B4CB4 /* NSData+Base64 */,
 				2798112C12DE628A003632F7 /* ASIHTTPRequest */,
 				27F799961252F4FD00DC7ABE /* RegexKitLite */,
 				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
@@ -235,6 +240,15 @@
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		2704222C12FB7150004B4CB4 /* NSData+Base64 */ = {
+			isa = PBXGroup;
+			children = (
+				2704222D12FB716B004B4CB4 /* NSData+Base64.m */,
+				2704222E12FB716B004B4CB4 /* NSData+Base64.h */,
+			);
+			name = "NSData+Base64";
 			sourceTree = "<group>";
 		};
 		2798112C12DE628A003632F7 /* ASIHTTPRequest */ = {
@@ -313,6 +327,7 @@
 				275ABC45128D60B600FA2066 /* Common.h in Headers */,
 				27C33F2C12E2859600229C1F /* ASIHTTPRequest.h in Headers */,
 				27240C10128E7233008DEDCE /* RegexKitLite.h in Headers */,
+				2704223012FB716B004B4CB4 /* NSData+Base64.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,6 +441,7 @@
 				2772F64612870F0000C99973 /* CKPoster.m in Sources */,
 				27F3607C1288F0090091D109 /* CKImage.m in Sources */,
 				27240C0F128E7233008DEDCE /* RegexKitLite.m in Sources */,
+				2704222F12FB716B004B4CB4 /* NSData+Base64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
