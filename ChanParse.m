@@ -11,8 +11,7 @@
 int randint(int max) { return random()/(RAND_MAX+1.0)*max; }
 
 int main (int argc, const char * argv[]) {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	NSUserDefaults* args = [NSUserDefaults standardUserDefaults];
 	if(![[args volatileDomainForName:NSArgumentDomain] count]) {
 		NSLog( @"ChanParse - ChanKit test interface.\n"
@@ -92,7 +91,7 @@ int main (int argc, const char * argv[]) {
 	int images = 0;
 	NSFileManager* fileman = [[NSFileManager alloc] init];
 	NSURL* path = nil;
-	
+
 	if([args stringForKey:@"url"]) {
 		url = [NSURL URLWithString:[args stringForKey:@"url"]];
 		switch ([[CKRecipe sharedRecipe] resourceKindForURL:url]) {
@@ -229,11 +228,10 @@ int main (int argc, const char * argv[]) {
 				else current.comment = progress;
 			}
 			if([proxies count] && !(i  % [proxies count])) firstpost = [NSDate date];
-			struct timespec sleep = {30,0};
-			if(i == [posters count] - 1 || [proxies count] && 
-										((i + 1) % [proxies count] || [[NSDate date] timeIntervalSinceDate:firstpost] >= 60)) 
-				sleep.tv_sec = 0;
-			else if(current.file) sleep.tv_sec = 60;
+			NSTimeInterval sleep = 30;
+			if(i == [posters count] - 1 || [proxies count] && ((i + 1) % [proxies count] || [[NSDate date] timeIntervalSinceDate:firstpost] >= 60)) 
+				sleep = 0;
+			else if(current.file) sleep = 60;
 			NSURL* proxy;
 			if([proxies count]) {
 				proxy = [NSURL URLWithString:[proxies objectAtIndex:i % [proxies count]]];
@@ -249,19 +247,19 @@ int main (int argc, const char * argv[]) {
 			else
 				post = [current post:&err];
 			switch(err) {
-				case CK_ERR_SUCCESS:			NSLog(@"%@\n%@",post.URL,[post prettyPrint]);	resource = post;						break;
-				case CK_POSTERR_FLOOD:			NSLog(@"Error: Flood");							sleep.tv_sec += sleep.tv_sec ? 30 : 0;	break;
-				case CK_POSTERR_VERIFICATION:	NSLog(@"Error: Captcha");						sleep.tv_sec = 0;						break;
-				case CK_POSTERR_DUPLICATE:		NSLog(@"Error: Duplicate");						sleep.tv_sec = 0;						break;	
-				case CK_ERR_NETWORK:			NSLog(@"Error: Network");						sleep.tv_sec = 0;						break;
-				case CK_POSTERR_DISALLOWED:		NSLog(@"Error: Comment Disallowed");			error = YES;							break;
-				case CK_POSTERR_NOTFOUND:		NSLog(@"Error: 404");							error = YES;							break;
+				case CK_ERR_SUCCESS:			NSLog(@"%@\n%@",post.URL,[post prettyPrint]);	resource = post;		break;
+				case CK_POSTERR_FLOOD:			NSLog(@"Error: Flood");							sleep += sleep ? 30 : 0;break;
+				case CK_POSTERR_VERIFICATION:	NSLog(@"Error: Captcha");						sleep = 0;				break;
+				case CK_POSTERR_DUPLICATE:		NSLog(@"Error: Duplicate");						sleep = 0;				break;	
+				case CK_ERR_NETWORK:			NSLog(@"Error: Network");						sleep = 0;				break;
+				case CK_POSTERR_DISALLOWED:		NSLog(@"Error: Comment Disallowed");			error = YES;			break;
+				case CK_POSTERR_NOTFOUND:		NSLog(@"Error: 404");							error = YES;			break;
 				case CK_ERR_UNDEFINED:
 				default:						NSLog(@"Error: %d Unknown",err);
 			}
 			if(post.OP) //Reply to ourself
 				[posters makeObjectsPerformSelector:@selector(setURL:) withObject:post.URL];
-			nanosleep(&sleep,NULL);
+			[NSThread sleepForTimeInterval:sleep];
 		}
 	}
 	else if([args boolForKey:@"random"]) {
@@ -328,7 +326,6 @@ int main (int argc, const char * argv[]) {
 		// This mess ladies and gentlemen wonderfully illustrates the need for the CKBrowser delegate
 		int lastindex;
 		int watchimages = 0;
-		struct timespec sleep = {10,0};
 		NSString* delim = @"\n\e[4m                                                                                                              \e[0m\n";
 		int fetchresult; // If we populate in the loop header the autorelease pool won't do any good
 		CKThread* thread;
@@ -371,7 +368,8 @@ int main (int argc, const char * argv[]) {
 				}
 				lastindex = [thread postcount];						
 			}
-			else nanosleep(&sleep,NULL);
+			else [NSThread sleepForTimeInterval:10];
+
 			fetchresult = [thread populate];
 			[loop drain];
 		} while(fetchresult != CK_ERR_NOTFOUND && !post.deleted);
