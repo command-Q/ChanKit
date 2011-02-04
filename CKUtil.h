@@ -6,6 +6,7 @@
  *	CKUtil.h - Utility string/URL/network methods. Globally included.
  */
 
+@class ASIHTTPRequest;
 @class CKRecipe;
 
 @interface CKUtil : NSObject 

@@ -12,6 +12,7 @@
  */
 
 #import <ChanKit/Common.h>
+#import <ChanKit/CKUtil.h>
 #import <ChanKit/CKRecipe.h>
 #import <ChanKit/CKImage.h>
 #import <ChanKit/CKUser.h>
