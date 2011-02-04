@@ -28,12 +28,8 @@
 	if((self = [self initByReferencingURL:url]) && [self load]) {
 		resolution = [self.image size];
 		size = [image length];
-		MD5 = [[CKUtil MD5:image] retain];
-
 		DLog(@"Image Resolution: %0.0fx%0.0f",resolution.width,resolution.height);
 		DLog(@"Image Size: %u bytes",size);
-		DLog(@"Image MD5: %@",MD5);
-
 		return self;		
 	}
 	return nil;
@@ -109,8 +105,9 @@
 
 - (BOOL)isLoaded { return image != nil; }
 - (NSString*)MD5 {
-	if(!MD5) [self load];
-	return MD5;
+	if(MD5 || [self load])
+		return [MD5 copy];
+	return [NSString string];
 }
 - (NSImage*)image {	return [[[NSImage alloc] initWithData:image] autorelease]; }
 - (NSData*)data { 
@@ -125,6 +122,13 @@
 		if([CKUtil validateResponse:fetch] != CK_ERR_SUCCESS)
 			return NO;
 		image = [[fetch responseData] retain];
+		NSString* tmpMD5 = [CKUtil MD5:image];
+		if(!MD5) MD5 = [tmpMD5 retain];
+		else if(![MD5 isEqualToString:tmpMD5]){
+			DLog(@"Hash differs: %@ : %@",MD5,tmpMD5);
+			return NO;
+		}
+		DLog(@"Verified MD5: %@",MD5);
 	}
 	return self.isLoaded;
 }
