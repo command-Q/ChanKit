@@ -86,8 +86,8 @@
 	[pages removeAllObjects];
 	for(NSString* page in [[[CKRecipe sharedRecipe] lookup:@"Board.Pages" inDocument:doc]
 				componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
-		[pages addObject:[[[CKPage alloc] initByReferencingURL:[boardroot URLByAppendingPathComponent:page]] autorelease]];
-	[pages insertObject:[[[CKPage alloc] initWithXML:doc] autorelease] atIndex:index];
+		[pages addObject:[CKPage pageReferencingURL:[boardroot URLByAppendingPathComponent:page]]];
+	[pages insertObject:[CKPage pageFromXML:doc] atIndex:index];
 	 
 	numpages = [pages count];
 	DLog(@"Pages: %d",numpages);
