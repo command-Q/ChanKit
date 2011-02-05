@@ -84,27 +84,28 @@ static CKRecipe* sharedInstance = nil;
 	}
 }
 
-- (NSURL*)matchSite:(NSString*)site resourceKind:(int*)type {
+- (NSURL*)matchSite:(NSString*)site resourceKind:(int*)kind {
 	@synchronized(self) {
-		*type = CK_RESOURCE_UNDEFINED;
+		__block int type = CK_RESOURCE_UNDEFINED;
 		__block NSString* result;
 		[[[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"]
 		 enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 			 recipe = [[NSDictionary dictionaryWithContentsOfFile:obj] retain];
 			 [[self lookup:@"Support.Sites"] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 				 if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[obj valueForKeyPath:@"Regex.Image"]] capture:1L]) length])
-					 *type = CK_RESOURCE_IMAGE;
+					 type = CK_RESOURCE_IMAGE;
 				 else if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[obj valueForKeyPath:@"Regex.Post"]] capture:1L]) length])
-					 *type = CK_RESOURCE_POST;
+					 type = CK_RESOURCE_POST;
 				 else if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[obj valueForKeyPath:@"Regex.Thread"]] capture:1L]) length])
-					 *type = CK_RESOURCE_THREAD;
+					 type = CK_RESOURCE_THREAD;
 				 else if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[obj valueForKeyPath:@"Regex.Board"]] capture:1L]) length])
-					 *type = CK_RESOURCE_BOARD;
-				 *stop = *type != CK_RESOURCE_UNDEFINED;
+					 type = CK_RESOURCE_BOARD;
+				 *stop = type != CK_RESOURCE_UNDEFINED;
 			 }];
-			 *stop = *type != CK_RESOURCE_UNDEFINED;
+			 *stop = type != CK_RESOURCE_UNDEFINED;
 		 }];
-		if(*type != CK_RESOURCE_UNDEFINED) return [NSURL URLWithString:result];
+		kind = &type;
+		if(type != CK_RESOURCE_UNDEFINED) return [NSURL URLWithString:result];
 		return nil;
 	}
 }
