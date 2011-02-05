@@ -17,6 +17,26 @@
 + (NSString*)version {
 	return [NSString stringWithFormat:@"%d.%d.%d%@-%@",CK_VERSION_MAJOR,CK_VERSION_MINOR,CK_VERSION_MICRO,CK_VERSION_TAG,CK_VERSION_OS];
 }
++ (NSString*)describeError:(int)errnum {
+	switch(errnum) {
+		case CK_ERR_UNDEFINED:			return @"Unknown error";
+		// Document fetch errors
+		case CK_ERR_SUCCESS:			return @"Operation succeeded";
+		case CK_ERR_NETWORK:			return @"Resource not reachable";
+		case CK_ERR_CHECKSUM:			return @"Resource failed checksum verification";
+		case CK_ERR_NOTFOUND:			return @"Resource not found";
+		case CK_ERR_PARSER:				return @"Document could not be parsed";
+		case CK_ERR_UNSUPPORTED:		return @"Unsupported board software";
+		case CK_ERR_BANNED:				return @"You are banned";
+		// Common post errors
+		case CK_POSTERR_FLOOD:			return @"Flood detected";
+		case CK_POSTERR_VERIFICATION:	return @"CAPTCHA verification failed";
+		case CK_POSTERR_DUPLICATE:		return @"Duplicate image detected";
+		case CK_POSTERR_NOTFOUND:		return @"Thread not found";
+		case CK_POSTERR_DISALLOWED:		return @"Comment disallowed";
+		default:						return @"lp0 on fire";
+	}
+}
 
 + (int)parsePostID:(NSURL*)URL { 
 	int res = [[CKRecipe sharedRecipe] resourceKindForURL:URL];

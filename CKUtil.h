@@ -12,6 +12,7 @@
 @interface CKUtil : NSObject 
 
 + (NSString*)version;
++ (NSString*)describeError:(int)errnum;
 
 + (int)parsePostID:(NSURL*)URL;
 + (int)parseThreadID:(NSURL*)URL;
