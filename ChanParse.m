@@ -246,16 +246,20 @@ int main (int argc, const char * argv[]) {
 				post = [current post:&err attempt:dubs];
 			else
 				post = [current post:&err];
-			switch(err) {
-				case CK_ERR_SUCCESS:			NSLog(@"%@\n%@",post.URL,[post prettyPrint]);	resource = post;		break;
-				case CK_POSTERR_FLOOD:			NSLog(@"Error: Flood");							sleep += sleep ? 30 : 0;break;
-				case CK_POSTERR_VERIFICATION:	NSLog(@"Error: Captcha");						sleep = 0;				break;
-				case CK_POSTERR_DUPLICATE:		NSLog(@"Error: Duplicate");						sleep = 0;				break;	
-				case CK_ERR_NETWORK:			NSLog(@"Error: Network");						sleep = 0;				break;
-				case CK_POSTERR_DISALLOWED:		NSLog(@"Error: Comment Disallowed");			error = YES;			break;
-				case CK_POSTERR_NOTFOUND:		NSLog(@"Error: 404");							error = YES;			break;
-				case CK_ERR_UNDEFINED:
-				default:						NSLog(@"Error: %d Unknown",err);
+			if(!err) {
+				NSLog(@"%@\n%@",post.URL,[post prettyPrint]);
+				resource = post;
+			}
+			else { 
+				switch(err) {
+					case CK_POSTERR_FLOOD: sleep += sleep ? 30 : 0; break;
+					case CK_POSTERR_VERIFICATION:
+					case CK_POSTERR_DUPLICATE:		
+					case CK_ERR_NETWORK: sleep = 0; break;
+					case CK_POSTERR_DISALLOWED:
+					case CK_POSTERR_NOTFOUND: error = YES; break;
+				}
+				NSLog(@"Error: %@",[CKUtil describeError:err]);
 			}
 			if(post.OP) //Reply to ourself
 				[posters makeObjectsPerformSelector:@selector(setURL:) withObject:post.URL];
