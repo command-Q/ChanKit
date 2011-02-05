@@ -28,6 +28,7 @@
 
 		DLog(@"URL: %@", URL);
 		DLog(@"Board: %@", name);		
+		DLog(@"Board Root: %@", boardroot);		
 	}
 	return self;
 }

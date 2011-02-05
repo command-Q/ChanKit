@@ -421,7 +421,7 @@
 		<key>URL</key>
 		<dict>
 			<key>BoardRoot</key>
-			<string>^(.*\\.[^/]+/[^/]+/)</string>
+			<string>^(.*\.[^/]+/[^/]+/)</string>
 			<key>Board</key>
 			<string>\.[^/]+/(\w+)/</string>
 			<key>Page</key>
