@@ -28,6 +28,7 @@
 #define	CK_ERR_UNDEFINED	 -1
 #define	CK_ERR_SUCCESS		  0
 #define CK_ERR_NETWORK		  6
+#define CK_ERR_CHECKSUM		  7
 #define CK_ERR_NOTFOUND		404
 #define CK_ERR_PARSER		406
 #define	CK_ERR_UNSUPPORTED	415
