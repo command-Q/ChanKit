@@ -18,7 +18,7 @@
 + (int)parseThreadID:(NSURL*)URL;
 + (int)parsePage:(NSURL*)URL;
 + (NSString*)parseBoard:(NSURL*)URL;
-+ (NSString*)parseBoardRoot:(NSURL*)URL;
++ (NSURL*)parseBoardRoot:(NSURL*)URL;
 + (NSURL*)URLByDeletingFragment:(NSURL*)URL;
 
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy;

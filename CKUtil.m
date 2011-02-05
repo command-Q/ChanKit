@@ -61,9 +61,12 @@
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] == CK_RESOURCE_UNDEFINED) return nil;
 	return [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Board"] capture:1L]; 
 }
-+ (NSString*)parseBoardRoot:(NSURL*)URL { 
++ (NSURL*)parseBoardRoot:(NSURL*)URL { 
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] == CK_RESOURCE_UNDEFINED) return nil;
-	return [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.BoardRoot"] capture:1L]; 
+	NSString* root;
+	if((root = [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.BoardRoot"] capture:1L]))
+		return [NSURL URLWithString:root];
+	return nil;
 }
 + (NSURL*)URLByDeletingFragment:(NSURL*)URL { 
 	return [NSURL URLWithString:[[URL absoluteString] stringByMatching:@"[^#]+"]]; 
