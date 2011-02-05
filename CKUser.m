@@ -136,14 +136,14 @@
 	NSMutableString* nm = [NSMutableString string];
 	if(name) [nm appendString:name];
 	[nm appendString:self.tripstring];
-	[nm appendFormat:@" %@",self.authority];
+	[nm appendString:self.authority];
 	return nm;
 }
 
 - (NSString*)authority {
 	switch(privilege) {
-		case CK_PRIV_ADMIN:	return @"## Admin";
-		case CK_PRIV_MOD:	return @"## Mod";
+		case CK_PRIV_ADMIN:	return @" ## Admin";
+		case CK_PRIV_MOD:	return @" ## Mod";
 		default:			return @"";
 	}
 }
