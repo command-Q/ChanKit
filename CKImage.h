@@ -41,7 +41,7 @@
 - (void)dealloc;
 
 - (void)setMetadata:(NSDictionary*)meta;
-- (BOOL)load;
+- (int)load;
 - (NSString*)description;
 - (NSString*)prettyPrint;
 - (NSXMLNode*)XMLRepresentation;

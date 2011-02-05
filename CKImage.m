@@ -25,7 +25,7 @@
 + (CKImage*)imageReferencingURL:(NSURL*)url { return [[[self alloc] initByReferencingURL:url] autorelease]; }
 
 - (id)initWithContentsOfURL:(NSURL*)url {
-	if((self = [self initByReferencingURL:url]) && [self load]) {
+	if((self = [self initByReferencingURL:url]) && [self load] == CK_ERR_SUCCESS) {
 		resolution = [self.image size];
 		size = [image length];
 		DLog(@"Image Resolution: %0.0fx%0.0f",resolution.width,resolution.height);
@@ -105,7 +105,7 @@
 
 - (BOOL)isLoaded { return image != nil; }
 - (NSString*)MD5 {
-	if(MD5 || [self load])
+	if(MD5 || [self load] == CK_ERR_SUCCESS)
 		return [MD5 copy];
 	return [NSString string];
 }
@@ -114,23 +114,24 @@
 	[self load];
 	return image;
 }
-- (BOOL)load { 
+- (int)load { 
 	if(!image) {
 		ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
 		[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:&fetch];
 		[fetch startSynchronous];
-		if([CKUtil validateResponse:fetch] != CK_ERR_SUCCESS)
-			return NO;
+		int err;
+		if((err = [CKUtil validateResponse:fetch]) != CK_ERR_SUCCESS)
+			return err;
 		image = [[fetch responseData] retain];
 		NSString* tmpMD5 = [CKUtil MD5:image];
 		if(!MD5) MD5 = [tmpMD5 retain];
 		else if(![MD5 isEqualToString:tmpMD5]){
 			DLog(@"Hash differs: %@ : %@",MD5,tmpMD5);
-			return NO;
+			return CK_ERR_CHECKSUM;
 		}
 		DLog(@"Verified MD5: %@",MD5);
 	}
-	return self.isLoaded;
+	return CK_ERR_SUCCESS;
 }
 - (NSString*)formattedSize {
 	return size > 1048576 ? [NSString stringWithFormat:@"%.2f MB",size/1048576.0] : [NSString stringWithFormat:@"%u KB",size/1024];
