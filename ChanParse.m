@@ -111,7 +111,7 @@ int main (int argc, const char * argv[]) {
 				if([fileman createDirectoryAtPath:[path path] withIntermediateDirectories:YES attributes:nil error:&err]) {
 					NSLog(@"Dumping %d images to %@",[resource imagecount],[path path]);
 					for(CKImage* image in [resource images])
-						if(![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:image.name] path]]) {
+						if(![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:image.name] path]] && [image load] == CK_ERR_SUCCESS) {
 							[fileman createFileAtPath:[[path URLByAppendingPathComponent:image.name] path]
 											 contents:image.data
 										   attributes:[NSDictionary dictionaryWithObject:image.timestamp forKey:@"NSFileModificationDate"]];
@@ -359,7 +359,7 @@ int main (int argc, const char * argv[]) {
 				for(CKPost* p in updates) {
 					[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
 					 [[NSString stringWithFormat:@"\n%@%@",[p prettyPrint],delim] dataUsingEncoding:NSUTF8StringEncoding]];
-					if(path && p.image && ![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:p.image.name] path]]) {
+					if(path && p.image && ![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:p.image.name] path]] && [p.image load] == CK_ERR_SUCCESS) {
 						[fileman createFileAtPath:[[path URLByAppendingPathComponent:p.image.name] path]
 										 contents:p.image.data
 									   attributes:[NSDictionary dictionaryWithObject:p.image.timestamp forKey:@"NSFileModificationDate"]];
