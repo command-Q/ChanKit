@@ -111,7 +111,7 @@
 	NSMutableString* print = [NSMutableString string];
 	for(CKThread* t in threads) {
 		int disp = fmin([t.posts count] - 5,1);
-		[print appendFormat:@"\n%@\n%@\n%@\t| %d posts and %d images",
+		[print appendFormat:@"\n%@%@\n%@\t| %d posts and %d images",
 		 opdelim,[[t.posts objectAtIndex:0] prettyPrint],opdelim,t.postcount,t.imagecount];
 		for(CKPost* p in [[t posts] subarrayWithRange:NSMakeRange(disp,[t.posts count] - disp)])
 			[print appendFormat:@"%@\t| %@",replydelim,
