@@ -1,3 +1,20 @@
+Version 0.8.5 - 2/4/11
+	All:
+		URL redirects are now supported across the relevant classes (board/imgboard.php?res=?1234)
+	CKUtil:
+		CKUtil set of class methods is now part of the public interface; it probably should have been from the start. Collection of miscellaneous helper functions, including the internal document fetching routines, URL extraction, MD5 and password generation, but most importantly it was made public because it contains the method returning the current version number.
+		Separate the standard document error checking into its own method.
+	CKRecipe:
+		URL extraction has been given a standardized recipe location, and existing ones have been made safer.
+	CKImage:
+		Spoilered images are now marked and properly parsed.
+		Use base64 encoding for MD5s like Yotsuba does, and use it to verify image downloads.
+	CKPost:
+		Spoiler text is now included in a range like other markup (quotes, admin notices).
+	ChanParse:
+		Fix edge case in the rand() function.
+		Use NSThread for sleeping rather than nanosleep.
+
 Version 0.8.4 - 1/21/11
 	All:
 		Prefer forward declarations (@class) over imports everywhere possible. This also fixes a build error with client apps that don't independently include ASIHTTPRequest.
