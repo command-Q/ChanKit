@@ -18,7 +18,6 @@
 + (int)parseThreadID:(NSURL*)URL;
 + (int)parsePage:(NSURL*)URL;
 + (NSString*)parseBoard:(NSURL*)URL;
-+ (NSString*)parseBoardFromString:(NSString*)URL;
 + (NSString*)parseBoardRoot:(NSURL*)URL;
 + (NSURL*)URLByDeletingFragment:(NSURL*)URL;
 

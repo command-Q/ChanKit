@@ -61,7 +61,6 @@
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] == CK_RESOURCE_UNDEFINED) return nil;
 	return [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Board"] capture:1L]; 
 }
-+ (NSString*)parseBoardFromString:(NSString*)URL { return [self parseBoard:[NSURL URLWithString:URL]]; }
 + (NSString*)parseBoardRoot:(NSURL*)URL { 
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] == CK_RESOURCE_UNDEFINED) return nil;
 	return [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.BoardRoot"] capture:1L]; 
