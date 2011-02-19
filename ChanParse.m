@@ -131,6 +131,7 @@ int main (int argc, const char * argv[]) {
 		int runs = 1;
 		NSArray* uploads = nil;
 		NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithObject:url forKey:@"URL"];
+		NSMutableString* rewritecomment = post.OP ? [NSMutableString string] : [NSMutableString stringWithFormat:@">>%d\n",post.ID];
 		if([args stringForKey:@"name"])
 			[dict setObject:[args stringForKey:@"name"] forKey:@"Name"];
 		if([args stringForKey:@"trip"])
@@ -144,7 +145,7 @@ int main (int argc, const char * argv[]) {
 		if([args stringForKey:@"subject"])
 			[dict setObject:[args stringForKey:@"subject"] forKey:@"Subject"];
 		if([args stringForKey:@"comment"])
-			[dict setObject:[args stringForKey:@"comment"] forKey:@"Comment"];
+			[rewritecomment appendString:[args stringForKey:@"comment"]];
 		if([args URLForKey:@"file"]) {
 			BOOL dir;
 			[[NSFileManager defaultManager] fileExistsAtPath:[[args URLForKey:@"file"] path] isDirectory:&dir];
@@ -157,7 +158,8 @@ int main (int argc, const char * argv[]) {
 																			 error:NULL];
 			runs = [uploads count];
 		}
-		if(!post.OP) [dict setObject:[NSString stringWithFormat:@">>%d\n%@",post.ID,[dict objectForKey:@"Comment"]] forKey:@"Comment"];
+		if([rewritecomment length])
+			[dict setObject:rewritecomment forKey:@"Comment"];
 		[dict setObject:[CKUtil generatePassword] forKey:@"Password"]; // Use a single password for dumps
 		 
 		NSArray* previousimages = [NSArray array];
