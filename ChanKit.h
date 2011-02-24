@@ -1,14 +1,14 @@
 /*
- *  ChanKit - Imageboard parsing and interaction.
- *  Copyright 2009-2011 command-Q.org. All rights reserved.
- *	This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
+ * ChanKit - Imageboard parsing and interaction.
+ * Copyright 2009-2011 command-Q.org. All rights reserved.
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
  * 
- *	ChanKit.h - ChanKit main interface.
+ * ChanKit.h - ChanKit main interface.
  *
- *	ChanKit includes RegexKitLite, a lightweight, iOS-compatible regular expression library. 
- *	For details visit http://regexkit.sourceforge.net/RegexKitLite/
- *	And ASIHTTPRequest, a robust CFNetwork-based replacement for NSURLRequest
- *	See http://allseeing-i.com/ASIHTTPRequest
+ * ChanKit includes RegexKitLite, a lightweight, iOS-compatible regular expression library. 
+ * For details visit http://regexkit.sourceforge.net/RegexKitLite/
+ * And ASIHTTPRequest, a robust CFNetwork-based replacement for NSURLRequest
+ * See http://allseeing-i.com/ASIHTTPRequest
  */
 
 #import <ChanKit/Common.h>

@@ -1,9 +1,9 @@
 /*
- *  ChanKit - Imageboard parsing and interaction.
- *  Copyright 2009-2011 command-Q.org. All rights reserved.
- *	This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
+ * ChanKit - Imageboard parsing and interaction.
+ * Copyright 2009-2011 command-Q.org. All rights reserved.
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
  * 
- *	CKThread.h - Thread object. May be initialized from thread XML or preinitialized from page XML.
+ * CKThread.h - Thread object. May be initialized from thread XML or preinitialized from page XML.
  */
 
 

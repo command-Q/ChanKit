@@ -1,9 +1,9 @@
 /*
- *  ChanKit - Imageboard parsing and interaction.
- *  Copyright 2010-2011 command-Q.org. All rights reserved.
- *	This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
+ * ChanKit - Imageboard parsing and interaction.
+ * Copyright 2010-2011 command-Q.org. All rights reserved.
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
  * 
- *	CKUser.m - Imageboard user.
+ * CKUser.m - Imageboard user.
  */
 
 #import "CKUser.h"
