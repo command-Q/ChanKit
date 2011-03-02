@@ -42,8 +42,6 @@
 		2798116412DE6325003632F7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2798116312DE6325003632F7 /* SystemConfiguration.framework */; };
 		27C00CAF12482F1400AE717E /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 27C00CAE12482F1400AE717E /* libicucore.dylib */; };
 		27C33F2C12E2859600229C1F /* ASIHTTPRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 2798113712DE629E003632F7 /* ASIHTTPRequest.h */; };
-		27DDA68D12FC1D5F00BA4322 /* CKBrowser.h in Headers */ = {isa = PBXBuildFile; fileRef = 27DDA68B12FC1D5F00BA4322 /* CKBrowser.h */; };
-		27DDA68E12FC1D5F00BA4322 /* CKBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 27DDA68C12FC1D5F00BA4322 /* CKBrowser.m */; };
 		27EF3EB90F5ED5DF00603D3A /* CKUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 27EF3EB70F5ED5DF00603D3A /* CKUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		27EF3EBA0F5ED5DF00603D3A /* CKUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 27EF3EB80F5ED5DF00603D3A /* CKUtil.m */; };
 		27F29CC3126A37980064DD6B /* Recipes in Resources */ = {isa = PBXBuildFile; fileRef = 27F29CC2126A37980064DD6B /* Recipes */; };
@@ -117,8 +115,6 @@
 		2798115F12DE6306003632F7 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = /usr/lib/libz.dylib; sourceTree = "<absolute>"; };
 		2798116312DE6325003632F7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		27C00CAE12482F1400AE717E /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
-		27DDA68B12FC1D5F00BA4322 /* CKBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKBrowser.h; sourceTree = "<group>"; };
-		27DDA68C12FC1D5F00BA4322 /* CKBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKBrowser.m; sourceTree = "<group>"; };
 		27EF3EB70F5ED5DF00603D3A /* CKUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CKUtil.h; sourceTree = "<group>"; };
 		27EF3EB80F5ED5DF00603D3A /* CKUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CKUtil.m; sourceTree = "<group>"; };
 		27F29CC2126A37980064DD6B /* Recipes */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Recipes; sourceTree = "<group>"; };
@@ -220,8 +216,6 @@
 				277C705C0F6378FC003B2E73 /* CKBoard.m */,
 				277C70D40F6382C7003B2E73 /* CKChan.h */,
 				277C70D50F6382C7003B2E73 /* CKChan.m */,
-				27DDA68B12FC1D5F00BA4322 /* CKBrowser.h */,
-				27DDA68C12FC1D5F00BA4322 /* CKBrowser.m */,
 				277C73DC0F645FA0003B2E73 /* ChanKit.h */,
 			);
 			name = Classes;
@@ -334,7 +328,6 @@
 				27C33F2C12E2859600229C1F /* ASIHTTPRequest.h in Headers */,
 				27240C10128E7233008DEDCE /* RegexKitLite.h in Headers */,
 				2704223012FB716B004B4CB4 /* NSData+Base64.h in Headers */,
-				27DDA68D12FC1D5F00BA4322 /* CKBrowser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,7 +442,6 @@
 				27F3607C1288F0090091D109 /* CKImage.m in Sources */,
 				27240C0F128E7233008DEDCE /* RegexKitLite.m in Sources */,
 				2704222F12FB716B004B4CB4 /* NSData+Base64.m in Sources */,
-				27DDA68E12FC1D5F00BA4322 /* CKBrowser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
