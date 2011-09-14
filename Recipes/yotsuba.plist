@@ -184,7 +184,7 @@
 		<key>Quotes</key>
 		<dict>
 			<key>XML</key>
-			<string>./blockquote/a[@class=&quot;quotelink&quot;]</string>
+			<string>./blockquote//a[@class=&quot;quotelink&quot;]</string>
 			<key>URL</key>
 			<string>./@href</string>
 			<key>ID</key>
