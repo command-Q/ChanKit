@@ -236,7 +236,7 @@
 		<key>Response</key>
 		<dict>
 			<key>Format</key>
-			<string>%@/res/%@#%@</string>
+			<string>%@res/%@#%@</string>
 			<key>NotFound</key>
 			<dict>
 				<key>Path</key>
@@ -293,7 +293,7 @@
 				<key>Path</key>
 				<string>/html/head/meta/@content</string>
 				<key>Regex</key>
-				<string>url=(.+)/./</string>
+				<string>url=(.+)</string>
 			</dict>
 		</dict>
 		<key>Captcha</key>
