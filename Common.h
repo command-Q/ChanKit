@@ -45,6 +45,7 @@
 #define	CK_RECIPE_NOMATCH				 0
 #define	CK_RECIPE_URLMATCH				 1
 #define	CK_RECIPE_XMLMATCH				 2
+#define	CK_RECIPE_MANUAL				 3
 
 #define	CK_POSTERR_FLOOD				 1
 #define	CK_POSTERR_VERIFICATION			 2

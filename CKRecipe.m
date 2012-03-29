@@ -54,8 +54,10 @@ static CKRecipe* sharedInstance = nil;
 
 - (NSDictionary*)recipeFile:(NSString*)path {
 	@synchronized(self) {
-		if([[NSFileManager defaultManager] fileExistsAtPath:path])
+		if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+			certainty = CK_RECIPE_MANUAL;
 			return recipe = [NSDictionary dictionaryWithContentsOfFile:path];
+		}
 		return nil;
 	}
 }
