@@ -241,10 +241,7 @@ int main (int argc, const char * argv[]) {
 				else current.comment = progress;
 			}
 			if([proxies count] && !(i  % [proxies count])) firstpost = [NSDate date];
-			NSTimeInterval sleep = 30;
-			if(i == [posters count] - 1 || [proxies count] && ((i + 1) % [proxies count] || [[NSDate date] timeIntervalSinceDate:firstpost] >= 60)) 
-				sleep = 0;
-			else if(current.file) sleep = 60;
+
 			NSURL* proxy;
 			if([proxies count]) {
 				proxy = [NSURL URLWithString:[proxies objectAtIndex:i % [proxies count]]];
@@ -254,18 +251,29 @@ int main (int argc, const char * argv[]) {
 				NSLog(@"Using proxy %@",[args URLForKey:@"CKProxySetting"]);
 			}
 			
+			sleep += [lastpost timeIntervalSinceNow];
+			if(sleep > 0)
+				[NSThread sleepForTimeInterval:sleep];
+
 			int err;
 			if([args boolForKey:@"dubs"])
 				post = [current post:&err attempt:dubs];
 			else
 				post = [current post:&err];
+			
+			lastpost = [NSDate date];
+			sleep = 20;
+			if(i == [posters count] - 1 || ([proxies count] && ((i + 1) % [proxies count] || [[NSDate date] timeIntervalSinceDate:firstpost] >= 40))) 
+				sleep = 0;
+			else if(current.file) sleep = 40;
+
 			if(!err) {
 				NSLog(@"%@\n%@",post.URL,[post prettyPrint]);
 				resource = post;
 			}
 			else { 
 				switch(err) {
-					case CK_POSTERR_FLOOD: sleep += sleep ? 30 : 0; break;
+					case CK_POSTERR_FLOOD: sleep += sleep ? 20 : 0; break;
 					case CK_POSTERR_VERIFICATION:
 					case CK_POSTERR_DUPLICATE:		
 					case CK_ERR_NETWORK: sleep = 0; break;
@@ -275,8 +283,7 @@ int main (int argc, const char * argv[]) {
 				NSLog(@"Error: %@",[CKUtil describeError:err]);
 			}
 			if(post.OP) //Reply to ourself
-				[posters makeObjectsPerformSelector:@selector(setURL:) withObject:post.URL];
-			[NSThread sleepForTimeInterval:sleep];
+				[posters makeObjectsPerformSelector:@selector(setURL:) withObject:post.URL];			
 		}
 	}
 	else if([args boolForKey:@"random"]) {
