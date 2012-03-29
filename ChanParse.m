@@ -6,6 +6,7 @@
  * ChanParse.m - Simple example/test app.
  */
 
+#import <Cocoa/Cocoa.h>
 #import <ChanKit/ChanKit.h>
 
 int randint(int max) { return random()/(RAND_MAX+1.0)*max; }

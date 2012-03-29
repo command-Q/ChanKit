@@ -104,7 +104,7 @@
 	[captcha.challenge release];
 	[captcha.image release];
 	[captcha.verification release];
-	[request release];
+//	[request release]; this is causing invalid accesses, but now it's probably a memory leak
 	[board release];
 	[super dealloc];
 }

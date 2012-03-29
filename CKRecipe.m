@@ -32,7 +32,7 @@ static CKRecipe* sharedInstance = nil;
 
 - (id)copyWithZone:(NSZone *)zone { return self; }
 - (id)retain { return self; }
-- (void)release {}
+- (oneway void)release {}
 - (id)autorelease { return self; }
 - (NSUInteger)retainCount { return NSUIntegerMax; }
 
@@ -73,11 +73,13 @@ static CKRecipe* sharedInstance = nil;
 				for(NSString* regex in [site objectForKey:@"Regex"])
 					if([[URL absoluteString] isMatchedByRegex:regex]) {
 						certainty = CK_RECIPE_URLMATCH;
+						DLog(@"Using %@",path);
 						return CK_DETECTION_URL;						
 					}
 				for(NSString* url in [site objectForKey:@"URLs"])
 					if([url isEqualToString:[URL host]]) {
 						certainty = CK_RECIPE_URLMATCH;
+						DLog(@"Using %@",path);
 						return CK_DETECTION_URL;			
 					}
 			}
@@ -127,6 +129,7 @@ static CKRecipe* sharedInstance = nil;
 				   ![versions containsObject:[self lookup:@"Support.Software.Version" inDocument:doc]]) 
 					continue;
 				certainty = CK_RECIPE_XMLMATCH;
+				DLog(@"Using %@",path);
 				return CK_DETECTION_TITLE;			
 			}			
 		}
@@ -134,6 +137,7 @@ static CKRecipe* sharedInstance = nil;
 			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
 			if([self lookup:@"Support.Identifier" inDocument:doc]) {
 					certainty = CK_RECIPE_XMLMATCH;
+					DLog(@"Using %@",path);
 					return CK_DETECTION_FUZZY;			
 				}
 		}
@@ -163,7 +167,7 @@ static CKRecipe* sharedInstance = nil;
 		NSDictionary* lookup = nil;
 		NSArray* paths,* nodes = nil;
 		
-		if(!doc || certainty == CK_RECIPE_NOMATCH && [self detectBoardSoftware:[doc rootDocument]] == CK_DETECTION_FAILED) return nil;
+		if(!doc || (certainty == CK_RECIPE_NOMATCH && [self detectBoardSoftware:[doc rootDocument]] == CK_DETECTION_FAILED)) return nil;
 		
 		id result = [self lookup:keyPath];
 		if([result isKindOfClass:[NSDictionary class]]) {

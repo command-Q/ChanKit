@@ -5,7 +5,7 @@
  * 
  * CKImage.h - Cross-compatible wrapper around NSImage with imageboard-specific metadata and convenience routines.
  */
-
+@class NSImage;
 @interface CKImage : NSObject {
 	NSURL* URL;
 	NSData* image;

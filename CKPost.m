@@ -337,7 +337,7 @@
 									 withString:[NSString stringWithFormat:@"\e[1;31m%@\e[0m",[adminmessages.values objectAtIndex:i]]];
 		}
 		for(int i = 0; i < spoilers.count; i++) {
-			NSUInteger start = [[spoilers.ranges objectAtIndex:i] rangeValue].location + i * 11;
+			NSUInteger start = [[spoilers.ranges objectAtIndex:i] rangeValue].location + i * 12;
 			[formatted replaceCharactersInRange:[formatted rangeOfString:[spoilers.values objectAtIndex:i]
 										options:0 range:NSMakeRange(start,[formatted length]-start)]
 									 withString:[NSString stringWithFormat:@"\e[40;30m%@\e[0m",[spoilers.values objectAtIndex:i]]];
