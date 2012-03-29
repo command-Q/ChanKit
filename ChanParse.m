@@ -190,35 +190,39 @@ int main (int argc, const char * argv[]) {
 					continue;
 				}
 			}
-			
+
 			NSLog(@"Initializing Poster %d of %d",i+1,runs);
-			CKPoster* poster = [CKPoster posterWithDictionary:dict];
+			CKPoster* poster;			
+			do {
+				poster = [CKPoster posterWithDictionary:dict];
+				
+				NSLog(@"Captcha:");
 			
-			NSLog(@"Captcha:");
+				const char* temp =[[NSTemporaryDirectory() stringByAppendingPathComponent:@"captcha.XXXXXX.jpg"] fileSystemRepresentation];
+				char* tempfile = malloc(strlen(temp)+1);
+				strcpy(tempfile,temp);
+				mkstemps(tempfile,4);
+				NSString* captcha = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempfile length:strlen(tempfile)];
+				free(tempfile);
 			
-			const char* temp =[[NSTemporaryDirectory() stringByAppendingPathComponent:@"captcha.XXXXXX.jpg"] fileSystemRepresentation];
-			char* tempfile = malloc(strlen(temp)+1);
-			strcpy(tempfile,temp);
-			mkstemps(tempfile,4);
-			NSString* captcha = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempfile length:strlen(tempfile)];
-			free(tempfile);
+				[poster.captcha.data writeToFile:captcha atomically:NO];
+				[[NSWorkspace sharedWorkspace] openFile:captcha];
 			
-			[poster.captcha.data writeToFile:captcha atomically:NO];
-			[[NSWorkspace sharedWorkspace] openFile:captcha];
-			
-			// This breaks in a loop as availableData is always set after the first instance
-			/*
-			NSFileHandle* input = [NSFileHandle fileHandleWithStandardInput];
-			NSData* data;
-			while(data == nil) data = [input availableData];
-			poster.verification = [[NSString stringWithUTF8String:[data bytes]]
-								   stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-			*/
-			char text[100];
-			poster.verification = [[NSString stringWithUTF8String:fgets(text,100,stdin)]
-								   stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				// This breaks in a loop as availableData is always set after the first instance
+				/*
+			 	NSFileHandle* input = [NSFileHandle fileHandleWithStandardInput];
+			 	NSData* data;
+			 	while(data == nil) data = [input availableData];
+			 	poster.verification = [[NSString stringWithUTF8String:[data bytes]]
+			 	stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+			 	*/
+				char text[100];
+				poster.verification = [[NSString stringWithUTF8String:fgets(text,100,stdin)]
+								   	stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];				
+			} while(![poster verify:nil]);
 			[posters addObject:poster];
 		}
+		
 		NSArray* proxies = [NSArray array];
 		if([args URLForKey:@"proxies"])
 			proxies = [[[NSString stringWithContentsOfURL:[args URLForKey:@"proxies"] encoding:NSUTF8StringEncoding error:NULL]
@@ -226,6 +230,8 @@ int main (int argc, const char * argv[]) {
 								componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 		BOOL error = NO;
 		NSDate* firstpost = [NSDate date];
+		NSDate* lastpost = [NSDate date];
+		NSTimeInterval sleep = 0;
 		for(int i = 0; !error && i < [posters count]; i++) {
 			CKPoster* current = [posters objectAtIndex:i];
 			NSString* progress = [NSString stringWithFormat:@"%d of %d",i+1,[posters count]];
