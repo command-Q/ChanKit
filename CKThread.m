@@ -49,17 +49,20 @@
 	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]])) {		
 		NSXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Thread.Root"] error:NULL] objectAtIndex:0];
 		[root setURI:[URL absoluteString]];
-		NSArray* pre = [root nodesForXPath:
-						[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread.Preceding"],[NSNumber numberWithInt:ID]] error:NULL];
-		if([pre count])
-			for(int i = [(NSXMLNode*)[pre objectAtIndex:0] index]; i >= 0; i--)
-				[root removeChildAtIndex:i];
-		NSArray* post = [root nodesForXPath:
-						[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread.Following"],[NSNumber numberWithInt:ID]] error:NULL];
-		if([post count])
-			for(int i = [root childCount]-1; i >= [(NSXMLNode*)[post objectAtIndex:0] index]; i--)
-				[root removeChildAtIndex:i];
-
+		NSString* cleanup;
+		if((cleanup = [[CKRecipe sharedRecipe] lookup:@"Thread.Preceding"])) {
+				NSArray* pre = [root nodesForXPath:[NSString stringWithFormat:cleanup,[NSNumber numberWithInt:ID]] error:NULL];
+			if([pre count])
+				for(int i = [(NSXMLNode*)[pre objectAtIndex:0] index]; i >= 0; i--)
+					[root removeChildAtIndex:i];
+		}
+		if((cleanup = [[CKRecipe sharedRecipe] lookup:@"Thread.Following"])) {
+			NSArray* post = [root nodesForXPath:
+							 [NSString stringWithFormat:cleanup,[NSNumber numberWithInt:ID]] error:NULL];
+			if([post count])
+				for(int i = [root childCount]-1; i >= [(NSXMLNode*)[post objectAtIndex:0] index]; i--)
+					[root removeChildAtIndex:i];
+		}
 		[(CKPost*)[posts objectAtIndex:0] populate:root threadContext:nil];
 
 		NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Trailing" inDocument:root] 
