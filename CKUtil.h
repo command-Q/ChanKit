@@ -1,6 +1,6 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
- * Copyright 2009-2011 command-Q.org. All rights reserved.
+ * Copyright 2009-2012 command-Q.org. All rights reserved.
  * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
  * 
  * CKUtil.h - Utility string/URL/network methods. Globally included.
