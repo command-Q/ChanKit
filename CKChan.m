@@ -37,7 +37,7 @@
 		DLog(@"About: %@",about);
 		
 		// Safe to assume that all imageboards have at least one stylesheet?
-		NSURL* css = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Chan.Stylesheet" inDocument:doc]];
+		NSURL* css = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Chan.Stylesheet" inDocument:doc] relativeToURL:URL];
 		NSString* logourl = [NSString stringWithFormat:@"%@://%@%@",[css scheme],[css host],
 							 [[NSString stringWithContentsOfURL:css encoding:NSUTF8StringEncoding error:NULL]
 							  stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Chan.Logo"] capture:1L]];
@@ -62,7 +62,7 @@
 		
 		for(NSString* board in [[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.URL" inDocument:doc] 
 								componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
-			[boards addObject:[[[CKBoard alloc] initByReferencingURL:[NSURL URLWithString:board]
+			[boards addObject:[[[CKBoard alloc] initByReferencingURL:[NSURL URLWithString:board relativeToURL:URL]
 															  title:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Title"
 																						 inDocument:doc 
 																							   test:board]

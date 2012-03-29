@@ -69,13 +69,13 @@
 	return 0;
 }
 - (void)populate:(NSXMLNode*)doc {
-	NSURL* captchaurl = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.URL" inDocument:doc]];
+	NSURL* captchaurl = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.URL" inDocument:doc] relativeToURL:URL];
 	NSXMLDocument* captchadoc = [[[NSXMLDocument alloc] initWithContentsOfURL:captchaurl options:NSXMLDocumentTidyHTML error:nil] autorelease];
 	captcha.challenge = [[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.Challenge" inDocument:captchadoc] retain];
 	captcha.image = [[CKImage alloc] initWithContentsOfURL:
 					 [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.Image" inDocument:captchadoc] 
 							relativeToURL:captchaurl]];
-	action = [[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.URL" inDocument:doc]] retain];
+	action = [[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.URL" inDocument:doc] relativeToURL:URL] retain];
 	int type = [[CKRecipe sharedRecipe] resourceKindForURL:URL];
 	NSURL* boardurl;
 	switch(type) {
@@ -206,11 +206,11 @@
 		*error = CK_POSTERR_NOTFOUND;
 	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate" inDocument:doc]) {
 		*error = CK_POSTERR_DUPLICATE;
-		return [CKPost postFromURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate.URL" inDocument:doc]]];
+		return [CKPost postFromURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate.URL" inDocument:doc] relativeToURL:URL]];
 	}
 	else {
 		*error = CK_ERR_UNDEFINED;
-		NSString* resboard = [[CKUtil parseBoardRoot:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.URL" inDocument:doc]]] absoluteString];
+		NSString* resboard = [[CKUtil parseBoardRoot:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.URL" inDocument:doc] relativeToURL:URL]] absoluteString];
 		NSString* resthread = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Thread" inDocument:doc];
 		NSString* respost = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Post" inDocument:doc];
 		if(![resthread intValue]) resthread = respost;

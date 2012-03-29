@@ -39,13 +39,13 @@
 - (id)initWithXML:(NSXMLNode*)doc {
 	NSString* url;
 	if((self = [super init]) && (url = [[CKRecipe sharedRecipe] lookup:@"Image.URL" inDocument:doc]) != nil) {
-		URL = [[NSURL alloc] initWithString:url];
+		URL = [[NSURL alloc] initWithString:url relativeToURL:[NSURL URLWithString:[doc URI]]];
 		name = [[[CKRecipe sharedRecipe] lookup:@"Image.Name" inDocument:doc] retain];
 		resolution = NSMakeSize([[[CKRecipe sharedRecipe] lookup:@"Image.Width" inDocument:doc] floatValue],
 						  [[[CKRecipe sharedRecipe] lookup:@"Image.Height" inDocument:doc] floatValue]);
 		NSString* turl;
 		if((turl = [[CKRecipe sharedRecipe] lookup:@"Image.Thumbnail" inDocument:doc]))
-			thumbnail = [[CKImage alloc] initByReferencingURL:[NSURL URLWithString:turl]];
+			thumbnail = [[CKImage alloc] initByReferencingURL:[NSURL URLWithString:turl relativeToURL:URL]];
 		size = [[[CKRecipe sharedRecipe] lookup:@"Image.Size" inDocument:doc] floatValue] * 1024;
 		if([[[CKRecipe sharedRecipe] lookup:@"Image.Measure" inDocument:doc] isEqualToString:@"MB"])
 			size *= 1024;

@@ -98,7 +98,7 @@
 	// Check that a redirect page didn't slip through
 	NSString* redirect;
 	if((redirect = [[CKRecipe sharedRecipe] lookup:@"Post.Redirect" inDocument:doc])) {
-		if((self = [self initByReferencingURL:[NSURL URLWithString:redirect]]))
+		if((self = [self initByReferencingURL:[NSURL URLWithString:redirect relativeToURL:URL]]))
 			return [self populate];
 		return CK_ERR_UNDEFINED;
 	}

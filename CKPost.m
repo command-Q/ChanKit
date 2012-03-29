@@ -235,7 +235,7 @@
 					post = self;
 				else if([href isMatchedByRegex:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossBoard"]])
 					// Cross-board quote, it will be resolved on the first call to populate:
-					post = [CKPost postReferencingURL:[NSURL URLWithString:href]];
+					post = [CKPost postReferencingURL:[NSURL URLWithString:href relativeToURL:URL]];
 				else if((xthread = [href stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossThread"] capture:1L]))
 					// Same board, different thread
 					// When populating from a page, all quotes are treated as such
