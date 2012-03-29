@@ -88,25 +88,24 @@ static CKRecipe* sharedInstance = nil;
 
 - (NSURL*)matchSite:(NSString*)site resourceKind:(int*)kind {
 	@synchronized(self) {
-		__block int type = CK_RESOURCE_UNDEFINED;
-		__block NSString* result;
-		[[[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"]
-		 enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-			 recipe = [[NSDictionary dictionaryWithContentsOfFile:obj] retain];
-			 [[self lookup:@"Support.Sites"] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-				 if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[obj valueForKeyPath:@"Regex.Image"]] capture:1L]) length])
+		int type = CK_RESOURCE_UNDEFINED;
+		NSString* result;
+		for(NSString* path in [[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"]) {
+			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
+			for(NSDictionary* sitesupport in [self lookup:@"Support.Sites"]) {
+				 if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[sitesupport valueForKeyPath:@"Regex.Image"]] capture:1L]) length])
 					 type = CK_RESOURCE_IMAGE;
-				 else if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[obj valueForKeyPath:@"Regex.Post"]] capture:1L]) length])
+				 else if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[sitesupport valueForKeyPath:@"Regex.Post"]] capture:1L]) length])
 					 type = CK_RESOURCE_POST;
-				 else if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[obj valueForKeyPath:@"Regex.Thread"]] capture:1L]) length])
+				 else if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[sitesupport valueForKeyPath:@"Regex.Thread"]] capture:1L]) length])
 					 type = CK_RESOURCE_THREAD;
-				 else if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[obj valueForKeyPath:@"Regex.Board"]] capture:1L]) length])
+				 else if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[sitesupport valueForKeyPath:@"Regex.Board"]] capture:1L]) length])
 					 type = CK_RESOURCE_BOARD;
-				 *stop = type != CK_RESOURCE_UNDEFINED;
-			 }];
-			 *stop = type != CK_RESOURCE_UNDEFINED;
-		 }];
-		kind = &type;
+				if(type != CK_RESOURCE_UNDEFINED) break;
+			}
+			if(type != CK_RESOURCE_UNDEFINED) break;
+		}
+		if(kind) *kind = type;
 		if(type != CK_RESOURCE_UNDEFINED) return [NSURL URLWithString:result];
 		return nil;
 	}
