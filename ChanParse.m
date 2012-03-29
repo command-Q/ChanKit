@@ -42,6 +42,7 @@ int main (int argc, const char * argv[]) {
 			  "\t-dump <path>\tPath to dump images to (optional)\n"
 			  "\t-watch YES\tInstead of exiting, watch and print changes to thread until it 404s (optional - global setting)\n"
 			  "\t\t(YES must be passed to work with NSUserDefaults, we don't really want getopt for this tiny sample app.)\n"
+			  "\t-retry <int>\tIf images fail to load, retry n times [0 - unlimited] (optional)\n"
 			  "\n"
 			  "Post:\n"
 			  "\n"
@@ -111,11 +112,15 @@ int main (int argc, const char * argv[]) {
 				if([fileman createDirectoryAtPath:[path path] withIntermediateDirectories:YES attributes:nil error:&err]) {
 					NSLog(@"Dumping %d images to %@",[resource imagecount],[path path]);
 					for(CKImage* image in [resource images])
-						if(![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:image.name] path]] && [image load] == CK_ERR_SUCCESS) {
-							[fileman createFileAtPath:[[path URLByAppendingPathComponent:image.name] path]
-											 contents:image.data
-										   attributes:[NSDictionary dictionaryWithObject:image.timestamp forKey:@"NSFileModificationDate"]];
-							images++;
+						if(![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:image.name] path]]) {
+							int res, i = [args integerForKey:@"retry"];
+							do { res = [image load]; } while(res != CK_ERR_SUCCESS && (!i || --i));
+							if(res == CK_ERR_SUCCESS) {
+								[fileman createFileAtPath:[[path URLByAppendingPathComponent:image.name] path]
+											 	 contents:image.data
+											   attributes:[NSDictionary dictionaryWithObject:image.timestamp forKey:@"NSFileModificationDate"]];
+								images++;
+							}
 						}
 					NSLog(@"Dump complete! Got %d images.",images);
 				}
@@ -365,11 +370,15 @@ int main (int argc, const char * argv[]) {
 				for(CKPost* p in updates) {
 					[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
 					 [[NSString stringWithFormat:@"\n%@%@",[p prettyPrint],delim] dataUsingEncoding:NSUTF8StringEncoding]];
-					if(path && p.image && ![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:p.image.name] path]] && [p.image load] == CK_ERR_SUCCESS) {
-						[fileman createFileAtPath:[[path URLByAppendingPathComponent:p.image.name] path]
-										 contents:p.image.data
-									   attributes:[NSDictionary dictionaryWithObject:p.image.timestamp forKey:@"NSFileModificationDate"]];
-						watchimages++;
+					if(path && p.image && ![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:p.image.name] path]]) {
+						int res, i = [args integerForKey:@"retry"];
+						do { res = [p.image load]; } while(res != CK_ERR_SUCCESS && (!i || --i));
+						if(res == CK_ERR_SUCCESS) {
+							[fileman createFileAtPath:[[path URLByAppendingPathComponent:p.image.name] path]
+											 contents:p.image.data
+										   attributes:[NSDictionary dictionaryWithObject:p.image.timestamp forKey:@"NSFileModificationDate"]];
+							watchimages++;
+						}
 					}
 				}
 				lastindex = [thread postcount];						
