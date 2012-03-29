@@ -79,7 +79,9 @@
 	int error;
 	if((error = [CKUtil validateResponse:fetch]) != CK_ERR_SUCCESS)
 		return error;
-	*doc = [[[NSXMLDocument alloc] initWithData:[fetch responseData] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
+//	*doc = [[[NSXMLDocument alloc] initWithData:[fetch responseData] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
+//	Dirty trick to work around a bug in the outdated version of libxml2 used by NSXMLDocument
+	*doc = [[[NSXMLDocument alloc] initWithXMLString:[[fetch responseString] stringByReplacingOccurrencesOfString:@"<'+'\\/script>" withString:@"</script>"] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
 	[*doc setURI:[[fetch url] absoluteString]];
 	if([[CKRecipe sharedRecipe] certainty] == CK_RECIPE_NOMATCH && [[CKRecipe sharedRecipe] detectBoardSoftware:*doc] <= 0) {
 		DLog(@"Unsupported board type");
