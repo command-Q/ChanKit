@@ -22,13 +22,13 @@
 				<key>Regex</key>
 				<dict>
 					<key>Image</key>
-					<string>http://images\.4chan\.org/\w+/src/\d+\.\w+</string>
+					<string>https?://images\.4chan\.org/\w+/src/\d+\.\w+</string>
 					<key>Post</key>
-					<string>http://boards\.4chan\.org/\w+/res/\d+#q?\d+|http://sys\.4chan\.org/\w+/imgboard\.php\?res=\d+</string>
+					<string>https?://boards\.4chan\.org/\w+/res/\d+#q?\d+|https?://sys\.4chan\.org/\w+/imgboard\.php\?res=\d+</string>
 					<key>Thread</key>
-					<string>http://boards\.4chan\.org/\w+/res/\d+</string>
+					<string>https?://boards\.4chan\.org/\w+/res/\d+</string>
 					<key>Board</key>
-					<string>http://boards\.4chan\.org/\w+/\d*</string>
+					<string>https?://boards\.4chan\.org/\w+/\d*</string>
 				</dict>
 			</dict>
 		</array>
