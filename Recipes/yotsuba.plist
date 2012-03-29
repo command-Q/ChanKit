@@ -171,10 +171,7 @@
 		<key>Subject</key>
 		<string>./span[@class=&quot;filetitle&quot;]</string>
 		<key>Date</key>
-		<array>
-			<string>./text()[string-length() &gt; 1]</string>
-			<string>./span[@class="posttime"]</string>
-		</array>
+		<string>./span[@class=&quot;posttime&quot;]</string>
 		<key>Comment</key>
 		<string>./blockquote</string>
 		<key>RawComment</key>
