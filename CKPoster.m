@@ -209,19 +209,34 @@
 		return [CKPost postFromURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate.URL" inDocument:doc]]];
 	}
 	else {
-		*error = CK_ERR_SUCCESS;
 		NSString* resboard = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.URL" inDocument:doc];
+		*error = CK_ERR_UNDEFINED;
 		NSString* resthread = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Thread" inDocument:doc];
 		NSString* respost = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Post" inDocument:doc];
 		if(![resthread intValue]) resthread = respost;
-		NSString* resurl = [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Format"],resboard,resthread,respost];
 		DLog(@"Got Board: %@",resboard);
 		DLog(@"Got Thread: %@",resthread);
 		DLog(@"Got Post: %@",respost);
-		DLog(@"URL: %@",resurl);
-		if(resthread && respost && resboard)
-			return [CKPost postFromURL:[NSURL URLWithString:resurl]];
-		*error = CK_ERR_UNDEFINED;
+		if(resthread && respost && resboard) {
+			NSURL* resurl = [NSURL URLWithString:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Format"],resboard,resthread,respost]];
+			DLog(@"URL: %@",[resurl absoluteString]);
+			// 4chan will happily serve us a cached page that doesn't include our post, especially on long threads, so we can't do this
+			// return [CKPost postFromURL:[NSURL URLWithString:resurl]];
+			int i = 0;
+			CKPost* post = [[CKPost alloc] initByReferencingURL:resurl];
+			*error = [post populate];
+			// Finite wait in the off chance the post is actually deleted before we get it
+			while(*error == CK_ERR_NOTFOUND && i < 10) {
+				[post release];
+				[NSThread sleepForTimeInterval:1];
+				post = [[CKPost alloc] initByReferencingURL:resurl];
+				*error = [post populate];
+				i++;
+			}
+			DLog(@"Tried to find post %d times",i);
+			if(!*error)
+				return [post autorelease];
+		}
 	}
 	return nil;
 }
