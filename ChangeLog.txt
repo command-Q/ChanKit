@@ -1,3 +1,20 @@
+Version 0.8.6 - 3/29/12
+	All:
+		URLs are created relative to known URLs wherever possible in order to support schemeless links.
+	CKUtil:
+		Error codes now have string descriptions with describeError:
+		Workaround a showstopper bug in NSXMLDocument's parser by rewriting broken script tags.
+	CKImage:
+		Returns a new error when an MD5 mismatch occurs.
+	ChanParse:
+		New flag setting retry limit for failed image downloads.
+	Yotsuba:
+		Support HTTPS resources.
+	Other:
+		Update ASIHTTPRequest to v1.8.1-61
+		New alternate build script for quick/simple building without the need for Xcode.
+		Many bugfixes and routine tracking of imageboard changes.
+
 Version 0.8.5 - 2/4/11
 	All:
 		URL redirects are now supported across the relevant classes (board/imgboard.php?res=?1234)

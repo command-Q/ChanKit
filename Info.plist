@@ -19,7 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>command-Q.org</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.5</string>
+	<string>0.8.6</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 </dict>
