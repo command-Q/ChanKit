@@ -148,6 +148,8 @@ int main (int argc, const char * argv[]) {
 			[dict setObject:[args stringForKey:@"email"] forKey:@"Email"];
 		if([args stringForKey:@"password"])
 			[dict setObject:[args stringForKey:@"password"] forKey:@"Password"];
+		else
+			[dict setObject:[CKUtil generatePassword] forKey:@"Password"]; // Use a single password for dumps
 		if([args stringForKey:@"subject"])
 			[dict setObject:[args stringForKey:@"subject"] forKey:@"Subject"];
 		if([args stringForKey:@"comment"])
@@ -166,7 +168,6 @@ int main (int argc, const char * argv[]) {
 		}
 		if([rewritecomment length])
 			[dict setObject:rewritecomment forKey:@"Comment"];
-		[dict setObject:[CKUtil generatePassword] forKey:@"Password"]; // Use a single password for dumps
 		 
 		NSArray* previousimages = [NSArray array];
 		if([args boolForKey:@"resume"])
