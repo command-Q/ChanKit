@@ -173,6 +173,7 @@ int main (int argc, const char * argv[]) {
 			previousimages = [[CKThread threadFromURL:url] images];
 			
 		NSMutableArray* posters = [NSMutableArray arrayWithCapacity:runs];
+	 	NSFileHandle* input = [NSFileHandle fileHandleWithStandardInput];
 		for(int i = 0; i < runs; i++) {
 			if(uploads) {
 				if([[previousimages filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"name = %@",[[uploads objectAtIndex:i] lastPathComponent]]] count]) {
@@ -197,29 +198,21 @@ int main (int argc, const char * argv[]) {
 			do {
 				poster = [CKPoster posterWithDictionary:dict];
 				
-				NSLog(@"Captcha:");
-			
+				NSLog(@"Captcha:");	
 				const char* temp =[[NSTemporaryDirectory() stringByAppendingPathComponent:@"captcha.XXXXXX.jpg"] fileSystemRepresentation];
-				char* tempfile = malloc(strlen(temp)+1);
+				char tempfile[strlen(temp)+1];
 				strcpy(tempfile,temp);
 				mkstemps(tempfile,4);
 				NSString* captcha = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempfile length:strlen(tempfile)];
-				free(tempfile);
 			
 				[poster.captcha.data writeToFile:captcha atomically:NO];
 				[[NSWorkspace sharedWorkspace] openFile:captcha];
 			
-				// This breaks in a loop as availableData is always set after the first instance
-				/*
-			 	NSFileHandle* input = [NSFileHandle fileHandleWithStandardInput];
-			 	NSData* data;
-			 	while(data == nil) data = [input availableData];
-			 	poster.verification = [[NSString stringWithUTF8String:[data bytes]]
-			 	stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-			 	*/
-				char text[100];
-				poster.verification = [[NSString stringWithUTF8String:fgets(text,100,stdin)]
-								   	stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];				
+				NSData* data = [input availableData];
+				NSString* str = [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding];
+				poster.verification = [str stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+				[str release];
+				[[NSFileManager defaultManager] removeItemAtPath:captcha error:NULL];
 			} while(![poster verify:nil]);
 			[posters addObject:poster];
 		}
