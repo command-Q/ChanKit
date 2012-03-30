@@ -285,14 +285,14 @@
 				<key>Regex</key>
 				<string>no:([^ ]+)</string>
 			</dict>
-			<key>URL</key>
+<!--			<key>URL</key>
 			<dict>
 				<key>Path</key>
 				<string>/html/head/meta/@content</string>
 				<key>Regex</key>
 				<string>url=(.+)</string>
 			</dict>
-		</dict>
+-->		</dict>
 		<key>Captcha</key>
 		<dict>
 			<key>URL</key>

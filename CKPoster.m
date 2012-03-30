@@ -211,7 +211,10 @@
 	}
 	else {
 		*error = CK_ERR_UNDEFINED;
-		NSString* resboard = [[CKUtil parseBoardRoot:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.URL" inDocument:doc] relativeToURL:URL]] absoluteString];
+		NSString* resboard,* redirect = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.URL" inDocument:doc];
+		if(redirect)
+			resboard = [[CKUtil parseBoardRoot:[NSURL URLWithString:redirect relativeToURL:URL]] absoluteString];
+		else resboard = [[CKUtil parseBoardRoot:URL] absoluteString];
 		NSString* resthread = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Thread" inDocument:doc];
 		NSString* respost = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.Post" inDocument:doc];
 		if(![resthread intValue]) resthread = respost;
