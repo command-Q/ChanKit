@@ -8,6 +8,7 @@ Version 0.8 - This is a development version with incomplete functionality.
 
 ####Building
 Use the provided Xcode project (Xcode 3.1 or higher) to build. A sample command-line application is included which can be used for browsing and posting (the framework must be in your framework search path).
+
 A basic build script which does not depend on Xcode and links directly in the project directory is also included.
 
 ####Notes

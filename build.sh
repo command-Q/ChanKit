@@ -40,8 +40,7 @@ if [ $CKUP -ne 0 ]; then
 		cd ../../
 	fi
 	
-	sed "s/<string>[0-9]*\.[0-9]*\.[0-9]*<\/string>/<string>$VERSION<\/string>/g" Info.plist > $DESTDIR/ChanKit.framework/Resources/Info.plist
-	cp -pR Recipes English.lproj ChanKit_thumb.png ChanKit.png $DESTDIR/ChanKit.framework/Resources
+	cp -pR Recipes Info.plist English.lproj ChanKit_thumb.png ChanKit.png $DESTDIR/ChanKit.framework/Resources
 	cp -pR CKUtil.h CKRecipe.h CKImage.h CKUser.h CKPost.h CKPoster.h CKThread.h CKPage.h CKBoard.h CKChan.h Common.h ChanKit.h $DESTDIR/ChanKit.framework/Headers
 fi
 if [ -e ChanKit.framework ]; then rm ChanKit.framework; fi
