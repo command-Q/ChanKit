@@ -224,6 +224,13 @@
 			<string>resto</string>
 			<key>File</key>
 			<string>upfile</string>
+			<key>Spoiler</key>
+			<dict>
+				<key>Field</key>
+				<string>spoiler</string>
+				<key>Enabled</key>
+				<string>on</string>
+			</dict>
 			<key>Extra</key>
 			<dict>
 				<key>mode</key>

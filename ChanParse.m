@@ -56,6 +56,7 @@ int main (int argc, const char * argv[]) {
 			  "\t-subject <string>\tPost subject (optional)\n"
 			  "\t-comment <string>\tComment to post (optional if uploading a file)\n"
 			  "\t-file <path>\tFile path to post (optional if posting a comment) or directory to dump\n"
+			  "\t-spoiler YES\tImage(s) should be marked as spoilers\n"
 			  "\t-proxies <path>\tA text file containing a list of proxies to alternate between when dumping a folder\n"
 			  "\t-progress YES\tAppend the number of images being dumped to comment\n"
 			  "\t-resume YES\tIn a thread, only post images named differently from those already present\n"
@@ -166,6 +167,8 @@ int main (int argc, const char * argv[]) {
 																			 error:NULL];
 			runs = [uploads count];
 		}
+		[dict setObject:[NSNumber numberWithBool:[args boolForKey:@"spoiler"]] forKey:@"Spoiler"];
+		
 		if([rewritecomment length])
 			[dict setObject:rewritecomment forKey:@"Comment"];
 		 

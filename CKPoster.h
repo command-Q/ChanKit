@@ -27,6 +27,7 @@ static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); 
 	NSString* subject;
 	NSString* comment;
 	NSURL* file;
+	BOOL spoiler;
 	captcha_s captcha;
 	
 	CKBoard* board; // For dubs
@@ -37,6 +38,7 @@ static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); 
 @property(nonatomic,readwrite,copy) NSString* subject;
 @property(nonatomic,readwrite,copy) NSString* comment;
 @property(nonatomic,readwrite,copy) NSURL* file;
+@property(nonatomic,readwrite,assign) BOOL spoiler;
 @property(nonatomic,readwrite,copy) NSString* verification;
 @property(nonatomic,readonly,retain) CKImage* captcha;
 

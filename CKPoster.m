@@ -24,6 +24,8 @@
 				comment = [[dict objectForKey:key] retain];
 			else if([key isEqualToString:@"File"])
 				file = [[dict objectForKey:key] retain];
+			else if([key isEqualToString:@"Spoiler"])
+				spoiler = [[dict objectForKey:key] boolValue];
 			else if([key isEqualToString:@"Verification"]) {
 				captcha.challenge = [[dict objectForKey:key] retain];
 				captcha.verification = @"manual_challenge";
@@ -32,6 +34,7 @@
 		DLog(@"Subject: %@",subject);
 		DLog(@"Comment: %@",comment);
 		DLog(@"File: %@",file);
+		DLog(@"Spoiler: %d",spoiler);
 		DLog(@"Verification: %@",captcha.verification);
 	}
 	return self;
@@ -114,6 +117,7 @@
 @synthesize subject;
 @synthesize comment;
 @synthesize file;
+@synthesize spoiler;
 
 - (NSString*)verification { return captcha.verification; }
 - (void)setVerification:(NSString*)ver { captcha.verification = [ver retain]; }
@@ -157,7 +161,15 @@
 
 	if(subject) [request setPostValue:subject forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Subject"]];
 	if(comment) [request setPostValue:comment forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Comment"]];
-	if(file) [request setFile:[file path] forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.File"]];
+	if(file) {
+		[request setFile:[file path] forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.File"]];
+		if(spoiler) {
+			NSString* spoilername,* spoilerenabled;
+			if((spoilername = [[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Spoiler.Field"]) &&
+			   (spoilerenabled = [[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Spoiler.Enabled"]))
+				[request setPostValue:spoilerenabled forKey:spoilername];
+		}
+	}
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] != CK_RESOURCE_BOARD)
 		[request setPostValue:[NSString stringWithFormat:@"%d",[CKUtil parseThreadID:URL]] 
 					   forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Thread"]];
