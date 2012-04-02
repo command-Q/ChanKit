@@ -106,9 +106,8 @@
 
 - (BOOL)loaded { return image != nil; }
 - (NSString*)MD5 {
-	if(MD5 || [self load] == CK_ERR_SUCCESS)
-		return [MD5 copy];
-	return nil;
+	if(!MD5) [self load];
+	return MD5;
 }
 - (NSImage*)image {	return [[[NSImage alloc] initWithData:image] autorelease]; }
 - (NSData*)data { 
