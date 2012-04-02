@@ -85,6 +85,7 @@
 @synthesize timestamp;
 @synthesize thumbnail;
 @synthesize spoiler;
+@synthesize verified;
 
 - (void)setMetadata:(NSDictionary*)meta {
 	for(NSString* key in meta) {
@@ -115,7 +116,7 @@
 	return image;
 }
 - (int)load { 
-	if(!image) {
+	if(!verified) {
 		ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
 		[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:&fetch];
 		[fetch startSynchronous];
@@ -129,6 +130,7 @@
 			DLog(@"Hash differs: %@ : %@",MD5,tmpMD5);
 			return CK_ERR_CHECKSUM;
 		}
+		verified = true;
 		DLog(@"Verified MD5: %@",MD5);
 	}
 	return CK_ERR_SUCCESS;
