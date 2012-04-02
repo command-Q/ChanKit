@@ -253,7 +253,7 @@
 				<key>Path</key>
 				<string>/html/body/table/tr/td/font/b/text()</string>
 				<key>Regex</key>
-				<string>(Part of your comment isn\&apos;t allowed to be posted :\().*</string>
+				<string>(Part of your comment isn&apos;t allowed to be posted :\().*</string>
 			</dict>
 			<key>Duplicate</key>
 			<dict>
@@ -277,6 +277,20 @@
 				<string>/html/body/table/tr/td/font/b/text()</string>
 				<key>Regex</key>
 				<string>Error: (Flood detected, post discarded\.).*</string>
+			</dict>
+			<key>Rejected</key>
+			<dict>
+				<key>Path</key>
+				<string>/html/body/table/tr/td/font/b/text()</string>
+				<key>Regex</key>
+				<string>(Detected possible malicious code in image file\.)</string>
+			</dict>
+			<key>Filetype</key>
+			<dict>
+				<key>Path</key>
+				<string>/html/body/table/tr/td/font/b/text()</string>
+				<key>Regex</key>
+				<string>(Error: Cannot find record\.)</string>
 			</dict>
 			<key>Thread</key>
 			<dict>

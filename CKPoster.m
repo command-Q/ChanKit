@@ -217,6 +217,10 @@
 		*error = CK_POSTERR_DISALLOWED;
 	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.NotFound" inDocument:doc])
 		*error = CK_POSTERR_NOTFOUND;
+	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Rejected" inDocument:doc])
+		*error = CK_POSTERR_REJECTED;
+	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Filetype" inDocument:doc])
+		*error = CK_POSTERR_FILETYPE;
 	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate" inDocument:doc]) {
 		*error = CK_POSTERR_DUPLICATE;
 		return [CKPost postFromURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate.URL" inDocument:doc] relativeToURL:URL]];

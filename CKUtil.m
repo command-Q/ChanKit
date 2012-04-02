@@ -34,6 +34,8 @@
 		case CK_POSTERR_DUPLICATE:		return @"Duplicate image detected";
 		case CK_POSTERR_NOTFOUND:		return @"Thread not found";
 		case CK_POSTERR_DISALLOWED:		return @"Comment disallowed";
+		case CK_POSTERR_REJECTED:		return @"File rejected";
+		case CK_POSTERR_FILETYPE:		return @"Filetype mismatch";
 		default:						return @"lp0 on fire";
 	}
 }
