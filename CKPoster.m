@@ -256,6 +256,7 @@
 			DLog(@"Tried to find post %d times",i);
 			if(!*error)
 				return [post autorelease];
+			[post release];
 		}
 	}
 	return nil;
