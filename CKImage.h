@@ -29,9 +29,9 @@
 @property(nonatomic,readwrite,copy) NSDate* timestamp;
 @property(nonatomic,readonly,assign) NSString* formattedTimestamp;
 @property(nonatomic,readwrite,assign) CKImage* thumbnail;
-@property(nonatomic,readonly,assign) BOOL isLoaded;
 @property(nonatomic,readonly,copy) NSData* data;
 @property(nonatomic,readwrite,assign) BOOL spoiler;
+@property(nonatomic,readonly,assign) BOOL loaded;
 @property(nonatomic,readonly,assign) BOOL verified;
 
 - (id)initByReferencingURL:(NSURL*)url;

@@ -104,7 +104,7 @@
 	}
 }
 
-- (BOOL)isLoaded { return image != nil; }
+- (BOOL)loaded { return image != nil; }
 - (NSString*)MD5 {
 	if(MD5 || [self load] == CK_ERR_SUCCESS)
 		return [MD5 copy];
