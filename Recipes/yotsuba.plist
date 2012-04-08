@@ -345,9 +345,9 @@
 		</dict>
 		<key>OmittedImages</key>
 		<dict>
-			<key>path</key>
+			<key>Path</key>
 			<string>./span[@class=&quot;omittedposts&quot;]/text()</string>
-			<key>regex</key>
+			<key>Regex</key>
 			<string>[^\d]+(\d+)</string>
 		</dict>
 		<key>Trailing</key>
