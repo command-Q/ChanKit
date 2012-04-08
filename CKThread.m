@@ -11,6 +11,11 @@
 #import "CKPost.h"
 #import "CKUser.h"
 
+@interface CKThread()
+@property(nonatomic,readwrite) BOOL sticky;
+@property(nonatomic,readwrite) BOOL closed;
+@end
+
 @implementation CKThread
 
 - (id)init {

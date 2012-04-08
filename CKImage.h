@@ -18,21 +18,21 @@
 	BOOL spoiler;
 	BOOL verified;
 }
-@property(nonatomic,readonly,copy) NSURL* URL;
-@property(nonatomic,readonly,assign) NSImage* image;
+@property(nonatomic,readonly) NSURL* URL;
+@property(nonatomic,readonly) NSImage* image;
 @property(nonatomic,readwrite,copy) NSString* name;
 @property(nonatomic,readwrite,assign) NSUInteger size;
-@property(nonatomic,readonly,copy) NSString* formattedSize;
+@property(nonatomic,readonly) NSString* formattedSize;
 @property(nonatomic,readwrite,copy) NSString* MD5;
 @property(nonatomic,readwrite,assign) NSSize resolution;
-@property(nonatomic,readonly,assign) NSString* formattedResolution;
-@property(nonatomic,readwrite,copy) NSDate* timestamp;
-@property(nonatomic,readonly,assign) NSString* formattedTimestamp;
-@property(nonatomic,readwrite,assign) CKImage* thumbnail;
-@property(nonatomic,readonly,copy) NSData* data;
+@property(nonatomic,readonly) NSString* formattedResolution;
+@property(nonatomic,readwrite,retain) NSDate* timestamp;
+@property(nonatomic,readonly) NSString* formattedTimestamp;
+@property(nonatomic,readwrite,retain) CKImage* thumbnail;
+@property(nonatomic,readonly) NSData* data;
 @property(nonatomic,readwrite,assign) BOOL spoiler;
-@property(nonatomic,readonly,assign) BOOL loaded;
-@property(nonatomic,readonly,assign) BOOL verified;
+@property(nonatomic,readonly) BOOL loaded;
+@property(nonatomic,readonly) BOOL verified;
 
 - (id)initByReferencingURL:(NSURL*)url;
 + (CKImage*)imageReferencingURL:(NSURL*)url;

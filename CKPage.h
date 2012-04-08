@@ -15,10 +15,10 @@
 	int index;
 	NSMutableArray* threads;	
 }
-@property(nonatomic,readonly,copy) NSURL* URL;
-@property(nonatomic,readonly,copy) NSString* board;
-@property(nonatomic,readonly,assign) int index;
-@property(nonatomic,readonly,copy) NSArray* threads;
+@property(nonatomic,readonly) NSURL* URL;
+@property(nonatomic,readonly) NSString* board;
+@property(nonatomic,readonly) int index;
+@property(nonatomic,readonly) NSArray* threads;
 
 - (id)initByReferencingURL:(NSURL*)url;
 + (CKPage*)pageReferencingURL:(NSURL*)url;

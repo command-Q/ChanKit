@@ -33,14 +33,15 @@ static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); 
 	CKBoard* board; // For dubs
 	ASIFormDataRequest* request;
 }
-@property(nonatomic,readwrite,copy) NSURL* URL;
+@property(nonatomic,readwrite,retain) NSURL* URL;
 @property(nonatomic,readwrite,copy) CKUser* user;
 @property(nonatomic,readwrite,copy) NSString* subject;
 @property(nonatomic,readwrite,copy) NSString* comment;
-@property(nonatomic,readwrite,copy) NSURL* file;
+@property(nonatomic,readwrite,retain) NSURL* file;
 @property(nonatomic,readwrite,assign) BOOL spoiler;
 @property(nonatomic,readwrite,copy) NSString* verification;
-@property(nonatomic,readonly,retain) CKImage* captcha;
+@property(nonatomic,readonly) CKImage* captcha;
+
 
 - (id)initWithPostingDictionary:(NSDictionary*)dict;
 + (CKPoster*)posterWithDictionary:(NSDictionary*)dict;

@@ -21,15 +21,15 @@
 	int numpages;
 	BOOL is18plus;	
 }
-@property(nonatomic,readonly,copy) NSURL* URL;
-@property(nonatomic,readonly,copy) NSString* name;
-@property(nonatomic,readonly,copy) NSString* title;
-@property(nonatomic,readonly,copy) NSString* alternatetitle;
-@property(nonatomic,readonly,copy) NSString* category;
-@property(nonatomic,readonly,copy) NSArray* rules;
-@property(nonatomic,readonly,copy) NSArray* pages;
-@property(nonatomic,readonly,assign) int numpages;
-@property(nonatomic,readonly,assign) BOOL is18plus;
+@property(nonatomic,readonly) NSURL* URL;
+@property(nonatomic,readonly) NSString* name;
+@property(nonatomic,readonly) NSString* title;
+@property(nonatomic,readonly) NSString* alternatetitle;
+@property(nonatomic,readonly) NSString* category;
+@property(nonatomic,readonly) NSArray* rules;
+@property(nonatomic,readonly) NSArray* pages;
+@property(nonatomic,readonly) int numpages;
+@property(nonatomic,readonly) BOOL is18plus;
 
 - (id)initByReferencingURL:(NSURL*)url;
 + (CKBoard*)boardReferencingURL:(NSURL*)url;

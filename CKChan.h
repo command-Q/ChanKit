@@ -20,14 +20,14 @@
 	NSArray* categories;
 	NSMutableArray* boards;
 }
-@property(nonatomic,readonly,copy) NSURL* URL;
-@property(nonatomic,readonly,copy) NSString* name;
-@property(nonatomic,readonly,copy) NSString* about;
-@property(nonatomic,readonly,copy) NSString* slogan;
-@property(nonatomic,readonly,copy) CKImage* logo;
-@property(nonatomic,readonly,copy) NSDictionary* links;
-@property(nonatomic,readonly,copy) NSArray* categories;
-@property(nonatomic,readonly,copy) NSArray* boards;
+@property(nonatomic,readonly) NSURL* URL;
+@property(nonatomic,readonly) NSString* name;
+@property(nonatomic,readonly) NSString* about;
+@property(nonatomic,readonly) NSString* slogan;
+@property(nonatomic,readonly) CKImage* logo;
+@property(nonatomic,readonly) NSDictionary* links;
+@property(nonatomic,readonly) NSArray* categories;
+@property(nonatomic,readonly) NSArray* boards;
 
 - (id)initWithURL:(NSURL*)url;
 + (CKChan*)chanFromURL:(NSURL*)url;

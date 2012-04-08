@@ -10,8 +10,8 @@
 	NSDictionary* recipe;
 	int certainty;
 }
-@property(nonatomic,readonly,assign) int certainty;
-@property(nonatomic,readonly,copy) NSDictionary* recipe;
+@property(nonatomic,readonly) int certainty;
+@property(nonatomic,readonly) NSDictionary* recipe;
 
 + (CKRecipe*)sharedRecipe;
 

@@ -32,14 +32,14 @@ typedef struct {
 @property(nonatomic,readwrite,copy) NSString* email;
 @property(nonatomic,readwrite,copy) NSString* password;
 @property(nonatomic,readwrite,assign) int privilege;
-@property(nonatomic,readonly,assign) NSString* authority;
+@property(nonatomic,readonly) NSString* authority;
 @property(nonatomic,readwrite,copy) NSArray* posts;
-@property(nonatomic,readonly,copy) NSArray* threads;
-@property(nonatomic,readonly,assign) NSString* namestring;
-@property(nonatomic,readonly,assign) NSString* tripstring;
-@property(nonatomic,readonly,copy) NSDictionary* dictionary;
+@property(nonatomic,readonly) NSArray* threads;
 @property(nonatomic,readwrite,copy) NSString* tripcode;
 @property(nonatomic,readwrite,copy) NSString* securetrip;
+@property(nonatomic,readonly) NSString* namestring;
+@property(nonatomic,readonly) NSString* tripstring;
+@property(nonatomic,readonly) NSDictionary* dictionary;
 
 - (id)initWithUserInfo:(NSDictionary*)info;
 + (CKUser*)userWithInfo:(NSDictionary*)info;

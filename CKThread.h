@@ -18,19 +18,19 @@
 	int imagecount;
 	BOOL initialized; //Whether the thread is fully populated
 }
-@property(nonatomic,readonly,copy) NSURL* URL;
-@property(nonatomic,readonly,assign) int ID;
-@property(nonatomic,readonly,copy) NSString* board;
-@property(nonatomic,readonly,copy) NSArray* posts;
-@property(nonatomic,readonly,assign) int postcount;
-@property(nonatomic,readonly,assign) int imagecount;
-@property(nonatomic,readonly,retain) CKPost* OP;
-@property(nonatomic,readonly,retain) NSArray* replies;
-@property(nonatomic,readonly,retain) CKPost* latest;
-@property(nonatomic,readwrite,assign) BOOL sticky;
-@property(nonatomic,readwrite,assign) BOOL closed;
-@property(nonatomic,readonly,assign) BOOL initialized;
-@property(nonatomic,readonly,retain) NSString* IDString;
+@property(nonatomic,readonly) NSURL* URL;
+@property(nonatomic,readonly) int ID;
+@property(nonatomic,readonly) NSString* board;
+@property(nonatomic,readonly) NSArray* posts;
+@property(nonatomic,readonly) int postcount;
+@property(nonatomic,readonly) int imagecount;
+@property(nonatomic,readonly) CKPost* OP;
+@property(nonatomic,readonly) NSArray* replies;
+@property(nonatomic,readonly) CKPost* latest;
+@property(nonatomic,readonly) BOOL sticky;
+@property(nonatomic,readonly) BOOL closed;
+@property(nonatomic,readonly) BOOL initialized;
+@property(nonatomic,readonly) NSString* IDString;
 
 - (id)initByReferencingURL:(NSURL*)url;
 + (CKThread*)threadReferencingURL:(NSURL*)url;
