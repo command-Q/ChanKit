@@ -41,7 +41,7 @@
 		
 		NSBundle* classbundle = [NSBundle bundleForClass:[self class]];
 		image = [[CKImage alloc] initByReferencingURL:[classbundle URLForImageResource:@"ChanKit.png"]];
-		image.thumbnail = [[CKImage alloc] initWithContentsOfURL:[classbundle URLForImageResource:@"ChanKit_thumb.png"]];
+		image.thumbnail = [CKImage imageWithContentsOfURL:[classbundle URLForImageResource:@"ChanKit_thumb.png"]];
 		[image setMetadata:[NSDictionary dictionaryWithObjectsAndKeys:	
 							@"KRUrxKSynSfP8h/eYN8yqA==",@"MD5",
 							[NSNumber numberWithUnsignedInteger:328230],@"Size",
