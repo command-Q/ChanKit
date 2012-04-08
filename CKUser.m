@@ -123,6 +123,18 @@
 
 - (NSString*)tripcode { return tripcode.trip; }
 - (NSString*)securetrip { return tripcode.securetrip; }
+- (void)setTripcode:(NSString*)trip {
+	if(tripcode.trip != trip) {
+		[tripcode.trip release];
+		tripcode.trip = [trip copy];
+	}
+}
+- (void)setSecuretrip:(NSString*)trip {
+	if(tripcode.securetrip != trip) {
+		[tripcode.securetrip release];
+		tripcode.securetrip = [trip copy];
+	}
+}
 
 - (NSArray*)threads { return [posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"OP"]]; }
 
@@ -150,6 +162,21 @@
 
 - (BOOL)isEqual:(id)other { return [self hash] == [other hash]; }
 - (NSUInteger)hash { return 31 * (31 * (31 * (31 + privilege) + [name hash]) + [tripcode.trip hash]) + [tripcode.securetrip hash]; }
+
+- (id)copyWithZone:(NSZone*)zone {
+	CKUser* copy;
+	if((copy = [[CKUser allocWithZone:zone] init])) {
+		copy.name = name;
+		copy.tripcode = tripcode.trip;
+		copy.securetrip = tripcode.securetrip;
+		copy.email = email;
+		copy.password = password;
+		copy.privilege = privilege;
+		copy.posts = posts;
+	}
+    return copy;
+}
+
 - (NSString*)description {
 	if(email) return [self.namestring stringByAppendingFormat:@" (mailto:%@)",email];
 	return self.namestring;

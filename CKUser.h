@@ -19,7 +19,7 @@ typedef struct {
 	BOOL hashed;
 } tripcode_s;
 
-@interface CKUser : NSObject {
+@interface CKUser : NSObject <NSCopying> {
 	NSString* name;
 	tripcode_s tripcode;
 	NSString* email;
@@ -35,11 +35,11 @@ typedef struct {
 @property(nonatomic,readonly,assign) NSString* authority;
 @property(nonatomic,readwrite,copy) NSArray* posts;
 @property(nonatomic,readonly,copy) NSArray* threads;
-@property(nonatomic,readonly,copy) NSString* tripcode;
-@property(nonatomic,readonly,copy) NSString* securetrip;
 @property(nonatomic,readonly,assign) NSString* namestring;
 @property(nonatomic,readonly,assign) NSString* tripstring;
 @property(nonatomic,readonly,copy) NSDictionary* dictionary;
+@property(nonatomic,readwrite,copy) NSString* tripcode;
+@property(nonatomic,readwrite,copy) NSString* securetrip;
 
 - (id)initWithUserInfo:(NSDictionary*)info;
 + (CKUser*)userWithInfo:(NSDictionary*)info;
