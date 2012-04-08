@@ -142,9 +142,8 @@
 + (NSString*)generatePassword {
 	NSString* alphanum = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     NSMutableString* pass = [NSMutableString stringWithCapacity:8];
-	srand(time(NULL)); //Not really worried about entropy here
 	for(int i = 0; i < 8; i++)
-		[pass appendFormat:@"%c",[alphanum characterAtIndex:rand()%[alphanum length]]];
+		[pass appendFormat:@"%c",[alphanum characterAtIndex:arc4random()*[alphanum length]/4294967296L]];
 	return pass;
 }
 + (NSString*)MD5:(NSData*)data {
