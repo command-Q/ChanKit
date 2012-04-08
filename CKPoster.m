@@ -223,10 +223,9 @@
 		*error = CK_POSTERR_FILETYPE;
 	else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate" inDocument:doc]) {
 		*error = CK_POSTERR_DUPLICATE;
-		return [CKPost postFromURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate.URL" inDocument:doc] relativeToURL:URL]];
+		return [CKPost postReferencingURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate.URL" inDocument:doc] relativeToURL:URL]];
 	}
 	else {
-		*error = CK_ERR_UNDEFINED;
 		NSString* resboard,* redirect = [[CKRecipe sharedRecipe] lookup:@"Poster.Response.URL" inDocument:doc];
 		if(redirect)
 			resboard = [[CKUtil parseBoardRoot:[NSURL URLWithString:redirect relativeToURL:URL]] absoluteString];
@@ -238,26 +237,14 @@
 		DLog(@"Got Thread: %@",resthread);
 		DLog(@"Got Post: %@",respost);
 		if(resthread && respost && resboard) {
+			*error = CK_ERR_SUCCESS;
 			NSURL* resurl = [NSURL URLWithString:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Format"],resboard,resthread,respost]];
 			DLog(@"URL: %@",[resurl absoluteString]);
-			// 4chan will happily serve us a cached page that doesn't include our post, especially on long threads, so we can't do this
-			// return [CKPost postFromURL:[NSURL URLWithString:resurl]];
-			int i = 0;
-			CKPost* post = [[CKPost alloc] initByReferencingURL:resurl];
-			*error = [post populate];
-			// Finite wait in the off chance the post is actually deleted before we get it
-			while(*error == CK_ERR_NOTFOUND && i < 10) {
-				[post release];
-				[NSThread sleepForTimeInterval:1];
-				post = [[CKPost alloc] initByReferencingURL:resurl];
-				*error = [post populate];
-				i++;
-			}
-			DLog(@"Tried to find post %d times",i);
-			if(!*error)
-				return [post autorelease];
-			[post release];
+			// 4chan will happily serve us a cached page that doesn't include our post, especially on long threads, so we can't return a populated post
+			// Better not to make network-hitting decisions like that anyway.
+			return [CKPost postReferencingURL:resurl];
 		}
+		*error = CK_ERR_UNDEFINED;
 	}
 	return nil;
 }

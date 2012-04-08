@@ -265,9 +265,14 @@ int main (int argc, const char * argv[]) {
 				sleep = 0;
 			else if(current.file) sleep = 40;
 
-			if(!err) {
+			if(err == CK_ERR_SUCCESS)
+				while((err = [post populate]) == CK_ERR_NOTFOUND)
+					[NSThread sleepForTimeInterval:2];
+			if(err == CK_ERR_SUCCESS) {
 				NSLog(@"%@\n%@",post.URL,[post prettyPrint]);
 				resource = post;
+				if(post.OP) //Reply to ourself
+					[posters makeObjectsPerformSelector:@selector(setURL:) withObject:post.URL];
 			}
 			else { 
 				switch(err) {
@@ -279,9 +284,7 @@ int main (int argc, const char * argv[]) {
 					case CK_POSTERR_NOTFOUND: error = YES; break;
 				}
 				NSLog(@"Error: %@",[CKUtil describeError:err]);
-			}
-			if(post.OP) //Reply to ourself
-				[posters makeObjectsPerformSelector:@selector(setURL:) withObject:post.URL];			
+			}	
 		}
 	}
 	else if([args boolForKey:@"random"]) {

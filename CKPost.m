@@ -128,6 +128,7 @@
 			return [self populate];
 		return CK_ERR_UNDEFINED;
 	}
+	deleted = NO;
 	[self populate:doc threadContext:nil];
 	if(deleted) return CK_ERR_NOTFOUND;
 	return 0;
