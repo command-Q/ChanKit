@@ -74,20 +74,23 @@
 	return [NSURL URLWithString:[[URL absoluteString] stringByMatching:@"[^#]+"]]; 
 }
 
-+ (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy {
-	ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
-	[CKUtil setProxy:proxy onRequest:&fetch];
-	[fetch startSynchronous];
++ (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request throughProxy:(NSURL*)proxy {
+	[CKUtil setProxy:proxy onRequest:&request];
+	[request startSynchronous];
 	int error;
-	if((error = [CKUtil validateResponse:fetch]) != CK_ERR_SUCCESS)
+	if((error = [CKUtil validateResponse:request]) != CK_ERR_SUCCESS)
 		return error;
-//	*doc = [[[NSXMLDocument alloc] initWithData:[fetch responseData] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
-//	Dirty trick to work around a bug in the outdated version of libxml2 used by NSXMLDocument
-	NSString* response = [fetch responseString];
+	if(!request.contentLength)
+		return CK_ERR_UNDEFINED;
+	//*doc = [[[NSXMLDocument alloc] initWithData:[request responseData] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
+	//Dirty trick to work around a bug in the outdated version of libxml2 used by NSXMLDocument
+	NSString* response = [request responseString];
 	if(!response)
-		response = [[[NSString alloc] initWithBytes:[[fetch responseData] bytes] length:[[fetch responseData] length] encoding:NSASCIIStringEncoding] autorelease];
-	*doc = [[[NSXMLDocument alloc] initWithXMLString:[response stringByReplacingOccurrencesOfString:@"<'+'\\/script>" withString:@"</script>"] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
-	[*doc setURI:[[fetch url] absoluteString]];
+		response = [[[NSString alloc] initWithBytes:[[request responseData] bytes] length:[[request responseData] length] encoding:NSASCIIStringEncoding] autorelease];
+	if(!(*doc = [[[NSXMLDocument alloc] initWithXMLString:[response stringByReplacingOccurrencesOfString:@"<'+'\\/script>" withString:@"</script>"] 
+		                                     options:NSXMLDocumentTidyHTML error:NULL] autorelease]))
+		return CK_ERR_PARSER;
+	[*doc setURI:[[request url] absoluteString]];
 	if([[CKRecipe sharedRecipe] certainty] == CK_RECIPE_NOMATCH && [[CKRecipe sharedRecipe] detectBoardSoftware:*doc] <= 0) {
 		DLog(@"Unsupported board type");
 		return CK_ERR_UNSUPPORTED;
@@ -97,6 +100,13 @@
 		return CK_ERR_BANNED;
 	}
 	return CK_ERR_SUCCESS;	
+}
++ (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request {
+	return [CKUtil fetchXML:doc viaRequest:request throughProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"]]; // Very bad!
+}
++ (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy {
+	ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
+	return [CKUtil fetchXML:doc viaRequest:fetch throughProxy:proxy];
 }
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL {
 	return [CKUtil fetchXML:doc fromURL:URL throughProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"]]; // Very bad!

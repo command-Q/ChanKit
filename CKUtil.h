@@ -21,6 +21,8 @@
 + (NSURL*)parseBoardRoot:(NSURL*)URL;
 + (NSURL*)URLByDeletingFragment:(NSURL*)URL;
 
++ (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request throughProxy:(NSURL*)proxy;
++ (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request;
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy;
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL;
 + (int)validateResponse:(ASIHTTPRequest*)response;
