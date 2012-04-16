@@ -35,4 +35,5 @@
 - (CKPost*)oldestPost;
 - (NSTimeInterval)rangeOfPosts;
 
+- (NSString*)prettyPrint;
 @end
