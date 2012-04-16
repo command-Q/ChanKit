@@ -91,7 +91,6 @@
 	CKPost* candidate;
 	for(CKThread* thread in threads)
 		if((candidate = [[thread posts] lastObject]).ID > result.ID)
-			// Clang, stop complaining about this
 			result = candidate;
 	return result;
 }
