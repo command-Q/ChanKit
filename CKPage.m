@@ -67,7 +67,7 @@
 	[threads removeAllObjects];
 	NSString* URI = [doc URI];
 	for(NSString* href in [[[CKRecipe sharedRecipe] lookup:@"Page.Threads" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
-		[doc setURI:[[(index ? [URL URLByDeletingLastPathComponent] : URL) URLByAppendingPathComponent:href] absoluteString]];		
+		[doc setURI:[[NSURL URLWithString:href relativeToURL:URL] absoluteString]];		
 		[threads addObject:[[[CKThread alloc] initWithPage:doc] autorelease]];		
 	}
 	[doc setURI:URI];
