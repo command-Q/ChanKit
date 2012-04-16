@@ -138,7 +138,7 @@
 			<key>Path</key>
 			<string>./span[@class=&quot;filesize&quot;]/text()[2]</string>
 			<key>Regex</key>
-			<string>, ([^x]+)</string>
+			<string>, (\d+)x</string>
 		</dict>
 		<key>Height</key>
 		<dict>
