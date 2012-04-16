@@ -32,6 +32,7 @@
 		DLog(@"Image Size: %u bytes",size);
 		return self;		
 	}
+	[self release];
 	return nil;
 }
 + (CKImage*)imageWithContentsOfURL:(NSURL*)url { return [[[self alloc] initWithContentsOfURL:url] autorelease]; }
@@ -63,6 +64,7 @@
 
 		return self;
 	}
+	[self release];
 	return nil;
 }
 + (CKImage*)imageFromXML:(NSXMLNode*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }

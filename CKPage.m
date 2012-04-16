@@ -34,6 +34,7 @@
 - (id)initWithURL:(NSURL*)url {
 	if((self = [self initByReferencingURL:url]) && ![self populate])
 		return self;
+	[self release];
 	return nil;
 }
 + (CKPage*)pageFromURL:(NSURL*)url { return [[[self alloc] initWithURL:url] autorelease]; }

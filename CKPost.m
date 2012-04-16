@@ -79,15 +79,18 @@
 		DLog(@"Board: %@",board);
 		DLog(@"Thread ID: %d",thread);
 		DLog(@"Post ID: %d",ID);
-		DLog(@"OP: %d",OP);	
+		DLog(@"OP: %d",OP);
+		return self;
 	}
-	return self;
+	[self release];
+	return nil;
 }
 + (CKPost*)postReferencingURL:(NSURL*)url { return [[[self alloc] initByReferencingURL:url] autorelease]; }
 
 - (id)initWithURL:(NSURL*)url{
 	if((self = [self initByReferencingURL:url]) && ![self populate])
 		return self;
+	[self release];
 	return nil;
 }
 + (CKPost*)postFromURL:(NSURL*)url { return [[[self alloc] initWithURL:url] autorelease]; }

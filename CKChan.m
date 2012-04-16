@@ -83,6 +83,7 @@
 	NSURL* url;
 	if((url = [[CKRecipe sharedRecipe] URLForSite:sitename]))
 		return [self initWithURL:url];
+	[self release];
 	return nil;
 }
 + (CKChan*)chanNamed:(NSString*)sitename { return [[[self alloc] initWithName:sitename] autorelease]; }
