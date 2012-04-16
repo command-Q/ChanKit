@@ -311,11 +311,11 @@
 	[formatter setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
 	NSMutableString* desc = [NSMutableString string];
 	if(subject) [desc appendFormat:@"\e[1;34m%@\e[0m ",subject];
-	[desc appendFormat:@"%@ %@ No.%d ",[user prettyPrint],[formatter stringFromDate:date],ID];
-	if(banned) [desc appendString:@"\e[0;31m☠\e[0m"];
-	if(deleted) [desc appendString:@"\e[0;31m⌫\e[0m"];
-	if(closed) [desc appendString:@"⦸\e[0;31m✖\e[0m"];
-	if(sticky) [desc appendString:@"\e[0;33m☌\e[0m"];
+	[desc appendFormat:@"%@ %@ No.%d",[user prettyPrint],[formatter stringFromDate:date],ID];
+	if(banned) [desc appendString:@" \e[0;31m☠\e[0m"];
+	if(deleted) [desc appendString:@" \e[0;31m⌫\e[0m"];
+	if(closed) [desc appendString:@" \e[0;31m✖\e[0m"];
+	if(sticky) [desc appendString:@" \e[0;33m☌\e[0m"];
 	if(image) [desc appendString:[image prettyPrint]];
 	if(comment) {
 		NSMutableString* formatted = [NSMutableString stringWithString:comment];

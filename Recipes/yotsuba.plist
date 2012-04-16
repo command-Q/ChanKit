@@ -200,9 +200,9 @@
 		<key>Spoilers</key>
 		<string>./blockquote/span[@class=&quot;spoiler&quot;]/text()</string>
 		<key>Sticky</key>
-		<string>./img[@alt=&quot;sticky&quot;]</string>
+		<string>./span[starts-with(@id,&quot;nothread&quot;)]/img[@alt=&quot;sticky&quot;]/@alt</string>
 		<key>Closed</key>
-		<string>./span/img[@alt=&quot;closed&quot;]</string>
+		<string>./span[starts-with(@id,&quot;nothread&quot;)]/img[@alt=&quot;closed&quot;]/@alt</string>
 		<key>BanMessage</key>
 		<string>(USER WAS BANNED FOR THIS POST)</string>
 	</dict>
@@ -353,9 +353,9 @@
 		<key>Trailing</key>
 		<string>./table/tr/td[@class=&quot;reply&quot;]/@id</string>
 		<key>Sticky</key>
-		<string>/html/body/form/span/img[@alt=&quot;sticky&quot;]</string>
+		<string>/html/body/form/span[starts-with(@id,&quot;nothread&quot;)]/img[@alt=&quot;sticky&quot;]/@alt</string>
 		<key>Closed</key>
-		<string>/html/body/form/span/img[@alt=&quot;closed&quot;]</string>
+		<string>/html/body/form/span[starts-with(@id,&quot;nothread&quot;)]/img[@alt=&quot;closed&quot;]/@alt</string>
 	</dict>
 	<key>Page</key>
 	<dict>
