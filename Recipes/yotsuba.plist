@@ -176,6 +176,8 @@
 		<string>./blockquote</string>
 		<key>RawComment</key>
 		<string>./blockquote/text()</string>
+		<key>Abbreviated</key>
+		<string>./blockquote/span[@class=&quot;abbr&quot;]</string>
 		<key>Admin</key>
 		<string>./blockquote/b/text()</string>
 		<key>Quotes</key>

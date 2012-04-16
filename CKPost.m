@@ -177,9 +177,14 @@
 	
 	image = [[CKImage alloc] initWithXML:doc];
 
+	NSArray* abbr = [doc nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Post.Abbreviated"] error:NULL];
+	if((abbreviated = [abbr count]))
+		[[abbr objectAtIndex:0] detach];
+	DLog(@"Abbreviated: %d",abbreviated);
+
 	comment = [[[CKRecipe sharedRecipe] lookup:@"Post.Comment" inDocument:doc] retain];
 	DLog(@"Comment:\n%@",comment);
-	
+
 	NSUInteger last = 0;
 	for(NSString* msg in [[[CKRecipe sharedRecipe] lookup:@"Post.Admin" inDocument:doc] 
 						  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
@@ -280,6 +285,7 @@
 @synthesize banned;
 @synthesize deleted;
 @synthesize comment;
+@synthesize abbreviated;
 
 - (NSArray*)quotes { return quotes.values; }
 - (NSArray*)inlinequotes { return inlinequotes.values; }
@@ -299,10 +305,11 @@
 	[desc appendFormat:@"%@ %@ No.%d ",user,[formatter stringFromDate:date],ID];
 	if(banned) [desc appendString:@"☠"];
 	if(deleted) [desc appendString:@"⌫"];
-	if(closed) [desc appendString:@"⦸✖"];
+	if(closed) [desc appendString:@"✖"];
 	if(sticky) [desc appendString:@"☌"];
 	if(image) [desc appendString:[image description]];
 	if(comment) [desc appendFormat:@"\n%@",comment];
+	if(abbreviated) [desc appendString:@" (…)"];
 	return desc;
 }
 
@@ -347,6 +354,7 @@
 				 [[formatted componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] 
 				  componentsJoinedByString:@"\n\t"]];
 	}
+	if(abbreviated) [desc appendString:@"\n\t(…)"];
 	return desc;	
 }
 

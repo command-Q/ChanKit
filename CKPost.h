@@ -55,6 +55,7 @@ typedef struct {
 	ranges_s inlinequotes;
 	ranges_s adminmessages;
 	ranges_s spoilers;
+	BOOL abbreviated;
 	BOOL OP;
 	BOOL sticky;
 	BOOL closed;
@@ -80,6 +81,7 @@ typedef struct {
 @property(nonatomic,readwrite,assign) BOOL closed;
 @property(nonatomic,readonly) BOOL banned;
 @property(nonatomic,readwrite,assign) BOOL deleted;
+@property(nonatomic,readonly) BOOL abbreviated;
 @property(nonatomic,readonly) NSString* IDString;
 
 - (id)initTestPost;
