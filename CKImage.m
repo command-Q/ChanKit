@@ -40,7 +40,7 @@
 - (id)initWithXML:(NSXMLNode*)doc {
 	NSString* url;
 	if((self = [super init]) && (url = [[CKRecipe sharedRecipe] lookup:@"Image.URL" inDocument:doc]) != nil) {
-		URL = [[NSURL alloc] initWithString:url relativeToURL:[NSURL URLWithString:[doc URI]]];
+		URL = [[NSURL alloc] initWithString:url relativeToURL:[NSURL URLWithString:[[doc rootDocument] URI]]];
 		name = [[[CKRecipe sharedRecipe] lookup:@"Image.Name" inDocument:doc] retain];
 		resolution = NSMakeSize([[[CKRecipe sharedRecipe] lookup:@"Image.Width" inDocument:doc] floatValue],
 						  [[[CKRecipe sharedRecipe] lookup:@"Image.Height" inDocument:doc] floatValue]);
