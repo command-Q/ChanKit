@@ -116,9 +116,8 @@ static CKRecipe* sharedInstance = nil;
 - (int)detectBoardSoftware:(NSXMLDocument*)doc {
 	@synchronized(self) {
 		if(!doc) return CK_DETECTION_COULDNOTPROCEED;
-		if([self detectSite:[NSURL URLWithString:[doc URI]]]) {
-			return CK_DETECTION_URL;
-		}
+//		if([self detectSite:[NSURL URLWithString:[doc URI]]])
+//			return CK_DETECTION_URL;
 		NSArray* recipes = [[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"];
 		for(NSString* path in recipes) {
 			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];

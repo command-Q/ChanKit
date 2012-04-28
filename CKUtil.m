@@ -91,7 +91,7 @@
 		                                     options:NSXMLDocumentTidyHTML error:NULL] autorelease]))
 		return CK_ERR_PARSER;
 	[*doc setURI:[[request url] absoluteString]];
-	if([[CKRecipe sharedRecipe] certainty] == CK_RECIPE_NOMATCH && [[CKRecipe sharedRecipe] detectBoardSoftware:*doc] <= 0) {
+	if([[CKRecipe sharedRecipe] certainty] != CK_RECIPE_XMLMATCH && [[CKRecipe sharedRecipe] detectBoardSoftware:*doc] <= 0) {
 		DLog(@"Unsupported board type");
 		return CK_ERR_UNSUPPORTED;
 	}
