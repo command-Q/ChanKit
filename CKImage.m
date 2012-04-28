@@ -56,7 +56,7 @@
 		
 		DLog(@"Image URL: %@",URL);
 		DLog(@"Image Name: %@",name);
-		DLog(@"Image Timestamp: %@",name);
+		DLog(@"Image Timestamp: %@",timestamp);
 		DLog(@"Image Resolution: %0.0fx%0.0f",resolution.width,resolution.height);
 		DLog(@"Image Size: %u bytes",size);
 		DLog(@"Image MD5: %@",MD5);
