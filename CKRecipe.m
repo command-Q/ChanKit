@@ -70,17 +70,17 @@ static CKRecipe* sharedInstance = nil;
 		for(NSString* path in recipes) {
 			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
 			for(NSDictionary* site in [self lookup:@"Support.Sites"]) {
-				for(NSString* regex in [site objectForKey:@"Regex"])
-					if([[URL absoluteString] isMatchedByRegex:regex]) {
-						certainty = CK_RECIPE_URLMATCH;
-						DLog(@"Using %@",path);
-						return CK_DETECTION_URL;						
-					}
 				for(NSString* url in [site objectForKey:@"URLs"])
 					if([url isEqualToString:[URL host]]) {
 						certainty = CK_RECIPE_URLMATCH;
 						DLog(@"Using %@",path);
 						return CK_DETECTION_URL;			
+					}
+				for(NSString* regex in [site objectForKey:@"Regex"])
+					if([[URL absoluteString] isMatchedByRegex:regex]) {
+						certainty = CK_RECIPE_URLMATCH;
+						DLog(@"Using %@",path);
+						return CK_DETECTION_URL;						
 					}
 			}
 		}
