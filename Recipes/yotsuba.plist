@@ -35,10 +35,10 @@
 		<key>Software</key>
 		<dict>
 			<key>Title</key>
-			<string>/html/body/form/div[@id=&quot;footer&quot;]/center/font/a[2]/text()</string>
+			<string>/html/body/form/div[@id=&quot;footer&quot;]/div[@id=&quot;absbot&quot;]/a[2]/text()</string>
 		</dict>
 		<key>Identifier</key>
-		<string>/html/body/form/span[@class=&quot;filetitle&quot;]</string>
+		<string>/html/body/form/div[@id=&quot;footer&quot;]/div[@id=&quot;absbot&quot;]/a[2]</string>
 	</dict>
 	<key>User</key>
 	<dict>
