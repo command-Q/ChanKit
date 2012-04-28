@@ -331,7 +331,7 @@
 	<key>Thread</key>
 	<dict>
 		<key>Root</key>
-		<string>/html/body/form</string>
+		<string>/html/body/form/input[@name=&quot;%@&quot;]/..</string>
 		<key>Replies</key>
 		<string>/html/body/form/table/tr/td[@class=&quot;reply&quot;]/@id</string>
 		<key>Preceding</key>

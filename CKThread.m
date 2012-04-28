@@ -53,7 +53,8 @@
 
 - (id)initWithPage:(NSXMLDocument*)doc {
 	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]])) {		
-		NSXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[[CKRecipe sharedRecipe] lookup:@"Thread.Root"] error:NULL] objectAtIndex:0];
+		NSXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread.Root"],self.IDString]
+		 	error:NULL] objectAtIndex:0];
 		[[root rootDocument] setURI:[URL absoluteString]];
 		NSString* cleanup;
 		if((cleanup = [[CKRecipe sharedRecipe] lookup:@"Thread.Preceding"])) {
