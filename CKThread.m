@@ -74,11 +74,12 @@
 		NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Trailing" inDocument:root] 
 						componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 
+		NSString* URI = [doc URI];
 		for(NSString* reply in replies) {
 			[doc setURI:[NSString stringWithFormat:@"%@#%@",URL,reply]];
 			[posts addObject:[[[CKPost alloc] initWithXML:doc threadContext:self] autorelease]];
 		}		
-
+		[doc setURI:URI];
 		
 		postcount = [[[CKRecipe sharedRecipe] lookup:@"Thread.Omitted" inDocument:root] intValue] + [posts count];
 		imagecount = [[[CKRecipe sharedRecipe] lookup:@"Thread.OmittedImages" inDocument:root] intValue] + [[self imagePosts] count];
