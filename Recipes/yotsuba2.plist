@@ -48,6 +48,8 @@
 			<array>
 				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/span[@class=&quot;name&quot;]/text()</string>
 				<string>./div[@class=&quot;postInfo&quot;]/span/span[@class=&quot;name&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/a[@class=&quot;useremail&quot;]/span[@class=&quot;name&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span/a[@class=&quot;useremail&quot;]/span[@class=&quot;name&quot;]/text()</string>
 			</array>
 			<key>TripString</key>
 			<string>([^!]*+)!?</string>
@@ -55,7 +57,10 @@
 		<key>Email</key>
 		<dict>
 			<key>Path</key>
-			<string>./div[@class=&quot;postInfo&quot;]/span/span[@class=&quot;name&quot;]/a[@class=&quot;useremail&quot;]/@href</string>
+			<array>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/a[@class=&quot;useremail&quot;]/@href</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span/a[@class=&quot;useremail&quot;]/@href</string>
+			</array>
 			<key>Regex</key>
 			<string>mailto:(.*)</string>
 		</dict>
