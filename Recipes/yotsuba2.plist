@@ -448,11 +448,11 @@
 			<key>CrossBoardFormat</key>
 			<string>&gt;&gt;&gt;/%@/%d</string>
 			<key>ID</key>
-			<string>[#p=](\d+)</string>
+			<string>#p(\d+)$</string>
 			<key>CrossThread</key>
-			<string>(\d+#p?\d+)</string>
+			<string>(\d+#p\d+)$</string>
 			<key>CrossBoard</key>
-			<string>[^\?]+\?[^=]+=</string>
+			<string>/\w+/res/\d+#p\d+$</string>
 			<key>Regex</key>
 			<string>&gt;&gt;\d+\s*|&gt;&gt;&gt;/\w+/\d+\s*</string>
 		</dict>
