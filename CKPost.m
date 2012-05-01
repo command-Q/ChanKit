@@ -295,9 +295,6 @@
 - (NSArray*)inlinequotes { return inlinequotes.values; }
 - (NSArray*)spoilers { return spoilers.values; }
 - (NSArray*)adminmessages { return adminmessages.values; }
-- (void)addAdminMessage:(NSString*)newcomment {
-	//todo
-}
 
 - (NSString*)IDString { return [NSString stringWithFormat:@"%d",ID]; }
 

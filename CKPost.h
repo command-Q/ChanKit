@@ -96,7 +96,6 @@ typedef struct {
 - (int)populate;
 - (void)populate:(NSXMLNode*)doc threadContext:(CKThread*)context;
 
-- (void)addAdminMessage:(NSString*)newcomment;
 - (NSString*)commentFilteringQuotes;
 - (BOOL)commentContains:(NSString*)astring;
 - (BOOL)quoted:(CKPost*)post;
