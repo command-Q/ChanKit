@@ -110,7 +110,10 @@
 @synthesize is18plus;
 
 - (void)setCategory:(NSString*)cat is18Plus:(BOOL)nsfw {
-	category = [cat retain];
+	if(cat != category) {
+		[category release];
+		category = [cat copy];
+	}
 	DLog(@"Category: %@",category);
 	is18plus = nsfw;
 	DLog(@"18+: %d",is18plus);
@@ -134,7 +137,7 @@
 	[queue setSuspended:NO];
     [queue waitUntilAllOperationsAreFinished];
 	[queue release];
-	return pages;
+	return self.pages;
 }
 
 - (CKPost*)findPostForImage:(NSURL*)url {

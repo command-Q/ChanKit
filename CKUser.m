@@ -121,8 +121,8 @@
 	return dict;
 }
 
-- (NSString*)tripcode { return tripcode.trip; }
-- (NSString*)securetrip { return tripcode.securetrip; }
+- (NSString*)tripcode { return [[tripcode.trip retain] autorelease]; }
+- (NSString*)securetrip { return [[tripcode.securetrip retain] autorelease]; }
 - (void)setTripcode:(NSString*)trip {
 	if(tripcode.trip != trip) {
 		[tripcode.trip release];

@@ -291,10 +291,10 @@
 @synthesize comment;
 @synthesize abbreviated;
 
-- (NSArray*)quotes { return quotes.values; }
-- (NSArray*)inlinequotes { return inlinequotes.values; }
-- (NSArray*)spoilers { return spoilers.values; }
-- (NSArray*)adminmessages { return adminmessages.values; }
+- (NSArray*)quotes { return [[quotes.values retain] autorelease]; }
+- (NSArray*)inlinequotes { return [[inlinequotes.values retain] autorelease]; }
+- (NSArray*)spoilers { return [[spoilers.values retain] autorelease]; }
+- (NSArray*)adminmessages { return [[adminmessages.values retain] autorelease]; }
 
 - (NSString*)IDString { return [NSString stringWithFormat:@"%d",ID]; }
 

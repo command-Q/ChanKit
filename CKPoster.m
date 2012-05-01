@@ -120,9 +120,14 @@
 @synthesize file;
 @synthesize spoiler;
 
-- (NSString*)verification { return captcha.verification; }
-- (void)setVerification:(NSString*)ver { captcha.verification = [ver retain]; }
-- (CKImage*)captcha { return [captcha.image retain]; }
+- (NSString*)verification { return [[captcha.verification retain] autorelease]; }
+- (void)setVerification:(NSString*)ver {
+	if(ver != captcha.verification) {
+		[captcha.verification release];
+		captcha.verification = [ver copy];
+	}
+}
+- (CKImage*)captcha { return [[captcha.image retain] autorelease]; }
 
 - (BOOL)verify:(NSString*)captchaverification {
 	// Needs work

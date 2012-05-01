@@ -109,12 +109,12 @@
 - (BOOL)loaded { return image != nil; }
 - (NSString*)MD5 {
 	if(!MD5) [self load];
-	return MD5;
+	return [[MD5 retain] autorelease];
 }
 - (NSImage*)image {	return [[[NSImage alloc] initWithData:image] autorelease]; }
 - (NSData*)data { 
 	[self load];
-	return image;
+	return [[image retain] autorelease];
 }
 - (int)load { 
 	if(!verified) {
