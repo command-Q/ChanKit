@@ -80,7 +80,8 @@
 		DLog(@"Thread ID: %d",thread);
 		DLog(@"Post ID: %d",ID);
 		DLog(@"OP: %d",OP);
-		return self;
+		if(ID >= 0)
+			return self;
 	}
 	[self release];
 	return nil;
