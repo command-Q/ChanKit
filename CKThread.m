@@ -156,10 +156,12 @@
 	
 	NSString* URI = [doc URI];
 	for(NSString* reply in replies) {
+		NSAutoreleasePool* loop = [[NSAutoreleasePool alloc] init];
 		[doc setURI:[NSString stringWithFormat:@"%@#%@",URL,reply]];
 		CKPost* post = [[CKPost alloc] initWithXML:doc threadContext:self];
 		[posts insertObject:post atIndex:post.index+deleted];
 		[post release];
+		[loop drain];
 	}
 	[doc setURI:URI]; // A bit messy
 	postcount = [posts count];
