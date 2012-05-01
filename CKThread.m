@@ -36,10 +36,16 @@
 		DLog(@"Board: %@", board);
 		DLog(@"Thread ID: %d",ID);
 		DLog(@"Thread URL: %@",URL);
-
-		[posts addObject:[[[CKPost alloc] initByReferencingURL:URL] autorelease]];
+		
+		CKPost* OP = [[CKPost alloc] initByReferencingURL:URL];
+		if(OP) {
+			[posts addObject:OP];
+			[OP release];
+			return self;
+		}
 	}
-	return self;
+	[self release];
+	return nil;
 }
 + (CKThread*)threadReferencingURL:(NSURL*)url { return [[[self alloc] initByReferencingURL:url] autorelease]; }
 
@@ -78,7 +84,11 @@
 		NSString* URI = [doc URI];
 		for(NSString* reply in replies) {
 			[doc setURI:[NSString stringWithFormat:@"%@#%@",URL,reply]];
-			[posts addObject:[[[CKPost alloc] initWithXML:doc threadContext:self] autorelease]];
+			CKPost* post = [[CKPost alloc] initWithXML:doc threadContext:self];
+			if(post) {
+				[posts addObject:post];
+				[post release];
+			}
 		}		
 		[doc setURI:URI];
 		
@@ -159,8 +169,10 @@
 		NSAutoreleasePool* loop = [[NSAutoreleasePool alloc] init];
 		[doc setURI:[NSString stringWithFormat:@"%@#%@",URL,reply]];
 		CKPost* post = [[CKPost alloc] initWithXML:doc threadContext:self];
-		[posts insertObject:post atIndex:post.index+deleted];
-		[post release];
+		if(post) {
+			[posts insertObject:post atIndex:post.index+deleted];
+			[post release];
+		}
 		[loop drain];
 	}
 	[doc setURI:URI]; // A bit messy

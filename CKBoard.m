@@ -85,10 +85,13 @@
 	DLog(@"Rules: %@",rules);
 	
 	[pages removeAllObjects];
-	for(NSString* page in [[[CKRecipe sharedRecipe] lookup:@"Board.Pages" inDocument:doc]
+	CKPage* page;
+	for(NSString* pageno in [[[CKRecipe sharedRecipe] lookup:@"Board.Pages" inDocument:doc]
 				componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
-		[pages addObject:[CKPage pageReferencingURL:[boardroot URLByAppendingPathComponent:page]]];
-	[pages insertObject:[CKPage pageFromXML:doc] atIndex:index];
+		if((page = [CKPage pageReferencingURL:[boardroot URLByAppendingPathComponent:pageno]]))
+			[pages addObject:page];
+	if((page = [CKPage pageFromXML:doc]))
+		[pages insertObject:page atIndex:index];
 	 
 	numpages = [pages count];
 	DLog(@"Pages: %d",numpages);

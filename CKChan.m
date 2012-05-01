@@ -97,18 +97,17 @@
 												   componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]];
 	DLog(@"Links: %@",links);
 	
-	for(NSString* board in [[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.URL" inDocument:doc] 
-							componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
-		[boards addObject:[[[CKBoard alloc] initByReferencingURL:[NSURL URLWithString:board relativeToURL:URL]
-														  title:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Title"
-																					 inDocument:doc 
-																						   test:board]
-													   category:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Category"
-																					 inDocument:doc 
-																						   test:board]
-													   is18plus:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Age" 
-																					 inDocument:doc 
-																						   test:board] != nil] autorelease]];
+	for(NSString* boardlink in [[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.URL" inDocument:doc] 
+							componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+		CKBoard* board = [[CKBoard alloc] initByReferencingURL:[NSURL URLWithString:boardlink relativeToURL:URL]
+			      title:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Title"    inDocument:doc test:boardlink]
+			   category:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Category" inDocument:doc test:boardlink]
+			   is18plus:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Age"      inDocument:doc test:boardlink] != nil];
+		if(board) {
+			[boards addObject:board];
+			[board release];
+		}
+	}
 	DLog(@"# of Boards: %d",[boards count]);
 	
 	return 0;
