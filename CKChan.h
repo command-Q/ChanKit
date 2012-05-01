@@ -29,11 +29,14 @@
 @property(nonatomic,readonly) NSArray* categories;
 @property(nonatomic,readonly) NSArray* boards;
 
+- (id)initByReferencingURL:(NSURL*)url;
++ (CKChan*)chanReferencingURL:(NSURL*)url;
 - (id)initWithURL:(NSURL*)url;
 + (CKChan*)chanFromURL:(NSURL*)url;
 - (id)initWithName:(NSString*)sitename;
 + (CKChan*)chanNamed:(NSString*)sitename;
 - (void)dealloc;
+- (int)populate;
 
 - (NSArray*)workSafeBoards;
 - (NSArray*)boardsInCategory:(NSString*)category;
