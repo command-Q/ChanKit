@@ -235,7 +235,7 @@
 }
 
 - (NSArray*)postsFromIndex:(int)idex {
-	if(idex > [posts count]) return [NSArray array];
+	if(idex >= [posts count]) return nil;
 	return [posts subarrayWithRange:NSMakeRange(idex, [posts count] - idex)];
 }
 

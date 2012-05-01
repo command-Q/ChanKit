@@ -85,7 +85,7 @@
 @synthesize threads;
 
 - (CKThread*)getThread:(int)idx {
-	if(idx > [threads count]) return nil;
+	if(idx >= [threads count]) return nil;
 	if(![[threads objectAtIndex:idx] initialized])
 		[[threads objectAtIndex:idx] populate];
 	return [threads objectAtIndex:idx];
