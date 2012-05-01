@@ -68,9 +68,11 @@
 }
 + (CKPost*)testPost { return [[[self alloc] initTestPost] autorelease]; }
 
-- (id)initByReferencingURL:(NSURL*)url {
-	if(url && (self = [self init])) {
-		URL = [url retain];
+- (BOOL)parseURL:(NSURL*)url {
+	if(url && url != URL) {
+		[URL release];
+		[board release];
+		URL = [url copy];
 		board = [[CKUtil parseBoard:URL] retain];
 		thread = [CKUtil parseThreadID:URL];
 		ID = [CKUtil parsePostID:URL];
@@ -80,9 +82,14 @@
 		DLog(@"Thread ID: %d",thread);
 		DLog(@"Post ID: %d",ID);
 		DLog(@"OP: %d",OP);
-		if(ID >= 0)
-			return self;
+		return board && ID >= 0;
 	}
+	return url != nil;
+}
+
+- (id)initByReferencingURL:(NSURL*)url {
+	if((self = [self init]) && [self parseURL:url])
+		return self;
 	[self release];
 	return nil;
 }
@@ -128,7 +135,7 @@
 	// Check that a redirect page didn't slip through
 	NSString* redirect;
 	if((redirect = [[CKRecipe sharedRecipe] lookup:@"Post.Redirect" inDocument:doc])) {
-		if((self = [self initByReferencingURL:[NSURL URLWithString:redirect]]))
+		if([self parseURL:[NSURL URLWithString:redirect relativeToURL:URL]])
 			return [self populate];
 		return CK_ERR_UNDEFINED;
 	}
