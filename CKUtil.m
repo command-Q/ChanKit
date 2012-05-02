@@ -75,7 +75,7 @@
 }
 
 + (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request throughProxy:(NSURL*)proxy {
-	[CKUtil setProxy:proxy onRequest:&request];
+	[CKUtil setProxy:proxy onRequest:request];
 	[request startSynchronous];
 	int error;
 	if((error = [CKUtil validateResponse:request]) != CK_ERR_SUCCESS)
@@ -122,18 +122,18 @@
 	}
 	return CK_ERR_SUCCESS;
 }
-+ (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest**)request {
++ (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest*)request {
 	if(!proxy) return;
-	[*request setTimeOutSeconds:CK_PROXY_TIMEOUT]; // Since it's a proxy, latency may be much higher
-	[*request setProxyHost:[proxy host]];
-	[*request setProxyPort:[[proxy port] intValue]];
+	[request setTimeOutSeconds:CK_PROXY_TIMEOUT]; // Since it's a proxy, latency may be much higher
+	[request setProxyHost:[proxy host]];
+	[request setProxyPort:[[proxy port] intValue]];
 	if([[proxy scheme] caseInsensitiveCompare:@"http"] == NSOrderedSame)
-		[*request setProxyType:(NSString*)kCFProxyTypeHTTP];
+		[request setProxyType:(NSString*)kCFProxyTypeHTTP];
 	else if([[proxy scheme] caseInsensitiveCompare:@"https"] == NSOrderedSame)
-		[*request setProxyType:(NSString*)kCFProxyTypeHTTPS];
+		[request setProxyType:(NSString*)kCFProxyTypeHTTPS];
 	else if([[proxy scheme] caseInsensitiveCompare:@"socks"] == NSOrderedSame)
-		[*request setProxyType:(NSString*)kCFProxyTypeSOCKS];
-	DLog(@"Using proxy %@://%@:%d",[*request proxyType],[*request proxyHost],[*request proxyPort]);
+		[request setProxyType:(NSString*)kCFProxyTypeSOCKS];
+	DLog(@"Using proxy %@://%@:%d",[request proxyType],[request proxyHost],[request proxyPort]);
 }
 
 + (BOOL)checkBan:(NSXMLDocument*)doc { 

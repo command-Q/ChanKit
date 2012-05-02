@@ -119,7 +119,7 @@
 - (int)load { 
 	if(!verified) {
 		ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
-		[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:&fetch];
+		[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:fetch];
 		[fetch startSynchronous];
 		int err;
 		if((err = [CKUtil validateResponse:fetch]) != CK_ERR_SUCCESS)

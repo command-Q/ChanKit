@@ -134,7 +134,7 @@
 	if(captchaverification) self.verification = captchaverification;
 	ASIFormDataRequest* crequest = [ASIFormDataRequest requestWithURL:
 		[NSURL URLWithString:@"http://www.google.com/recaptcha/api/noscript?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc"]];
-	[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:&crequest];
+	[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:crequest];
 	[crequest setPostValue:captcha.challenge forKey:@"recaptcha_challenge_field"];
 	[crequest setPostValue:captcha.verification forKey:@"recaptcha_response_field"];
 	[crequest startSynchronous];
