@@ -42,7 +42,6 @@ static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); 
 @property(nonatomic,readwrite,copy) NSString* verification;
 @property(nonatomic,readonly) CKImage* captcha;
 
-
 - (id)initWithPostingDictionary:(NSDictionary*)dict;
 + (CKPoster*)posterWithDictionary:(NSDictionary*)dict;
 - (id)initByReferencingURL:(NSURL*)url;

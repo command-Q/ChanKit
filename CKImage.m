@@ -15,7 +15,6 @@
 		URL = [url retain];
 		name = [[URL lastPathComponent] retain];
 		timestamp = [[NSDate alloc] initWithTimeIntervalSince1970:[[name stringByMatching:@"\\d{10}"] floatValue]];
-		
 		DLog(@"Image URL: %@",URL);
 		DLog(@"Image Name: %@",name);
 		DLog(@"Image Timestamp: %@",timestamp);
@@ -43,7 +42,7 @@
 		URL = [[NSURL alloc] initWithString:url relativeToURL:[NSURL URLWithString:[[doc rootDocument] URI]]];
 		name = [[[CKRecipe sharedRecipe] lookup:@"Image.Name" inDocument:doc] retain];
 		resolution = NSMakeSize([[[CKRecipe sharedRecipe] lookup:@"Image.Width" inDocument:doc] floatValue],
-						  [[[CKRecipe sharedRecipe] lookup:@"Image.Height" inDocument:doc] floatValue]);
+		                        [[[CKRecipe sharedRecipe] lookup:@"Image.Height" inDocument:doc] floatValue]);
 		NSString* turl;
 		if((turl = [[CKRecipe sharedRecipe] lookup:@"Image.Thumbnail" inDocument:doc]))
 			thumbnail = [[CKImage alloc] initByReferencingURL:[NSURL URLWithString:turl relativeToURL:URL]];
@@ -121,8 +120,8 @@
 		ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
 		[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:fetch];
 		[fetch startSynchronous];
-		int err;
-		if((err = [CKUtil validateResponse:fetch]) != CK_ERR_SUCCESS)
+		int err = [CKUtil validateResponse:fetch];
+		if(err != CK_ERR_SUCCESS)
 			return err;
 		image = [[fetch responseData] retain];
 		NSString* tmpMD5 = [CKUtil MD5:image];
@@ -131,7 +130,7 @@
 			DLog(@"Hash differs: %@ : %@",MD5,tmpMD5);
 			return CK_ERR_CHECKSUM;
 		}
-		verified = true;
+		verified = YES;
 		DLog(@"Verified MD5: %@",MD5);
 	}
 	return CK_ERR_SUCCESS;
@@ -148,15 +147,13 @@
 	return [formatter stringFromDate:timestamp];
 }
 - (NSString*)description {
-	return [NSString stringWithFormat:@"%cFile : %@-(%@%@, %@%@, %@)",
-			NSNewlineCharacter,[URL lastPathComponent],spoiler ? @"Spoiler Image, " : @"",self.formattedSize,self.formattedResolution,
-			name ? [NSString stringWithFormat:@", %@",name] : @"",self.formattedTimestamp];
+	return [NSString stringWithFormat:@"%cFile : %@-(%@%@, %@%@, %@)",NSNewlineCharacter,[URL lastPathComponent],(spoiler ? @"Spoiler Image, " : @""),
+	          self.formattedSize,self.formattedResolution,(name ? [NSString stringWithFormat:@", %@",name] : @""),self.formattedTimestamp];
 }
 
 - (NSString*)prettyPrint {
-	return [NSString stringWithFormat:@"%cFile : \e[4;34m%@\e[0m-(%@%@, %@%@, %@)",
-			NSNewlineCharacter,[URL lastPathComponent],spoiler ? @"Spoiler Image, " : @"",self.formattedSize,self.formattedResolution,
-			name ? [NSString stringWithFormat:@", %@",name] : @"",self.formattedTimestamp];
+	return [NSString stringWithFormat:@"%cFile : \e[4;34m%@\e[0m-(%@%@, %@%@, %@)",NSNewlineCharacter,[URL lastPathComponent],(spoiler ? @"Spoiler Image, " : @""),
+	          self.formattedSize,self.formattedResolution,(name ? [NSString stringWithFormat:@", %@",name] : @""),self.formattedTimestamp];
 }
 
 - (NSXMLNode*)XMLRepresentation {
@@ -170,65 +167,61 @@
 	 */
 	[self load];
 	NSString* thumbpath = [NSString pathWithComponents:[NSArray arrayWithObjects:@"image",@"thumbs",
-							[[name stringByDeletingPathExtension] stringByAppendingPathExtension:[thumbnail.name pathExtension]],nil]];
+	                         [[name stringByDeletingPathExtension] stringByAppendingPathExtension:[thumbnail.name pathExtension]],nil]];
 	NSString* imgpath = [NSString pathWithComponents:[NSArray arrayWithObjects:@"image",name,nil]];
 
-	NSXMLNode* xmlthumb = [NSXMLElement elementWithName:@"img" children:nil
-											 attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"src" stringValue:thumbpath]]];
+	NSXMLNode* xmlthumb = [NSXMLElement elementWithName:@"img"
+	                                           children:nil
+	                                         attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"src" stringValue:thumbpath]]];
 
 	// Need some way to signal whether we intend to store the image, unless the href attr can be removed from the document later
 	NSXMLNode* xmlimage = [NSXMLElement elementWithName:@"a"
-											   children:[NSArray arrayWithObject:xmlthumb]
-											 attributes:[NSArray arrayWithObjects:
-														 [NSXMLNode attributeWithName:@"href" stringValue:imgpath],
-														 [NSXMLNode attributeWithName:@"class" stringValue:@"image"],
-														 [NSXMLNode attributeWithName:@"data-timestamp" stringValue:self.formattedTimestamp],
-														 [NSXMLNode attributeWithName:@"data-width" stringValue:
-														  [NSString stringWithFormat:@"%0.0f",self.resolution.width]],
-														 [NSXMLNode attributeWithName:@"data-height" stringValue:
-														  [NSString stringWithFormat:@"%0.0f",self.resolution.height]],
-														 [NSXMLNode attributeWithName:@"data-size" 
-																		  stringValue:[NSString stringWithFormat:@"%d",size]],
-														 [NSXMLNode attributeWithName:@"data-md5" stringValue:MD5],
-														 [NSXMLNode attributeWithName:@"data-name" stringValue:name],
-														 [NSXMLNode attributeWithName:@"data-origin" stringValue:[URL absoluteString]],nil]];
+	                                           children:[NSArray arrayWithObject:xmlthumb]
+	                                         attributes:[NSArray arrayWithObjects:
+	                                                      [NSXMLNode attributeWithName:@"href" stringValue:imgpath],
+	                                                      [NSXMLNode attributeWithName:@"class" stringValue:@"image"],
+	                                                      [NSXMLNode attributeWithName:@"data-timestamp" stringValue:self.formattedTimestamp],
+	                                                      [NSXMLNode attributeWithName:@"data-width" stringValue:
+	                                                      [NSString stringWithFormat:@"%0.0f",self.resolution.width]],
+	                                                      [NSXMLNode attributeWithName:@"data-height" stringValue:
+	                                                      [NSString stringWithFormat:@"%0.0f",self.resolution.height]],
+	                                                      [NSXMLNode attributeWithName:@"data-size" stringValue:[NSString stringWithFormat:@"%d",size]],
+	                                                      [NSXMLNode attributeWithName:@"data-md5" stringValue:MD5],
+	                                                      [NSXMLNode attributeWithName:@"data-name" stringValue:name],
+	                                                      [NSXMLNode attributeWithName:@"data-origin" stringValue:[URL absoluteString]],nil]];
 	
 	NSXMLNode* xmlfile = [NSXMLElement elementWithName:@"a"
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:[imgpath lastPathComponent]]]
-											attributes:[NSArray arrayWithObjects:
-														[NSXMLNode attributeWithName:@"href" stringValue:imgpath],
-														[NSXMLNode attributeWithName:@"class" stringValue:@"image-path"],nil]];
+	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:[imgpath lastPathComponent]]]
+	                                        attributes:[NSArray arrayWithObjects:
+	                                                      [NSXMLNode attributeWithName:@"href" stringValue:imgpath],
+	                                                      [NSXMLNode attributeWithName:@"class" stringValue:@"image-path"],nil]];
 
 	NSXMLNode* xmlsize = [NSXMLElement elementWithName:@"span"
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.formattedSize]]
-											attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-size"]]];
+	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.formattedSize]]
+	                                        attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-size"]]];
 
 	NSXMLNode* xmlres = [NSXMLElement elementWithName:@"span"
-											 children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.formattedResolution]]
-										   attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" 
-																								stringValue:@"image-resolution"]]];
+	                                         children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.formattedResolution]]
+	                                       attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-resolution"]]];
 	
 	NSXMLNode* xmlname = [NSXMLElement elementWithName:@"span"
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:name]]
-											attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-name"]]];
+	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:name]]
+	                                        attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-name"]]];
 	
 	NSXMLNode* xmltime = [NSXMLElement elementWithName:@"span"
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.formattedTimestamp]]
-											attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class"
-																								 stringValue:@"image-timestamp"]]];
+	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.formattedTimestamp]]
+	                                        attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-timestamp"]]];
 	
 
 	NSXMLNode* xmlcomma = [NSXMLNode textWithStringValue:@", "];
 	NSXMLNode* xmldescription = [NSXMLElement elementWithName:@"span"
-													 children:[NSArray arrayWithObjects:[NSXMLNode textWithStringValue:@"File: "],
-																						xmlfile,[NSXMLNode textWithStringValue:@" - ("],
-																						xmlsize,xmlcomma,xmlres,xmlcomma,xmlname,xmlcomma,xmltime,
-																						[NSXMLNode textWithStringValue:@")"],nil]
-											 attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" 
-																								  stringValue:@"image-description"]]];
+	                                                 children:[NSArray arrayWithObjects:[NSXMLNode textWithStringValue:@"File: "],xmlfile,
+	                                                             [NSXMLNode textWithStringValue:@" - ("],xmlsize,xmlcomma,xmlres,xmlcomma,
+	                                                             xmlname,xmlcomma,xmltime,[NSXMLNode textWithStringValue:@")"],nil]
+	                                               attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-description"]]];
 	return [NSXMLElement elementWithName:@"div"
-								children:[NSArray arrayWithObjects:xmldescription,xmlimage,nil]
-							  attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"file"]]];
+	                            children:[NSArray arrayWithObjects:xmldescription,xmlimage,nil]
+	                          attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"file"]]];
 
 }
 

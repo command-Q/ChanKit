@@ -66,7 +66,7 @@
 			NSURL* URL = [NSURL URLWithString:[doc URI]];
 			int ID = [CKUtil parsePostID:URL];
 			NSString* rootpath = ID == [CKUtil parseThreadID:URL] ? [[CKRecipe sharedRecipe] lookup:@"Post.OP"] : 
-										[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],[NSNumber numberWithInt:ID]];
+			                              [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],[NSNumber numberWithInt:ID]];
 			NSArray* nodes = [doc nodesForXPath:rootpath error:NULL];
 			if(![nodes count]) return nil;
 			doc = [nodes objectAtIndex:0];
@@ -79,8 +79,8 @@
 		DLog(@"Tripcode: %@",tripcode.trip);
 		tripcode.securetrip = [[[CKRecipe sharedRecipe] lookup:@"User.SecureTripcode" inDocument:doc] retain];
 		DLog(@"Secure Tripcode: %@",tripcode.securetrip);
-		if		([[CKRecipe sharedRecipe] lookup:@"User.Authority.Admin" inDocument:doc]) privilege = CK_PRIV_ADMIN;
-		else if	([[CKRecipe sharedRecipe] lookup:@"User.Authority.Mod" inDocument:doc])	  privilege = CK_PRIV_MOD;		
+		if      ([[CKRecipe sharedRecipe] lookup:@"User.Authority.Admin" inDocument:doc]) privilege = CK_PRIV_ADMIN;
+		else if	([[CKRecipe sharedRecipe] lookup:@"User.Authority.Mod" inDocument:doc])   privilege = CK_PRIV_MOD;
 		DLog(@"Privilege: %d",privilege);
 	}
 	return self;
@@ -107,17 +107,12 @@
 
 - (NSDictionary*)dictionary {
 	NSMutableDictionary* dict = [NSMutableDictionary dictionary];
-	if(name)
-		[dict setObject:name forKey:@"Name"];
-	if(tripcode.trip)
-		[dict setObject:tripcode.trip forKey:@"Tripcode"];
-	if(tripcode.securetrip)
-		[dict setObject:tripcode.securetrip forKey:@"SecureTripcode"];
-	if(email)
-		[dict setObject:email forKey:@"Email"];
+	if(name)                [dict setObject:name forKey:@"Name"];
+	if(tripcode.trip)       [dict setObject:tripcode.trip forKey:@"Tripcode"];
+	if(tripcode.securetrip) [dict setObject:tripcode.securetrip forKey:@"SecureTripcode"];
+	if(email)               [dict setObject:email forKey:@"Email"];
+	if(password)            [dict setObject:password forKey:@"Password"];
 	[dict setObject:[NSNumber numberWithInt:privilege] forKey:@"Privilege"];
-	if(password)
-		[dict setObject:password forKey:@"Password"];
 	return dict;
 }
 
@@ -154,9 +149,9 @@
 
 - (NSString*)authority {
 	switch(privilege) {
-		case CK_PRIV_ADMIN:	return @" ## Admin";
-		case CK_PRIV_MOD:	return @" ## Mod";
-		default:			return @"";
+		case CK_PRIV_ADMIN: return @" ## Admin";
+		case CK_PRIV_MOD:   return @" ## Mod";
+		default:            return @"";
 	}
 }
 
@@ -185,7 +180,7 @@
 	NSMutableString* p = [NSMutableString string];
 	int color = email ? 34 : 32;
 	switch(privilege) {
-		case CK_PRIV_ADMIN:	color = 31; break;
+		case CK_PRIV_ADMIN: color = 31; break;
 		case CK_PRIV_MOD:   color = 35; break;
 	}
 	if(name) [p appendFormat:@"\e[%@1;%dm%@\e[0m",email?@"4;":@"",color,name];
@@ -195,33 +190,32 @@
 	return p;
 }
 - (NSXMLNode*)XMLRepresentation {
-	NSXMLNode* xmlname = [NSXMLElement elementWithName:@"span" 
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:name]] 						
-											attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"name"]]];
+	NSXMLNode* xmlname = [NSXMLElement elementWithName:@"span"
+	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:name]]
+	                                        attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"name"]]];
 	
-	NSXMLNode* xmltrip = [NSXMLElement elementWithName:@"span" 
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:tripcode.trip]] 						
-											attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"tripcode"]]];
+	NSXMLNode* xmltrip = [NSXMLElement elementWithName:@"span"
+	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:tripcode.trip]]
+	                                        attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"tripcode"]]];
 	
-	NSXMLNode* xmlstrip = [NSXMLElement elementWithName:@"span" 
-											   children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:tripcode.securetrip]]						
-											 attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"securetripcode"]]];
+	NSXMLNode* xmlstrip = [NSXMLElement elementWithName:@"span"
+	                                           children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:tripcode.securetrip]]
+	                                         attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"securetripcode"]]];
 
-	NSXMLNode* xmlauth = [NSXMLElement elementWithName:@"span" 
-											  children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.authority]]						
-											attributes:[NSArray arrayWithObjects:
-														[NSXMLNode attributeWithName:@"class" stringValue:@"privilege"],
-														[NSXMLNode attributeWithName:@"data-privilege" 
-																		 stringValue:[NSString stringWithFormat:@"%d",privilege]],nil]];
-	NSXMLNode* xmlemail = [NSXMLElement elementWithName:@"a" 
-											   children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:email]]						
-											 attributes:[NSArray arrayWithObjects:
-														 [NSXMLNode attributeWithName:@"class" stringValue:@"mail"],
-														 [NSXMLNode attributeWithName:@"href" stringValue:[NSString stringWithFormat:@"mailto:%@",email]],nil]];
+	NSXMLNode* xmlauth = [NSXMLElement elementWithName:@"span"
+	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.authority]]
+	                                        attributes:[NSArray arrayWithObjects:
+	                                                    [NSXMLNode attributeWithName:@"class" stringValue:@"privilege"],
+	                                                    [NSXMLNode attributeWithName:@"data-privilege"  stringValue:[NSString stringWithFormat:@"%d",privilege]],nil]];
+	NSXMLNode* xmlemail = [NSXMLElement elementWithName:@"a"
+	                                           children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:email]]
+	                                         attributes:[NSArray arrayWithObjects:
+	                                                    [NSXMLNode attributeWithName:@"class" stringValue:@"mail"],
+	                                                    [NSXMLNode attributeWithName:@"href" stringValue:[NSString stringWithFormat:@"mailto:%@",email]],nil]];
 	
 	return [NSXMLElement elementWithName:@"div"
-								children:[NSArray arrayWithObjects:xmlname,xmltrip,xmlstrip,xmlauth,xmlemail,nil]
-							  attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"user"]]];
+	                            children:[NSArray arrayWithObjects:xmlname,xmltrip,xmlstrip,xmlauth,xmlemail,nil]
+	                          attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"user"]]];
 }
 
 @end

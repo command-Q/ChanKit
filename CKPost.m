@@ -34,21 +34,22 @@
 		thread = 0;
 		index = 0;
 		board = @"b";
-		NSDictionary* uinfo = [NSDictionary dictionaryWithObjectsAndKeys:@"Name",@"Name",@"Trip",@"Tripcode",
-							   @"Secure",@"Secure Tripcode",@"e@ma.il",@"Email",
-							   [NSNumber numberWithInt:CK_PRIV_ADMIN],@"Privilege",nil];
-		user = [[CKUser alloc] initWithUserInfo:uinfo];
+		user = [[CKUser alloc] initWithUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+		                                           @"Name",@"Name",
+		                                           @"Trip",@"Tripcode",
+		                                           @"Secure",@"Secure Tripcode",
+		                                           @"email@example.com",@"Email",
+		                                           [NSNumber numberWithInt:CK_PRIV_ADMIN],@"Privilege",nil]];
 		
 		NSBundle* classbundle = [NSBundle bundleForClass:[self class]];
 		image = [[CKImage alloc] initByReferencingURL:[classbundle URLForImageResource:@"ChanKit.png"]];
 		image.thumbnail = [CKImage imageWithContentsOfURL:[classbundle URLForImageResource:@"ChanKit_thumb.png"]];
 		[image setMetadata:[NSDictionary dictionaryWithObjectsAndKeys:	
-							@"KRUrxKSynSfP8h/eYN8yqA==",@"MD5",
-							[NSNumber numberWithUnsignedInteger:328230],@"Size",
-							[NSValue valueWithSize:NSMakeSize(512.0,512.0)],@"Resolution",
-							[[[NSFileManager defaultManager] attributesOfItemAtPath:
-							[classbundle pathForImageResource:@"ChanKit.png"] error:nil] fileModificationDate],
-							@"Timestamp",nil]];
+		                      @"KRUrxKSynSfP8h/eYN8yqA==",@"MD5",
+		                      [NSNumber numberWithUnsignedInteger:328230],@"Size",
+		                      [NSValue valueWithSize:NSMakeSize(512.0,512.0)],@"Resolution",
+		                      [[[NSFileManager defaultManager] attributesOfItemAtPath:
+		                         [classbundle pathForImageResource:@"ChanKit.png"] error:nil] fileModificationDate],@"Timestamp",nil]];
 
 		subject = @"Subject";
 		comment = @">>1\n>Inline\nComment\n(ADMIN MESSAGE)";
@@ -128,9 +129,9 @@
 }
 
 - (int)populate { 
-	int error;
 	NSXMLDocument* doc;
-	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
+	int error = [CKUtil fetchXML:&doc fromURL:URL];
+	if(error != CK_ERR_SUCCESS)
 		return error;
 	// URL may have changed during fetch due to redirects
 	if(![self parseURL:[NSURL URLWithString:[doc URI]]])
@@ -138,14 +139,14 @@
 	deleted = NO;
 	[self populate:doc threadContext:nil];
 	if(deleted) return CK_ERR_NOTFOUND;
-	return 0;
+	return CK_ERR_SUCCESS;
 }
 
 - (void)populate:(NSXMLNode*)doc threadContext:(CKThread*)context {
 	if(![doc level]) {
 		// doc is root node
 		NSString* rootpath = OP ? [[CKRecipe sharedRecipe] lookup:@"Post.OP"] : 
-									[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],self.IDString];
+		                        [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],self.IDString];
 		NSArray* nodes = [doc nodesForXPath:rootpath error:NULL];
 		if([nodes count]) [self populate:[nodes objectAtIndex:0] threadContext:context];
 		else deleted = YES; // Unless a bogus URL was sent, but that's the client's problem; it shouldn't ever happen internally.
@@ -193,8 +194,7 @@
 	DLog(@"Comment:\n%@",comment);
 
 	NSUInteger last = 0;
-	for(NSString* msg in [[[CKRecipe sharedRecipe] lookup:@"Post.Admin" inDocument:doc] 
-						  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+	for(NSString* msg in [[[CKRecipe sharedRecipe] lookup:@"Post.Admin" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
 		[adminmessages.values addObject:msg];
 		NSRange range = [comment rangeOfString:msg options:0 range:NSMakeRange(last,[comment length] - last)];
 		[adminmessages.ranges addObject:[NSValue valueWithRange:range]];
@@ -203,13 +203,11 @@
 	}
 	DLog(@"Admin Messages: %@",adminmessages.values);
 	
-	banned = [[adminmessages.values filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF = %@",
-														  [[CKRecipe sharedRecipe] lookup:@"Post.BanMessage"]]] count];
+	banned = [[adminmessages.values filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF = %@",[[CKRecipe sharedRecipe] lookup:@"Post.BanMessage"]]] count];
 	DLog(@"Banned: %d",banned);
 	
 	last = 0;
-	for(NSString* quote in [[[CKRecipe sharedRecipe] lookup:@"Post.InlineQuotes" inDocument:doc] 
-						  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+	for(NSString* quote in [[[CKRecipe sharedRecipe] lookup:@"Post.InlineQuotes" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
 		[inlinequotes.values addObject:quote];
 		NSRange range = [comment rangeOfString:quote options:0 range:NSMakeRange(last,[comment length] - last)];
 		[inlinequotes.ranges addObject:[NSValue valueWithRange:range]]; 
@@ -219,8 +217,7 @@
 	DLog(@"Inline Quotes: %@",inlinequotes.values);
 
 	last = 0;
-	for(NSString* spoiler in [[[CKRecipe sharedRecipe] lookup:@"Post.Spoilers" inDocument:doc] 
-						  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+	for(NSString* spoiler in [[[CKRecipe sharedRecipe] lookup:@"Post.Spoilers" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
 		[spoilers.values addObject:spoiler];
 		NSRange range = [comment rangeOfString:spoiler options:0 range:NSMakeRange(last,[comment length] - last)];
 		[spoilers.ranges addObject:[NSValue valueWithRange:range]]; 
@@ -333,30 +330,25 @@
 		for(int i = 0; i < quotes.count; i++) {
 			NSRange range = [[quotes.ranges objectAtIndex:i] rangeValue];
 			[formatted replaceCharactersInRange:NSMakeRange(range.location+i*11,range.length) withString:
-			 [NSString stringWithFormat:@"\e[4;31m%@\e[0m",[[quotes.values objectAtIndex:i] quoteRelativeToPost:self]]];
+			   [NSString stringWithFormat:@"\e[4;31m%@\e[0m",[[quotes.values objectAtIndex:i] quoteRelativeToPost:self]]];
 		}
 		// This is completely obscene but it's the shortest way to deal with this jacked up attributed string situation
 		for(int i = 0; i < inlinequotes.count; i++) {
 			NSUInteger start = [[inlinequotes.ranges objectAtIndex:i] rangeValue].location + i * 11;
-			[formatted replaceCharactersInRange:[formatted rangeOfString:[inlinequotes.values objectAtIndex:i]
-										options:0 range:NSMakeRange(start,[formatted length]-start)]
-									 withString:[NSString stringWithFormat:@"\e[0;32m%@\e[0m",[inlinequotes.values objectAtIndex:i]]];
+			[formatted replaceCharactersInRange:[formatted rangeOfString:[inlinequotes.values objectAtIndex:i] options:0 range:NSMakeRange(start,[formatted length]-start)]
+			                         withString:[NSString stringWithFormat:@"\e[0;32m%@\e[0m",[inlinequotes.values objectAtIndex:i]]];
 		}
 		for(int i = 0; i < adminmessages.count; i++) {
 			NSUInteger start = [[adminmessages.ranges objectAtIndex:i] rangeValue].location + i * 11;
-			[formatted replaceCharactersInRange:[formatted rangeOfString:[adminmessages.values objectAtIndex:i]
-										options:0 range:NSMakeRange(start,[formatted length]-start)]
-									 withString:[NSString stringWithFormat:@"\e[1;31m%@\e[0m",[adminmessages.values objectAtIndex:i]]];
+			[formatted replaceCharactersInRange:[formatted rangeOfString:[adminmessages.values objectAtIndex:i] options:0 range:NSMakeRange(start,[formatted length]-start)]
+		                             withString:[NSString stringWithFormat:@"\e[1;31m%@\e[0m",[adminmessages.values objectAtIndex:i]]];
 		}
 		for(int i = 0; i < spoilers.count; i++) {
 			NSUInteger start = [[spoilers.ranges objectAtIndex:i] rangeValue].location + i * 12;
-			[formatted replaceCharactersInRange:[formatted rangeOfString:[spoilers.values objectAtIndex:i]
-										options:0 range:NSMakeRange(start,[formatted length]-start)]
-									 withString:[NSString stringWithFormat:@"\e[40;30m%@\e[0m",[spoilers.values objectAtIndex:i]]];
+			[formatted replaceCharactersInRange:[formatted rangeOfString:[spoilers.values objectAtIndex:i] options:0 range:NSMakeRange(start,[formatted length]-start)]
+		                             withString:[NSString stringWithFormat:@"\e[40;30m%@\e[0m",[spoilers.values objectAtIndex:i]]];
 		}
-		[desc appendFormat:@"\n\n\t%@",
-				 [[formatted componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] 
-				  componentsJoinedByString:@"\n\t"]];
+		[desc appendFormat:@"\n\n\t%@",[[formatted componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@"\n\t"]];
 	}
 	if(abbreviated) [desc appendString:@"\n\t(…)"];
 	return desc;	
@@ -385,9 +377,8 @@
 	NSXMLNode* xmlfile = [image XMLRepresentation];
 	
 	NSXMLElement* xmlsubject = [NSXMLElement elementWithName:@"span"
-													children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:subject]]
-												  attributes:[NSArray arrayWithObject:
-															  [NSXMLNode attributeWithName:@"class" stringValue:@"subject"]]];
+	                                                children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:subject]]
+	                                              attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"subject"]]];
 	
 	NSMutableArray* piecemeal = [NSMutableArray array];
 	NSUInteger lastend = 0;
@@ -397,13 +388,11 @@
 		CKPost* post = [quotes.values objectAtIndex:i];
 		[piecemeal addObject:[NSXMLNode textWithStringValue:[comment substringWithRange:NSMakeRange(lastend,range.location - lastend)]]];
 		[piecemeal addObject:[NSXMLElement elementWithName:@"a"
-												  children:[NSArray arrayWithObject:
-															[NSXMLNode textWithStringValue:[NSString stringWithFormat:@">>%d",post.ID]]]
-												attributes:[NSArray arrayWithObjects:
-															[NSXMLNode attributeWithName:@"class" stringValue:@"quote"],
-															[NSXMLNode attributeWithName:@"href"
-																			 stringValue:[NSString stringWithFormat:@"#%d",post.ID]],
-															nil]]];//gonna have to do better than this
+		                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:[NSString stringWithFormat:@">>%d",post.ID]]]
+		                                        attributes:[NSArray arrayWithObjects:
+		                                                   [NSXMLNode attributeWithName:@"class" stringValue:@"quote"],
+		                                                   [NSXMLNode attributeWithName:@"href" stringValue:[NSString stringWithFormat:@"#%d",post.ID]],
+		                                                   nil]]];//gonna have to do better than this
 		lastend = range.location + range.length;
 	}
 	[piecemeal addObject:[NSXMLNode textWithStringValue:[comment substringWithRange:NSMakeRange(lastend,len - lastend)]]];
@@ -411,6 +400,7 @@
 	// ... eventually we return an <li>
 	return nil;
 }
+
 - (BOOL)isEqual:(id)other { return [self hash] == [other hash]; }
 - (NSUInteger)hash { return [URL hash]; }
 

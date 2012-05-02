@@ -68,26 +68,24 @@
 - (id)initWithPage:(NSXMLDocument*)doc {
 	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]])) {		
 		NSXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread.Root"],self.IDString]
-		 	error:NULL] objectAtIndex:0];
+		                                                        error:NULL] objectAtIndex:0];
 		[[root rootDocument] setURI:[URL absoluteString]];
 		NSString* cleanup;
 		if((cleanup = [[CKRecipe sharedRecipe] lookup:@"Thread.Preceding"])) {
-				NSArray* pre = [root nodesForXPath:[NSString stringWithFormat:cleanup,[NSNumber numberWithInt:ID]] error:NULL];
+			NSArray* pre = [root nodesForXPath:[NSString stringWithFormat:cleanup,[NSNumber numberWithInt:ID]] error:NULL];
 			if([pre count])
 				for(int i = [(NSXMLNode*)[pre objectAtIndex:0] index]; i >= 0; i--)
 					[root removeChildAtIndex:i];
 		}
 		if((cleanup = [[CKRecipe sharedRecipe] lookup:@"Thread.Following"])) {
-			NSArray* post = [root nodesForXPath:
-							 [NSString stringWithFormat:cleanup,[NSNumber numberWithInt:ID]] error:NULL];
+			NSArray* post = [root nodesForXPath:[NSString stringWithFormat:cleanup,[NSNumber numberWithInt:ID]] error:NULL];
 			if([post count])
 				for(int i = [root childCount]-1; i >= [(NSXMLNode*)[post objectAtIndex:0] index]; i--)
 					[root removeChildAtIndex:i];
 		}
 		[(CKPost*)[posts objectAtIndex:0] populate:root threadContext:nil];
 
-		NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Trailing" inDocument:root] 
-						componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+		NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Trailing" inDocument:root] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 
 		NSString* URI = [doc URI];
 		for(NSString* reply in replies) {
@@ -117,19 +115,18 @@
 }
 
 - (int)populate { 
-	int error;
 	NSXMLDocument* doc;
-	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
+	int error = [CKUtil fetchXML:&doc fromURL:URL];
+	if(error != CK_ERR_SUCCESS)
 		return error;
 	if(![self parseURL:[NSURL URLWithString:[doc URI]]])
 		return CK_ERR_REDIRECT;
 	[self populate:doc];
-	return 0;
+	return CK_ERR_SUCCESS;
 }
 
 - (void)populate:(NSXMLDocument*)doc {
-	NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Replies" inDocument:doc] 
-						componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+	NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Replies" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	__block NSUInteger deleted = [[posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.deleted = YES"]] count];
 	if(!initialized) {
 		for(CKPost* post in posts)
@@ -258,11 +255,10 @@
 	return [desc stringByAppendingString:delim];
 }
 - (NSString*)prettyPrint {
-	NSString* delim = @"\n\e[4m                                                                                                              \e[0m\n";
 	NSMutableString* desc = [NSMutableString stringWithFormat:@"%d posts and %d images",postcount,imagecount];
 	for(CKPost* post in posts) 
-		[desc appendFormat:@"%@%@",delim,[post prettyPrint]];
-	return [desc stringByAppendingString:delim];
+		[desc appendFormat:@"\n\e[4m%110s\e[0m\n%@","",[post prettyPrint]];
+	return [desc stringByAppendingFormat:@"\n\e[4m%110s\e[0m\n",""];
 }
 - (BOOL)isEqual:(id)other { return [self hash] == [other hash]; }
 - (NSUInteger)hash { return [[posts objectAtIndex:0] hash]; }

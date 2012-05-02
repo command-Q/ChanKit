@@ -98,10 +98,10 @@ int main (int argc, const char * argv[]) {
 	if([args stringForKey:@"url"]) {
 		url = [NSURL URLWithString:[args stringForKey:@"url"]];
 		switch ([[CKRecipe sharedRecipe] resourceKindForURL:url]) {
-			case CK_RESOURCE_POST:	resource = [CKPost postFromURL:url];		break;
-			case CK_RESOURCE_THREAD:resource = [CKThread threadFromURL:url];	break;
-			case CK_RESOURCE_BOARD:	resource = [CKPage pageFromURL:url];		break;
-			default: resource = nil; break;
+			case CK_RESOURCE_POST:   resource = [CKPost postFromURL:url];     break;
+			case CK_RESOURCE_THREAD: resource = [CKThread threadFromURL:url]; break;
+			case CK_RESOURCE_BOARD:  resource = [CKPage pageFromURL:url];     break;
+			default: resource = nil;
 		}
 		if(resource) {
 			NSLog(@"%@",[resource URL]);
@@ -119,8 +119,8 @@ int main (int argc, const char * argv[]) {
 							do { res = [image load]; } while(res != CK_ERR_SUCCESS && (!i || --i));
 							if(res == CK_ERR_SUCCESS) {
 								[fileman createFileAtPath:[[path URLByAppendingPathComponent:image.name] path]
-											 	 contents:image.data
-											   attributes:[NSDictionary dictionaryWithObject:image.timestamp forKey:@"NSFileModificationDate"]];
+								                 contents:image.data
+								               attributes:[NSDictionary dictionaryWithObject:image.timestamp forKey:@"NSFileModificationDate"]];
 								images++;
 							}
 						}
@@ -158,13 +158,11 @@ int main (int argc, const char * argv[]) {
 		if([args URLForKey:@"file"]) {
 			BOOL dir;
 			[[NSFileManager defaultManager] fileExistsAtPath:[[args URLForKey:@"file"] path] isDirectory:&dir];
-			if(!dir)
-				uploads = [NSArray arrayWithObject:[args URLForKey:@"file"]];
-			else
-				uploads = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[args URLForKey:@"file"] 
-														includingPropertiesForKeys:[NSArray arrayWithObject:NSURLTypeIdentifierKey] 
-																		   options:NSDirectoryEnumerationSkipsHiddenFiles 
-																			 error:NULL];
+			if(!dir) uploads = [NSArray arrayWithObject:[args URLForKey:@"file"]];
+			else     uploads = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[args URLForKey:@"file"]
+				                                             includingPropertiesForKeys:[NSArray arrayWithObject:NSURLTypeIdentifierKey]
+				                                                                options:NSDirectoryEnumerationSkipsHiddenFiles
+				                                                                  error:NULL];
 			runs = [uploads count];
 		}
 		[dict setObject:[NSNumber numberWithBool:[args boolForKey:@"spoiler"]] forKey:@"Spoiler"];
@@ -198,7 +196,7 @@ int main (int argc, const char * argv[]) {
 			}
 
 			NSLog(@"Initializing Poster %d of %d",i+1,runs);
-			CKPoster* poster;			
+			CKPoster* poster;
 			do {
 				poster = [CKPoster posterWithDictionary:dict];
 				
@@ -224,8 +222,8 @@ int main (int argc, const char * argv[]) {
 		NSArray* proxies = [NSArray array];
 		if([args URLForKey:@"proxies"])
 			proxies = [[[NSString stringWithContentsOfURL:[args URLForKey:@"proxies"] encoding:NSUTF8StringEncoding error:NULL]
-								stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
-								componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+			             stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
+			                componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 		BOOL error = NO;
 		NSDate* firstpost = [NSDate date];
 		NSDate* lastpost = [NSDate date];
@@ -248,7 +246,7 @@ int main (int argc, const char * argv[]) {
 				[args setURL:proxy forKey:@"CKProxySetting"];
 				NSLog(@"Using proxy %@",[args URLForKey:@"CKProxySetting"]);
 			}
-			
+
 			sleep += [lastpost timeIntervalSinceNow];
 			if(sleep > 0)
 				[NSThread sleepForTimeInterval:sleep];
@@ -305,8 +303,8 @@ int main (int argc, const char * argv[]) {
 		url = [NSURL URLWithString:[args stringForKey:@"against"]];
 		if([[NSFileManager defaultManager] fileExistsAtPath:[[args URLForKey:@"filter"] path]]) {
 			NSArray* proxies = [[[NSString stringWithContentsOfURL:[args URLForKey:@"filter"] encoding:NSUTF8StringEncoding error:NULL]
-									stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
-									componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+			                      stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
+			                         componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 			// Set up recipe
 			[[CKRecipe sharedRecipe] detectSite:url];
 			[proxies enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -314,11 +312,12 @@ int main (int argc, const char * argv[]) {
 				if(![proxy host]) // Most likely the scheme was ommitted
 					proxy = [NSURL URLWithString:[@"http://" stringByAppendingString:obj]];
 				NSXMLDocument* tempdoc;
-				if(![CKUtil fetchXML:&tempdoc fromURL:url throughProxy:proxy allowedRedirects:5]) {
+				if([CKUtil fetchXML:&tempdoc fromURL:url throughProxy:proxy allowedRedirects:5] == CK_ERR_SUCCESS) {
 					// Use standard output so that list can be redirected to a file
 					// Note: this sometimes gives false positives on proxies that resolve to some access page
 					[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
-					 [[[proxy absoluteString] stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+					   [[[proxy absoluteString] stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+				}
 			}];
 		}
 		else NSLog(@"%@ cannot be read.",[args URLForKey:@"filter"]);
@@ -341,17 +340,15 @@ int main (int argc, const char * argv[]) {
 		else if([args objectForKey:@"thread"] && !(resource = thread = [page getThread:[args integerForKey:@"thread"]]))
 			NSLog(@"There doesn't seem to be a thread with index %d.",[args integerForKey:@"thread"]);
 		else if([args objectForKey:@"post"] && ((index = [args integerForKey:@"post"]) > thread.postcount || 
-				!(resource = index < 0 ? thread.latest : [thread.posts objectAtIndex:index])))
+		       !(resource = index < 0 ? thread.latest : [thread.posts objectAtIndex:index])))
 				NSLog(@"There's no post at index %d.",index);
-		else
-			NSLog(@"%@\n%@",[resource URL],[resource prettyPrint]);			
-	}	
+		else NSLog(@"%@\n%@",[resource URL],[resource prettyPrint]);
+	}
 	
 	if(resource && [args boolForKey:@"watch"] && ([resource isKindOfClass:[CKThread class]] || [resource isKindOfClass:[CKPost class]])) {
-		// This mess ladies and gentlemen wonderfully illustrates the need for the CKBrowser delegate
+		// This mess wonderfully illustrates the need for the CKBrowser delegate
 		int lastindex;
 		int watchimages = 0;
-		NSString* delim = @"\n\e[4m                                                                                                              \e[0m\n";
 		int fetchresult; // If we populate in the loop header the autorelease pool won't do any good
 		CKThread* thread;
 		CKPost* post;
@@ -365,7 +362,8 @@ int main (int argc, const char * argv[]) {
 			}];
 			post = [[thread.posts objectAtIndex:lastindex] retain];
 			lastindex++;
-			[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:[delim dataUsingEncoding:NSUTF8StringEncoding]];
+			[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:[[NSString stringWithFormat:@"\n\e[4m%110s\e[0m\n",""]
+			   dataUsingEncoding:NSUTF8StringEncoding]];
 		}
 		else {
 			postscope = NO;
@@ -383,14 +381,14 @@ int main (int argc, const char * argv[]) {
 					}]];
 				for(CKPost* p in updates) {
 					[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
-					 [[NSString stringWithFormat:@"\n%@%@",[p prettyPrint],delim] dataUsingEncoding:NSUTF8StringEncoding]];
+					   [[NSString stringWithFormat:@"\n%@\n\e[4m%110s\e[0m\n",[p prettyPrint],""] dataUsingEncoding:NSUTF8StringEncoding]];
 					if(path && p.image && ![fileman fileExistsAtPath:[[path URLByAppendingPathComponent:p.image.name] path]]) {
 						int res, i = [args integerForKey:@"retry"];
 						do { res = [p.image load]; } while(res != CK_ERR_SUCCESS && (!i || --i));
 						if(res == CK_ERR_SUCCESS) {
 							[fileman createFileAtPath:[[path URLByAppendingPathComponent:p.image.name] path]
-											 contents:p.image.data
-										   attributes:[NSDictionary dictionaryWithObject:p.image.timestamp forKey:@"NSFileModificationDate"]];
+							                 contents:p.image.data
+							               attributes:[NSDictionary dictionaryWithObject:p.image.timestamp forKey:@"NSFileModificationDate"]];
 							watchimages++;
 						}
 					}

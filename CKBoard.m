@@ -76,9 +76,9 @@
 }
 
 - (int)populate {
-	int error;
 	NSXMLDocument* doc;
-	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
+	int error = [CKUtil fetchXML:&doc fromURL:URL];
+	if(error != CK_ERR_SUCCESS)
 		return error;
 	if(![self parseURL:[NSURL URLWithString:[doc URI]]])
 		return CK_ERR_REDIRECT;
@@ -92,13 +92,12 @@
 	DLog(@"Alt Title: %@",alternatetitle);	
 
 	rules = [[[[CKRecipe sharedRecipe] lookup:@"Board.Rules" inDocument:doc]
-				componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] retain];
+	           componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] retain];
 	DLog(@"Rules: %@",rules);
 	
 	[pages removeAllObjects];
 	CKPage* page;
-	for(NSString* pageno in [[[CKRecipe sharedRecipe] lookup:@"Board.Pages" inDocument:doc]
-				componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
+	for(NSString* pageno in [[[CKRecipe sharedRecipe] lookup:@"Board.Pages" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
 		if((page = [CKPage pageReferencingURL:[boardroot URLByAppendingPathComponent:pageno]]))
 			[pages addObject:page];
 	if((page = [CKPage pageFromXML:doc]))
@@ -107,7 +106,7 @@
 	numpages = [pages count];
 	DLog(@"Pages: %d",numpages);
 
-	return 0;
+	return CK_ERR_SUCCESS;
 }
 
 @synthesize URL;
@@ -144,7 +143,9 @@
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
 	[queue setSuspended:YES];
 	for(CKPage* page in pages)
-		[queue addOperationWithBlock:^{[page populate];}];
+		[queue addOperationWithBlock:^{
+			[page populate];
+		}];
 	[queue setSuspended:NO];
     [queue waitUntilAllOperationsAreFinished];
 	[queue release];
@@ -228,10 +229,10 @@
 						[lock unlock];
 						if(done) return;
 						NSArray* candidates = [thread imagePosts];
-						NSUInteger idx;
-						if((idx = [candidates indexOfObjectPassingTest:^(id post, NSUInteger idx, BOOL *stop) {
+						NSUInteger idx = [candidates indexOfObjectPassingTest:^(id post, NSUInteger idx, BOOL *stop) {
 							return *stop = [[[(CKPost*)post image] URL] isEqualTo:url];
-						}]) != NSNotFound) {
+						}];
+						if(idx != NSNotFound) {
 							[lock lock];
 							result = [candidates objectAtIndex:idx];
 							[lock unlock];
@@ -293,14 +294,12 @@
 - (CKPost*)newestPost { return [[pages objectAtIndex:0] newestPost]; }
 
 - (int)newestPostID {
-	int error;
 	NSXMLDocument* doc;
-	if((error = [CKUtil fetchXML:&doc fromURL:boardroot]))
-		return error;
+	if([CKUtil fetchXML:&doc fromURL:boardroot] != CK_ERR_SUCCESS)
+		return -1;
 	
 	int candidate, last = 0;
-	for(NSString* idstr in [[[CKRecipe sharedRecipe] lookup:@"Page.IDs" inDocument:doc] 
-							componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
+	for(NSString* idstr in [[[CKRecipe sharedRecipe] lookup:@"Page.IDs" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
 		if((candidate = [idstr intValue]) > last)
 			last = candidate;
 	return last;

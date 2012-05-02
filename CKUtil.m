@@ -19,25 +19,25 @@
 }
 + (NSString*)describeError:(int)errnum {
 	switch(errnum) {
-		case CK_ERR_UNDEFINED:			return @"Unknown error";
+		case CK_ERR_UNDEFINED:          return @"Unknown error";
 		// Document fetch errors
-		case CK_ERR_SUCCESS:			return @"Operation succeeded";
-		case CK_ERR_NETWORK:			return @"Resource not reachable";
-		case CK_ERR_CHECKSUM:			return @"Resource failed checksum verification";
-		case CK_ERR_NOTFOUND:			return @"Resource not found";
-		case CK_ERR_PARSER:				return @"Document could not be parsed";
-		case CK_ERR_UNSUPPORTED:		return @"Unsupported board software";
-		case CK_ERR_BANNED:				return @"You are banned";
-		case CK_ERR_REDIRECT:			return @"Bad redirection";
+		case CK_ERR_SUCCESS:            return @"Operation succeeded";
+		case CK_ERR_NETWORK:            return @"Resource not reachable";
+		case CK_ERR_CHECKSUM:           return @"Resource failed checksum verification";
+		case CK_ERR_NOTFOUND:           return @"Resource not found";
+		case CK_ERR_PARSER:             return @"Document could not be parsed";
+		case CK_ERR_UNSUPPORTED:        return @"Unsupported board software";
+		case CK_ERR_BANNED:             return @"You are banned";
+		case CK_ERR_REDIRECT:           return @"Bad redirection";
 		// Common post errors
-		case CK_POSTERR_FLOOD:			return @"Flood detected";
-		case CK_POSTERR_VERIFICATION:	return @"CAPTCHA verification failed";
-		case CK_POSTERR_DUPLICATE:		return @"Duplicate image detected";
-		case CK_POSTERR_NOTFOUND:		return @"Thread not found";
-		case CK_POSTERR_DISALLOWED:		return @"Comment disallowed";
-		case CK_POSTERR_REJECTED:		return @"File rejected";
-		case CK_POSTERR_FILETYPE:		return @"Filetype mismatch";
-		default:						return @"lp0 on fire";
+		case CK_POSTERR_FLOOD:          return @"Flood detected";
+		case CK_POSTERR_VERIFICATION:   return @"CAPTCHA verification failed";
+		case CK_POSTERR_DUPLICATE:      return @"Duplicate image detected";
+		case CK_POSTERR_NOTFOUND:       return @"Thread not found";
+		case CK_POSTERR_DISALLOWED:     return @"Comment disallowed";
+		case CK_POSTERR_REJECTED:       return @"File rejected";
+		case CK_POSTERR_FILETYPE:       return @"Filetype mismatch";
+		default:                        return nil;
 	}
 }
 
@@ -128,6 +128,7 @@
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL {
 	return [CKUtil fetchXML:doc fromURL:URL throughProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] allowedRedirects:5 /*ASI default*/];
 }
+
 + (int)validateResponse:(ASIHTTPRequest*)response {
 	if([response error]) {
 		DLog(@"%@",[[response error] localizedDescription]);
@@ -139,6 +140,7 @@
 	}
 	return CK_ERR_SUCCESS;
 }
+
 + (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest*)request {
 	if(!proxy) return;
 	[request setTimeOutSeconds:CK_PROXY_TIMEOUT]; // Since it's a proxy, latency may be much higher
@@ -159,8 +161,8 @@
 		DLog(@"Banned with reason: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.Reason" inDocument:doc]);
 		DLog(@"Banned IP: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.IP" inDocument:doc]);
 		DLog(@"Banned name: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.Name" inDocument:doc]);
-		DLog(@"Banned from %@ to %@",	[[CKRecipe sharedRecipe] lookup:@"Special.Ban.From" inDocument:doc],
-			 [[CKRecipe sharedRecipe] lookup:@"Special.Ban.To" inDocument:doc]);
+		DLog(@"Banned from %@ to %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.From" inDocument:doc],
+		                             [[CKRecipe sharedRecipe] lookup:@"Special.Ban.To" inDocument:doc]);
 		return YES;
 	}
 	return NO;

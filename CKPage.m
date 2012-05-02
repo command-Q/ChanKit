@@ -63,14 +63,14 @@
 }
 
 - (int)populate {
-	int error;
 	NSXMLDocument* doc;
-	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
+	int error = [CKUtil fetchXML:&doc fromURL:URL];
+	if(error != CK_ERR_SUCCESS)
 		return error;
 	if(![self parseURL:[NSURL URLWithString:[doc URI]]])
 		return CK_ERR_REDIRECT;
 	[self populate:doc];
-	return 0;
+	return CK_ERR_SUCCESS;
 }
 
 - (void)populate:(NSXMLDocument*)doc {
@@ -121,19 +121,16 @@
 - (NSTimeInterval)rangeOfPosts { return [[[self newestPost] date] timeIntervalSinceDate:[[self oldestPost] date]]; }
 
 - (NSString*)prettyPrint {
-	NSString* opdelim = @"\e[4m\t                                                                                                                         \e[0m\n";
-	NSString* replydelim = @"\n\t|\e[4m                                                                                                                        \e[0m\n";
 	NSMutableString* print = [NSMutableString string];
 	for(CKThread* t in threads) {
 		int disp = fmin([t.posts count] - 5,1);
-		[print appendFormat:@"\n%@%@\n%@\t| %d posts and %d images",
-		 opdelim,[[t.posts objectAtIndex:0] prettyPrint],opdelim,t.postcount,t.imagecount];
+		[print appendFormat:@"\n\e[4m\t%122s\e[0m\n%@\n\e[4m\t%122s\e[0m\n\t| %d posts and %d images",
+		   "",[[t.posts objectAtIndex:0] prettyPrint],"",t.postcount,t.imagecount];
 		for(CKPost* p in [[t posts] subarrayWithRange:NSMakeRange(disp,[t.posts count] - disp)])
-			[print appendFormat:@"%@\t| %@",replydelim,
-			 [[[p prettyPrint] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]
-			  componentsJoinedByString:@"\n\t| "]];
+			[print appendFormat:@"\n\t|\e[4m%120s\e[0m\n\t| %@","",
+			   [[[p prettyPrint] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@"\n\t| "]];
 	}
-	return [print stringByAppendingString:replydelim];
+	return [print stringByAppendingFormat:@"\n\t|\e[4m%120s\e[0m\n",""];
 }
 
 @end

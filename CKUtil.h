@@ -25,6 +25,7 @@
 + (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request allowedRedirects:(NSUInteger)redirects;
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy allowedRedirects:(NSUInteger)redirects;
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL;
+
 + (int)validateResponse:(ASIHTTPRequest*)response;
 + (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest*)request;
 + (BOOL)checkBan:(NSXMLDocument*)doc;

@@ -65,9 +65,9 @@
 + (CKPoster*)posterForXML:(NSXMLNode*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }
 
 - (int)populate { 
-	int error;
 	NSXMLDocument* doc;
-	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
+	int error = [CKUtil fetchXML:&doc fromURL:URL];
+	if(error != CK_ERR_SUCCESS)
 		return error;
 	NSURL* docURL = [[NSURL alloc] initWithString:[doc URI]];
 	if(!docURL) return CK_ERR_REDIRECT;
@@ -152,7 +152,7 @@
 	// Needs work
 	if(captchaverification) self.verification = captchaverification;
 	ASIFormDataRequest* crequest = [ASIFormDataRequest requestWithURL:
-		[NSURL URLWithString:@"http://www.google.com/recaptcha/api/noscript?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc"]];
+	    [NSURL URLWithString:@"http://www.google.com/recaptcha/api/noscript?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc"]];
 	[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:crequest];
 	[crequest setPostValue:captcha.challenge forKey:@"recaptcha_challenge_field"];
 	[crequest setPostValue:captcha.verification forKey:@"recaptcha_response_field"];
@@ -196,7 +196,7 @@
 	}
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] != CK_RESOURCE_BOARD)
 		[request setPostValue:[NSString stringWithFormat:@"%d",[CKUtil parseThreadID:URL]] 
-					   forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Thread"]];
+		               forKey:[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Thread"]];
 
 	[[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Extra"] enumerateKeysAndObjectsUsingBlock:^(id key, id object, BOOL *stop){
 		[request setPostValue:object forKey:key];

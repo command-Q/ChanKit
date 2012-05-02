@@ -123,9 +123,8 @@ static CKRecipe* sharedInstance = nil;
 			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
 			certainty = CK_RECIPE_PRELIMINARY;
 			if([[self lookup:@"Support.Title"] caseInsensitiveCompare:[self lookup:@"Support.Software.Title" inDocument:doc]] == NSOrderedSame) {
-				NSArray* versions;
-				if((versions = [self lookup:@"Support.Versions"]) && 
-				   ![versions containsObject:[self lookup:@"Support.Software.Version" inDocument:doc]]) 
+				NSArray* versions = [self lookup:@"Support.Versions"];
+				if(versions && ![versions containsObject:[self lookup:@"Support.Software.Version" inDocument:doc]])
 					continue;
 				certainty = CK_RECIPE_XMLMATCH;
 				DLog(@"Using %@",path);
@@ -135,10 +134,10 @@ static CKRecipe* sharedInstance = nil;
 		for(NSString* path in recipes) {
 			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
 			if([self lookup:@"Support.Identifier" inDocument:doc]) {
-					certainty = CK_RECIPE_XMLMATCH;
-					DLog(@"Using %@",path);
-					return CK_DETECTION_FUZZY;			
-				}
+				certainty = CK_RECIPE_XMLMATCH;
+				DLog(@"Using %@",path);
+				return CK_DETECTION_FUZZY;
+			}
 		}
 		return CK_DETECTION_FAILED;
 	}
@@ -156,7 +155,7 @@ static CKRecipe* sharedInstance = nil;
 		if([keys count] == 1)
 			return [dict objectForKey:[keys objectAtIndex:0]];
 		return [self lookupKeys:[keys subarrayWithRange:NSMakeRange(1,[keys count]-1)]
-				   inDictionary:[dict objectForKey:[keys objectAtIndex:0]]];
+		           inDictionary:[dict objectForKey:[keys objectAtIndex:0]]];
 	}
 }
 - (id)lookup:(NSString*)keyPath { @synchronized(self) { return [recipe valueForKeyPath:keyPath]; }}
@@ -182,7 +181,7 @@ static CKRecipe* sharedInstance = nil;
 		
 		for(NSString* path in paths) {
 			if(test) nodes = [doc nodesForXPath:[NSString stringWithFormat:path,test] error:NULL];
-			else	 nodes = [doc nodesForXPath:path error:NULL];				
+			else     nodes = [doc nodesForXPath:path error:NULL];
 			if([nodes count]) break;
 		}
 		if(![nodes count]) return nil;
@@ -224,10 +223,11 @@ static CKRecipe* sharedInstance = nil;
 - (NSURL*)URLForSite:(NSString*)sitename {
 	@synchronized(self) {
 		for(NSString* path in [[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"]) {				
-			NSUInteger i;
 			NSArray* site = [[NSDictionary dictionaryWithContentsOfFile:path] valueForKeyPath:@"Support.Sites"];
-			if((i = [site indexOfObjectPassingTest:^(id dict, NSUInteger idx, BOOL *stop) {
-													return *stop = [sitename isEqualToString:[dict objectForKey:@"Name"]];}]) != NSNotFound)
+			NSUInteger i = [site indexOfObjectPassingTest:^(id dict, NSUInteger idx, BOOL *stop) {
+				return *stop = [sitename isEqualToString:[dict objectForKey:@"Name"]];
+			}];
+			if(i != NSNotFound)
 				return [NSURL URLWithString:[[site objectAtIndex:i] objectForKey:@"Home"]];
 		}
 		return nil;
@@ -238,14 +238,15 @@ static CKRecipe* sharedInstance = nil;
 	@synchronized(self) {
 		if(certainty == CK_RECIPE_NOMATCH) [self detectSite:URL];
 		__block int res = CK_RESOURCE_UNDEFINED;
+		NSString* absURL = [URL absoluteString];
 		[[recipe valueForKeyPath:@"Support.Sites"] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-			if([[URL absoluteString] isMatchedByRegex:[obj valueForKeyPath:@"Regex.Image"]])
+			if([absURL isMatchedByRegex:[obj valueForKeyPath:@"Regex.Image"]])
 				res = CK_RESOURCE_IMAGE;
-			else if([[URL absoluteString] isMatchedByRegex:[obj valueForKeyPath:@"Regex.Post"]])
+			else if([absURL isMatchedByRegex:[obj valueForKeyPath:@"Regex.Post"]])
 				res = CK_RESOURCE_POST;
-			else if([[URL absoluteString] isMatchedByRegex:[obj valueForKeyPath:@"Regex.Thread"]])
+			else if([absURL isMatchedByRegex:[obj valueForKeyPath:@"Regex.Thread"]])
 				res = CK_RESOURCE_THREAD;
-			else if([[URL absoluteString] isMatchedByRegex:[obj valueForKeyPath:@"Regex.Board"]])
+			else if([absURL isMatchedByRegex:[obj valueForKeyPath:@"Regex.Board"]])
 				res = CK_RESOURCE_BOARD;
 			*stop = res != CK_RESOURCE_UNDEFINED;
 		}];

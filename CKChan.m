@@ -22,7 +22,7 @@
 - (id)initByReferencingURL:(NSURL*)url {
 	if((self = [self init])) {
 		URL = [url retain];
-		DLog(@"URL: %@", URL);
+		DLog(@"URL: %@",URL);
 	}
 	return self;
 }
@@ -59,9 +59,9 @@
 }
 
 - (int)populate {
-	int error;
 	NSXMLDocument* doc;
-	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
+	int error = [CKUtil fetchXML:&doc fromURL:URL];
+	if(error != CK_ERR_SUCCESS)
 		return error;
 	NSURL* docURL = [[NSURL alloc] initWithString:[doc URI]];
 	if(!docURL) return CK_ERR_REDIRECT;
@@ -82,34 +82,33 @@
 	
 	// Safe to assume that all imageboards have at least one stylesheet?
 	NSURL* css = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Chan.Stylesheet" inDocument:doc] relativeToURL:URL];
-	NSString* logourl = [NSString stringWithFormat:@"%@://%@%@",[css scheme],[css host],
-						 [[NSString stringWithContentsOfURL:css encoding:NSUTF8StringEncoding error:NULL]
-						  stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Chan.Logo"] capture:1L]];
-	if(logourl) {
-		DLog(@"Logo URL: %@",logourl);
-		logo = [[CKImage alloc] initByReferencingURL:[NSURL URLWithString:logourl]];
-		DLog(@"Logo:\n%@",logo);
+	if(css) {
+		NSString* logolink = [[NSString stringWithContentsOfURL:css encoding:NSUTF8StringEncoding error:NULL]
+		                        stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Chan.Logo"] capture:1L];
+		NSURL* logoURL;
+		if(logolink && (logoURL = [NSURL URLWithString:logolink relativeToURL:css])) {
+			DLog(@"Logo URL: %@",logoURL);
+			logo = [[CKImage alloc] initByReferencingURL:logoURL];
+		}			
 	}
 	
-	categories = [[[[CKRecipe sharedRecipe] lookup:@"Chan.Categories" inDocument:doc] 
-				  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] retain];
+	categories = [[[[CKRecipe sharedRecipe] lookup:@"Chan.Categories" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] retain];
 	DLog(@"Categories: \n%@",categories);
 	
-	NSMutableArray* linkurls = [[[[[CKRecipe sharedRecipe] lookup:@"Chan.Links.URLs" inDocument:doc] 
-								 componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] mutableCopy] autorelease];
+	NSMutableArray* linkurls = [[[[CKRecipe sharedRecipe] lookup:@"Chan.Links.URLs" inDocument:doc] 
+	                              componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] mutableCopy];
 	for(int i = 0; i < [linkurls count]; i++)
 		[linkurls replaceObjectAtIndex:i withObject:[URL URLByAppendingPathComponent:[linkurls objectAtIndex:i]]];
-	links = [[NSDictionary alloc] initWithObjects:linkurls 
-										  forKeys:[[[CKRecipe sharedRecipe] lookup:@"Chan.Links.Keys" inDocument:doc] 
-												   componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]];
+	links = [[NSDictionary alloc] initWithObjects:linkurls forKeys:[[[CKRecipe sharedRecipe] lookup:@"Chan.Links.Keys" inDocument:doc] 
+	                                                                  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]];
+	[linkurls release];
 	DLog(@"Links: %@",links);
 	
-	for(NSString* boardlink in [[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.URL" inDocument:doc] 
-							componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
+	for(NSString* boardlink in [[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.URL" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]) {
 		CKBoard* board = [[CKBoard alloc] initByReferencingURL:[NSURL URLWithString:boardlink relativeToURL:URL]
-			      title:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Title"    inDocument:doc test:boardlink]
-			   category:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Category" inDocument:doc test:boardlink]
-			   is18plus:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Age"      inDocument:doc test:boardlink] != nil];
+		                                                 title:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Title"    inDocument:doc test:boardlink]
+			                                          category:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Category" inDocument:doc test:boardlink]
+			                                          is18plus:[[CKRecipe sharedRecipe] lookup:@"Chan.Boards.Age"      inDocument:doc test:boardlink] != nil];
 		if(board) {
 			[boards addObject:board];
 			[board release];
@@ -117,7 +116,7 @@
 	}
 	DLog(@"# of Boards: %d",[boards count]);
 	
-	return 0;
+	return CK_ERR_SUCCESS;
 }
 
 @synthesize URL;
@@ -138,9 +137,10 @@
 }
 
 - (CKBoard*)boardNamed:(NSString*)nm {
-	NSUInteger index;
-	if((index = [boards indexOfObjectPassingTest:^(id board, NSUInteger idx, BOOL *stop) { return *stop = [[board name] isEqualToString:nm]; }])
-			!= NSNotFound) {
+	NSUInteger index = [boards indexOfObjectPassingTest:^(id board, NSUInteger idx, BOOL *stop) {
+		return *stop = [[board name] isEqualToString:nm];
+	}];
+	if(index != NSNotFound) {
 		[[boards objectAtIndex:index] populate];
 		return [boards objectAtIndex:index];		
 	}
