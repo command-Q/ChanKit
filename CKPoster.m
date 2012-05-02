@@ -77,31 +77,43 @@
 	}
 	else [docURL release];
 	[self populate:doc];
-	return 0;
+	if(!action)
+		return CK_ERR_UNDEFINED;
+	return CK_ERR_SUCCESS;
 }
 - (void)populate:(NSXMLNode*)doc {
-	NSURL* captchaurl = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.URL" inDocument:doc] relativeToURL:URL];
-	NSXMLDocument* captchadoc = [[[NSXMLDocument alloc] initWithContentsOfURL:captchaurl options:NSXMLDocumentTidyHTML error:nil] autorelease];
-	captcha.challenge = [[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.Challenge" inDocument:captchadoc] retain];
-	captcha.image = [[CKImage alloc] initWithContentsOfURL:
-					 [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.Image" inDocument:captchadoc] 
-							relativeToURL:captchaurl]];
-	action = [[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.URL" inDocument:doc] relativeToURL:URL] retain];
+	NSString* captchalink = [[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.URL" inDocument:doc];
+	if(captchalink) {
+		NSURL* captchaurl = [NSURL URLWithString:captchalink relativeToURL:URL];
+		NSXMLDocument* captchadoc;
+		int error = [CKUtil fetchXML:&captchadoc fromURL:captchaurl];
+		if(error == CK_ERR_SUCCESS) {
+			captcha.challenge = [[[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.Challenge" inDocument:captchadoc] retain];
+			NSString* imagelink = [[CKRecipe sharedRecipe] lookup:@"Poster.Captcha.Image" inDocument:captchadoc];
+			if(imagelink)
+				captcha.image = [[CKImage alloc] initWithContentsOfURL:[NSURL URLWithString:imagelink relativeToURL:captchaurl]];
+			DLog(@"Captcha Challenge: %@",captcha.challenge);
+		}
+	}
+
+	NSString* postinglink = [[CKRecipe sharedRecipe] lookup:@"Poster.URL" inDocument:doc];
+	if(postinglink)
+		action = [[NSURL URLWithString:postinglink relativeToURL:URL] retain];
+	DLog(@"Posting URL: %@",action);
+
 	int type = [[CKRecipe sharedRecipe] resourceKindForURL:URL];
 	NSURL* boardurl;
+	NSString* boardroot;
 	switch(type) {
 		case CK_RESOURCE_POST:
 		case CK_RESOURCE_THREAD:
-			board = [[CKBoard alloc] initByReferencingURL:
-					 [[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Board.Location" inDocument:doc] relativeToURL:URL] absoluteURL]];
+			if((boardroot = [[CKRecipe sharedRecipe] lookup:@"Board.Location" inDocument:doc]))
+				board = [[CKBoard alloc] initByReferencingURL:[[NSURL URLWithString:boardroot relativeToURL:URL] absoluteURL]];
 			break;
 		case CK_RESOURCE_BOARD:
 			board = [[CKBoard alloc] initByReferencingURL:URL];
 			break;
-		default:break;
 	}
-	DLog(@"Posting URL: %@",action);
-	DLog(@"Captcha Challenge: %@",captcha.challenge);
 }
 
 
@@ -200,6 +212,10 @@
 
 - (CKPost*)post:(int*)error attempt:(BOOL (^)(int idno))test {
 	if(!request) [self prepare];
+	if(!board) {
+		if(error) *error = CK_ERR_UNDEFINED;
+		return nil;
+	}
 	
 	int idno;
 	do {
