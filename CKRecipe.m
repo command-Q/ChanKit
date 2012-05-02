@@ -54,7 +54,8 @@ static CKRecipe* sharedInstance = nil;
 	@synchronized(self) {
 		if([[NSFileManager defaultManager] fileExistsAtPath:path]) {
 			certainty = CK_RECIPE_MANUAL;
-			return recipe = [NSDictionary dictionaryWithContentsOfFile:path];
+			[recipe release];
+			return recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
 		}
 		return nil;
 	}
@@ -65,23 +66,27 @@ static CKRecipe* sharedInstance = nil;
 - (int)detectSite:(NSURL*)URL {
 	@synchronized(self) {
 		NSArray* recipes = [[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"];
+		[recipe release];
 		for(NSString* path in recipes) {
-			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
+			recipe = [NSDictionary dictionaryWithContentsOfFile:path];
 			for(NSDictionary* site in [self lookup:@"Support.Sites"]) {
 				for(NSString* url in [site objectForKey:@"URLs"])
 					if([url isEqualToString:[URL host]]) {
 						certainty = CK_RECIPE_URLMATCH;
 						DLog(@"Using %@",path);
+						[recipe retain];
 						return CK_DETECTION_URL;			
 					}
 				for(NSString* regex in [site objectForKey:@"Regex"])
 					if([[URL absoluteString] isMatchedByRegex:regex]) {
 						certainty = CK_RECIPE_URLMATCH;
 						DLog(@"Using %@",path);
+						[recipe retain];
 						return CK_DETECTION_URL;						
 					}
 			}
 		}
+		recipe = nil;
 		return CK_DETECTION_FAILED;
 	}
 }
@@ -90,8 +95,9 @@ static CKRecipe* sharedInstance = nil;
 	@synchronized(self) {
 		int type = CK_RESOURCE_UNDEFINED;
 		NSString* result;
+		[recipe release];
 		for(NSString* path in [[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"]) {
-			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
+			recipe = [NSDictionary dictionaryWithContentsOfFile:path];
 			for(NSDictionary* sitesupport in [self lookup:@"Support.Sites"]) {
 				 if([(result = [site stringByMatching:[NSString stringWithFormat:@".*(%@).*",[sitesupport valueForKeyPath:@"Regex.Image"]] capture:1L]) length])
 					 type = CK_RESOURCE_IMAGE;
@@ -106,6 +112,7 @@ static CKRecipe* sharedInstance = nil;
 			if(type != CK_RESOURCE_UNDEFINED) break;
 		}
 		if(kind) *kind = type;
+		[recipe retain];
 		if(type != CK_RESOURCE_UNDEFINED) return [NSURL URLWithString:result];
 		return nil;
 	}
@@ -117,8 +124,9 @@ static CKRecipe* sharedInstance = nil;
 //		if([self detectSite:[NSURL URLWithString:[doc URI]]])
 //			return CK_DETECTION_URL;
 		NSArray* recipes = [[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"];
+		[recipe release];
 		for(NSString* path in recipes) {
-			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
+			recipe = [NSDictionary dictionaryWithContentsOfFile:path];
 			certainty = CK_RECIPE_PRELIMINARY;
 			if([[self lookup:@"Support.Title"] caseInsensitiveCompare:[self lookup:@"Support.Software.Title" inDocument:doc]] == NSOrderedSame) {
 				NSArray* versions = [self lookup:@"Support.Versions"];
@@ -126,17 +134,20 @@ static CKRecipe* sharedInstance = nil;
 					continue;
 				certainty = CK_RECIPE_XMLMATCH;
 				DLog(@"Using %@",path);
+				[recipe retain];
 				return CK_DETECTION_TITLE;			
 			}			
 		}
 		for(NSString* path in recipes) {
-			recipe = [[NSDictionary dictionaryWithContentsOfFile:path] retain];
+			recipe = [NSDictionary dictionaryWithContentsOfFile:path];
 			if([self lookup:@"Support.Identifier" inDocument:doc]) {
 				certainty = CK_RECIPE_XMLMATCH;
 				DLog(@"Using %@",path);
+				[recipe retain];
 				return CK_DETECTION_FUZZY;
 			}
 		}
+		recipe = nil;
 		return CK_DETECTION_FAILED;
 	}
 }
