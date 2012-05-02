@@ -206,6 +206,8 @@
 
 - (CKPost*)post:(int*)error {
 	if(!request) [self prepare];
+	int e;
+	if(!error) error = &e;
 	NSXMLDocument* doc;
 	if((*error = [CKUtil fetchXML:&doc viaRequest:request]) == CK_ERR_SUCCESS) {
 		if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Captcha" inDocument:doc])

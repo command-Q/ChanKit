@@ -75,6 +75,8 @@
 }
 
 + (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request throughProxy:(NSURL*)proxy {
+	if(!doc) return CK_ERR_UNDEFINED;
+	*doc = nil;
 	[CKUtil setProxy:proxy onRequest:request];
 	[request startSynchronous];
 	int error;
