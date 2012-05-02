@@ -38,10 +38,8 @@ static CKRecipe* sharedInstance = nil;
 
 - (id)init {
     @synchronized([self class]) {
-        if(!sharedInstance && (sharedInstance = self = [super init])) {
-			recipe = nil;
-			certainty = CK_RECIPE_NOMATCH;
-		}
+        if(!sharedInstance)
+			sharedInstance = self = [super init];
     }
     return sharedInstance;
 }
