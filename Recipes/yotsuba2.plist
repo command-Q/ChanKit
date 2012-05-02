@@ -28,7 +28,7 @@
 					<key>Thread</key>
 					<string>https?://boards\.4chan\.org/\w+/res/\d+</string>
 					<key>Board</key>
-					<string>https?://boards\.4chan\.org/\w+/\d*</string>
+					<string>https?://boards\.4chan\.org/\w+/\d*|https?://sys\.4chan\.org/\w+/imgboard\.php</string>
 				</dict>
 			</dict>
 		</array>
@@ -160,13 +160,6 @@
 		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer opContainer&quot;]/div</string>
 		<key>Index</key>
 		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer replyContainer&quot;]/div[@id=&quot;p%@&quot;]</string>
-		<key>Redirect</key>
-		<dict>
-			<key>Path</key>
-			<string>/html/head/meta[1]/@content</string>
-			<key>Regex</key>
-			<string>URL=(.*)</string>
-		</dict>
 		<key>Subject</key>
 		<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span[@class=&quot;subject&quot;]</string>
 		<key>Date</key>

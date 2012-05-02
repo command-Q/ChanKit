@@ -69,6 +69,13 @@
 	NSXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
+	NSURL* docURL = [[NSURL alloc] initWithString:[doc URI]];
+	if(!docURL) return CK_ERR_REDIRECT;
+	if(![[docURL absoluteURL] isEqual:[URL absoluteURL]]) {
+		[URL release];
+		URL = docURL;
+	}
+	else [docURL release];
 	[self populate:doc];
 	return 0;
 }
@@ -209,7 +216,7 @@
 	int e;
 	if(!error) error = &e;
 	NSXMLDocument* doc;
-	if((*error = [CKUtil fetchXML:&doc viaRequest:request]) == CK_ERR_SUCCESS) {
+	if((*error = [CKUtil fetchXML:&doc viaRequest:request allowedRedirects:0]) == CK_ERR_SUCCESS) {
 		if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Captcha" inDocument:doc])
 			*error = CK_POSTERR_VERIFICATION;
 		else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Flood" inDocument:doc])

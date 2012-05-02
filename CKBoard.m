@@ -20,17 +20,26 @@
 	return self;
 }
 
-- (id)initByReferencingURL:(NSURL*)url {
-	if((self = [self init])) {
+- (BOOL)parseURL:(NSURL*)url {
+	if(url && url != URL && ![[url absoluteURL] isEqual:[URL absoluteURL]]) {
+		[URL release];
+		[name release];
+		[boardroot release];
 		URL = [url retain];
 		name = [[CKUtil parseBoard:URL] retain];
 		boardroot = [[CKUtil parseBoardRoot:URL] retain];
-
 		DLog(@"URL: %@", URL);
 		DLog(@"Board: %@", name);		
 		DLog(@"Board Root: %@", boardroot);		
 	}
-	return self;
+	return url != nil;
+}
+
+- (id)initByReferencingURL:(NSURL*)url {
+	if((self = [self init]) && [self parseURL:url])
+		return self;
+	[self release];
+	return nil;
 }
 + (CKBoard*)boardReferencingURL:(NSURL*)url { return [[[self alloc] initByReferencingURL:url] autorelease]; }
 
@@ -71,7 +80,9 @@
 	NSXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
-
+	if(![self parseURL:[NSURL URLWithString:[doc URI]]])
+		return CK_ERR_REDIRECT;
+		
 	int index  = [[[CKRecipe sharedRecipe] lookup:@"Page.Number" inDocument:doc] integerValue];	
 	if(!title) {
 		title = [[[CKRecipe sharedRecipe] lookup:@"Board.Title" inDocument:doc test:[boardroot absoluteString]] retain];

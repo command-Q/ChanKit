@@ -69,7 +69,7 @@
 + (CKPost*)testPost { return [[[self alloc] initTestPost] autorelease]; }
 
 - (BOOL)parseURL:(NSURL*)url {
-	if(url && url != URL) {
+	if(url && url != URL && ![[url absoluteURL] isEqual:[URL absoluteURL]]) {
 		[URL release];
 		[board release];
 		URL = [url copy];
@@ -132,13 +132,9 @@
 	NSXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
-	// Check that a redirect page didn't slip through
-	NSString* redirect;
-	if((redirect = [[CKRecipe sharedRecipe] lookup:@"Post.Redirect" inDocument:doc])) {
-		if([self parseURL:[NSURL URLWithString:redirect relativeToURL:URL]])
-			return [self populate];
-		return CK_ERR_UNDEFINED;
-	}
+	// URL may have changed during fetch due to redirects
+	if(![self parseURL:[NSURL URLWithString:[doc URI]]])
+		return CK_ERR_REDIRECT;
 	deleted = NO;
 	[self populate:doc threadContext:nil];
 	if(deleted) return CK_ERR_NOTFOUND;

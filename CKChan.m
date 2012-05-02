@@ -63,6 +63,13 @@
 	NSXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
+	NSURL* docURL = [[NSURL alloc] initWithString:[doc URI]];
+	if(!docURL) return CK_ERR_REDIRECT;
+	if(![[docURL absoluteURL] isEqual:[URL absoluteURL]]) {
+		[URL release];
+		URL = docURL;
+	}
+	else [docURL release];
 	
 	name = [[[CKRecipe sharedRecipe] lookup:@"Chan.Name" inDocument:doc] retain];
 	DLog(@"Name: %@",name);

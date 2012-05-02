@@ -28,6 +28,7 @@
 		case CK_ERR_PARSER:				return @"Document could not be parsed";
 		case CK_ERR_UNSUPPORTED:		return @"Unsupported board software";
 		case CK_ERR_BANNED:				return @"You are banned";
+		case CK_ERR_REDIRECT:			return @"Bad redirection";
 		// Common post errors
 		case CK_POSTERR_FLOOD:			return @"Flood detected";
 		case CK_POSTERR_VERIFICATION:	return @"CAPTCHA verification failed";
@@ -74,44 +75,58 @@
 	return [NSURL URLWithString:[[URL absoluteString] stringByMatching:@"[^#]+"]]; 
 }
 
-+ (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request throughProxy:(NSURL*)proxy {
++ (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request throughProxy:(NSURL*)proxy allowedRedirects:(NSUInteger)redirects {
 	if(!doc) return CK_ERR_UNDEFINED;
 	*doc = nil;
 	[CKUtil setProxy:proxy onRequest:request];
 	[request startSynchronous];
-	int error;
-	if((error = [CKUtil validateResponse:request]) != CK_ERR_SUCCESS)
+	int error = [CKUtil validateResponse:request];
+	if(error != CK_ERR_SUCCESS)
 		return error;
 	if(!request.contentLength)
 		return CK_ERR_UNDEFINED;
+		
 	//*doc = [[[NSXMLDocument alloc] initWithData:[request responseData] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
 	//Dirty trick to work around a bug in the outdated version of libxml2 used by NSXMLDocument
 	NSString* response = [request responseString];
 	if(!response)
 		response = [[[NSString alloc] initWithBytes:[[request responseData] bytes] length:[[request responseData] length] encoding:NSASCIIStringEncoding] autorelease];
-	if(!(*doc = [[[NSXMLDocument alloc] initWithXMLString:[response stringByReplacingOccurrencesOfString:@"<'+'\\/script>" withString:@"</script>"] 
-		                                     options:NSXMLDocumentTidyHTML error:NULL] autorelease]))
+	if(!(*doc = [[NSXMLDocument alloc] initWithXMLString:[response stringByReplacingOccurrencesOfString:@"<'+'\\/script>" withString:@"</script>"] 
+	                                             options:NSXMLDocumentTidyHTML error:NULL]))
 		return CK_ERR_PARSER;
 	[*doc setURI:[[request url] absoluteString]];
-	if([[CKRecipe sharedRecipe] certainty] != CK_RECIPE_XMLMATCH && [[CKRecipe sharedRecipe] detectBoardSoftware:*doc] <= 0) {
-		DLog(@"Unsupported board type");
-		return CK_ERR_UNSUPPORTED;
+
+	id redirect; // each object along the way to check a redirect is only needed as an argument to the next so re-use the same pointer
+	if(!(redirects && [(redirect = [*doc nodesForXPath:@"/html/head/meta[@http-equiv=\"refresh\"]/@content" error:NULL]) count])) {
+		[*doc autorelease];
+		if([[CKRecipe sharedRecipe] certainty] != CK_RECIPE_XMLMATCH && [[CKRecipe sharedRecipe] detectBoardSoftware:*doc] <= 0) {
+			DLog(@"Unsupported board type");
+			return CK_ERR_UNSUPPORTED;
+		}
+		if([CKUtil checkBan:*doc]) {
+			DLog(@"Banned!");
+			return CK_ERR_BANNED;
+		}
+		return CK_ERR_SUCCESS;
 	}
-	if([CKUtil checkBan:*doc]) {
-		DLog(@"Banned!");
-		return CK_ERR_BANNED;
+	
+	if(!((redirect = [[[redirect objectAtIndex:0] stringValue] stringByMatching:@"(?i)\\d+;\\s*url=(.+)" capture:1L]) &&
+	     (redirect = [NSURL URLWithString:redirect relativeToURL:[request url]]))) {
+		[*doc autorelease];
+		return CK_ERR_REDIRECT;
 	}
-	return CK_ERR_SUCCESS;	
+	[*doc release];
+	return [CKUtil fetchXML:doc fromURL:redirect throughProxy:proxy allowedRedirects:redirects-1];
 }
-+ (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request {
-	return [CKUtil fetchXML:doc viaRequest:request throughProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"]]; // Very bad!
++ (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request allowedRedirects:(NSUInteger)redirects {
+	return [CKUtil fetchXML:doc viaRequest:request throughProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"]  allowedRedirects:redirects];
 }
-+ (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy {
++ (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL throughProxy:(NSURL*)proxy allowedRedirects:(NSUInteger)redirects {
 	ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
-	return [CKUtil fetchXML:doc viaRequest:fetch throughProxy:proxy];
+	return [CKUtil fetchXML:doc viaRequest:fetch throughProxy:proxy allowedRedirects:redirects];
 }
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL {
-	return [CKUtil fetchXML:doc fromURL:URL throughProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"]]; // Very bad!
+	return [CKUtil fetchXML:doc fromURL:URL throughProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] allowedRedirects:5 /*ASI default*/];
 }
 + (int)validateResponse:(ASIHTTPRequest*)response {
 	if([response error]) {

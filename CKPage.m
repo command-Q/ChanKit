@@ -18,16 +18,25 @@
 	return self;
 }
 
-- (id)initByReferencingURL:(NSURL*)url {
-	if((self = [self init])) {
+- (BOOL)parseURL:(NSURL*)url {
+	if(url && url != URL && ![[url absoluteURL] isEqual:[URL absoluteURL]]) {
+		[URL release];
+		[board release];
 		URL = [url retain];
 		board = [[CKUtil parseBoard:URL] retain];
 		index = [CKUtil parsePage:URL];
 		DLog(@"URL: %@", URL);
 		DLog(@"Board: %@", board);
-		DLog(@"Index: %d",index);
+		DLog(@"Index: %d",index);		
 	}
-	return self;
+	return url != nil;
+}
+
+- (id)initByReferencingURL:(NSURL*)url {
+	if((self = [self init]) && [self parseURL:url])
+		return self;
+	[self release];
+	return nil;
 }
 + (CKPage*)pageReferencingURL:(NSURL*)url { return [[[self alloc] initByReferencingURL:url] autorelease]; }
 
@@ -58,6 +67,8 @@
 	NSXMLDocument* doc;
 	if((error = [CKUtil fetchXML:&doc fromURL:URL]))
 		return error;
+	if(![self parseURL:[NSURL URLWithString:[doc URI]]])
+		return CK_ERR_REDIRECT;
 	[self populate:doc];
 	return 0;
 }

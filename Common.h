@@ -32,7 +32,8 @@
 #define CK_ERR_NOTFOUND		404
 #define CK_ERR_PARSER		406
 #define	CK_ERR_UNSUPPORTED	415
-#define	CK_ERR_BANNED		302
+#define	CK_ERR_BANNED		403
+#define CK_ERR_REDIRECT		302
 
 // Imageboard software detection codes (CKRecipe @detectBoardSoftware)
 #define	CK_DETECTION_COULDNOTPROCEED	-1

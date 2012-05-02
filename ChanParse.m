@@ -314,7 +314,7 @@ int main (int argc, const char * argv[]) {
 				if(![proxy host]) // Most likely the scheme was ommitted
 					proxy = [NSURL URLWithString:[@"http://" stringByAppendingString:obj]];
 				NSXMLDocument* tempdoc;
-				if(![CKUtil fetchXML:&tempdoc fromURL:url throughProxy:proxy])
+				if(![CKUtil fetchXML:&tempdoc fromURL:url throughProxy:proxy allowedRedirects:5]) {
 					// Use standard output so that list can be redirected to a file
 					// Note: this sometimes gives false positives on proxies that resolve to some access page
 					[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
