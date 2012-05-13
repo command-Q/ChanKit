@@ -169,11 +169,10 @@
 }
 
 + (NSString*)generatePassword {
-	NSString* alphanum = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    NSMutableString* pass = [NSMutableString stringWithCapacity:8];
+	char pass[8];
 	for(int i = 0; i < 8; i++)
-		[pass appendFormat:@"%c",[alphanum characterAtIndex:arc4random()*[alphanum length]/4294967296L]];
-	return pass;
+		pass[i] = arc4random()*94ULL/4294967296ULL+33;
+	return [[[NSString alloc] initWithBytes:pass length:8 encoding:NSASCIIStringEncoding] autorelease];
 }
 + (NSString*)MD5:(NSData*)data {
 	unsigned char result[CC_MD5_DIGEST_LENGTH];
