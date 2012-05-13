@@ -11,10 +11,8 @@
 @implementation CKUser
 
 - (id)init {
-	if((self = [super init])) {
+	if((self = [super init]))
 		privilege = CK_PRIV_NORMAL;
-		password = [[CKUtil generatePassword] retain]; 
-	}
 	return self;
 }
 
@@ -105,13 +103,19 @@
 @synthesize privilege;
 @synthesize posts;
 
+- (NSString*)password {
+	if(!password)
+		password = [[CKUtil generatePassword] retain];
+	return [[password retain] autorelease];
+}
+
 - (NSDictionary*)dictionary {
 	NSMutableDictionary* dict = [NSMutableDictionary dictionary];
 	if(name)                [dict setObject:name forKey:@"Name"];
 	if(tripcode.trip)       [dict setObject:tripcode.trip forKey:@"Tripcode"];
 	if(tripcode.securetrip) [dict setObject:tripcode.securetrip forKey:@"SecureTripcode"];
 	if(email)               [dict setObject:email forKey:@"Email"];
-	if(password)            [dict setObject:password forKey:@"Password"];
+	[dict setObject:self.password forKey:@"Password"];
 	[dict setObject:[NSNumber numberWithInt:privilege] forKey:@"Privilege"];
 	return dict;
 }
@@ -165,7 +169,7 @@
 		copy.tripcode = tripcode.trip;
 		copy.securetrip = tripcode.securetrip;
 		copy.email = email;
-		copy.password = password;
+		copy.password = self.password;
 		copy.privilege = privilege;
 		copy.posts = posts;
 	}
