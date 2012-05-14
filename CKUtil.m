@@ -99,7 +99,7 @@
 	id redirect; // each object along the way to check a redirect is only needed as an argument to the next so re-use the same pointer
 	if(!(redirects && [(redirect = [*doc nodesForXPath:@"/html/head/meta[@http-equiv=\"refresh\"]/@content" error:NULL]) count])) {
 		[*doc autorelease];
-		if([[CKRecipe sharedRecipe] certainty] != CK_RECIPE_XMLMATCH && [[CKRecipe sharedRecipe] detectBoardSoftware:*doc] <= 0) {
+		if([[CKRecipe sharedRecipe] certainty] == CK_RECIPE_NOMATCH && [[CKRecipe sharedRecipe] detectBoardSoftware:*doc] <= 0) {
 			DLog(@"Unsupported board type");
 			return CK_ERR_UNSUPPORTED;
 		}
