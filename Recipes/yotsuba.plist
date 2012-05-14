@@ -24,7 +24,7 @@
 					<key>Image</key>
 					<string>https?://images\.4chan\.org/\w+/src/\d+\.\w+</string>
 					<key>Post</key>
-					<string>https?://boards\.4chan\.org/\w+/res/\d+#q?\d+|https?://sys\.4chan\.org/\w+/imgboard\.php\?res=\d+</string>
+					<string>https?://boards\.4chan\.org/\w+/res/\d+#p?\d+|https?://sys\.4chan\.org/\w+/imgboard\.php\?res=\d+</string>
 					<key>Thread</key>
 					<string>https?://boards\.4chan\.org/\w+/res/\d+</string>
 					<key>Board</key>
@@ -35,10 +35,10 @@
 		<key>Software</key>
 		<dict>
 			<key>Title</key>
-			<string>/html/body/form/div[@id=&quot;footer&quot;]/div[@id=&quot;absbot&quot;]/a[2]/text()</string>
+			<string>/html/body/div[@id=&quot;absbot&quot;]/a[2]/text()</string>
 		</dict>
 		<key>Identifier</key>
-		<string>/html/body/form/div[@id=&quot;footer&quot;]/div[@id=&quot;absbot&quot;]/a[2]</string>
+		<string>/html/body/div[@id=&quot;absbot&quot;]/a[2]</string>
 	</dict>
 	<key>User</key>
 	<dict>
@@ -46,9 +46,10 @@
 		<dict>
 			<key>Path</key>
 			<array>
-				<string>./span[ends-with(@class,&quot;postername&quot;)]/text()</string>
-				<string>./span[ends-with(@class,&quot;postername&quot;)]/a[@class=&quot;linkmail&quot;]/text()</string>
-				<string>./span[ends-with(@class,&quot;postername&quot;)][1]/span/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/span[@class=&quot;name&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span/span[@class=&quot;name&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/a[@class=&quot;useremail&quot;]/span[@class=&quot;name&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span/a[@class=&quot;useremail&quot;]/span[@class=&quot;name&quot;]/text()</string>
 			</array>
 			<key>TripString</key>
 			<string>([^!]*+)!?</string>
@@ -56,7 +57,10 @@
 		<key>Email</key>
 		<dict>
 			<key>Path</key>
-			<string>./span[ends-with(@class,&quot;postername&quot;)]/a[@class=&quot;linkmail&quot;]/@href</string>
+			<array>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/a[@class=&quot;useremail&quot;]/@href</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span/a[@class=&quot;useremail&quot;]/@href</string>
+			</array>
 			<key>Regex</key>
 			<string>mailto:(.*)</string>
 		</dict>
@@ -66,8 +70,10 @@
 			<string>!%@</string>
 			<key>Path</key>
 			<array>
-				<string>./span[@class=&quot;postertrip&quot;]/text()</string>
-				<string>./span[ends-with(@class,&quot;postername&quot;)]/a[@class=&quot;linkmail&quot;]/span[@class=&quot;postertrip&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/span[@class=&quot;postertrip&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span/span[@class=&quot;postertrip&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/a[@class=&quot;useremail&quot;]/span[@class=&quot;postertrip&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span/a[@class=&quot;useremail&quot;]/span[@class=&quot;postertrip&quot;]/text()</string>
 			</array>
 			<key>Regex</key>
 			<string>!([^!]*)</string>
@@ -78,8 +84,10 @@
 			<string>!!%@</string>
 			<key>Path</key>
 			<array>
-				<string>./span[@class=&quot;postertrip&quot;]/text()</string>
-				<string>./span[ends-with(@class,&quot;postername&quot;)]/a[@class=&quot;linkmail&quot;]/span[@class=&quot;postertrip&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/span[@class=&quot;postertrip&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span/span[@class=&quot;postertrip&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span/a[@class=&quot;useremail&quot;]/span[@class=&quot;postertrip&quot;]/text()</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span/a[@class=&quot;useremail&quot;]/span[@class=&quot;postertrip&quot;]/text()</string>
 			</array>
 			<key>Regex</key>
 			<string>!!(.*)</string>
@@ -87,117 +95,100 @@
 		<key>Authority</key>
 		<dict>
 			<key>Mod</key>
-			<dict>
-				<key>Path</key>
-				<string>./span[@class=&quot;commentpostername&quot;]/span/@style</string>
-				<key>Regex</key>
-				<string>color:(#800080)</string>
-			</dict>
+			<array>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span[@class=&quot;nameBlock capcodeMod&quot;]</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;nameBlock capcodeMod&quot;]</string>
+			</array>
 			<key>Admin</key>
-			<dict>
-				<key>Path</key>
-				<string>./span[@class=&quot;commentpostername&quot;]/span/@style</string>
-				<key>Regex</key>
-				<string>color:(#F00000)</string>
-			</dict>
+			<array>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span[@class=&quot;nameBlock capcodeAdmin&quot;]</string>
+				<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;nameBlock capcodeAdmin&quot;]</string>
+			</array>
 		</dict>
 	</dict>
 	<key>Image</key>
 	<dict>
 		<key>URL</key>
-		<string>./a[img]/@href</string>
+		<string>./div[@class=&quot;file&quot;]/a[starts-with(@class,&quot;fileThumb&quot;)]/@href</string>
 		<key>Name</key>
-		<string>./span[@class=&quot;filesize&quot;]/span/@title</string>
+		<string>./div[@class=&quot;file&quot;]/div[@class=&quot;fileInfo&quot;]/span[@class=&quot;fileText&quot;]/span/@title</string>
 		<key>Thumbnail</key>
-		<string>./a/img/@src</string>
+		<string>./div[@class=&quot;file&quot;]/a[starts-with(@class,&quot;fileThumb&quot;)]/img/@src</string>
 		<key>Size</key>
 		<dict>
 			<key>Path</key>
-			<string>./a/img/@alt</string>
+			<string>./div[@class=&quot;file&quot;]/a[starts-with(@class,&quot;fileThumb&quot;)]/img/@alt</string>
 			<key>Regex</key>
 			<string>([\d\.^ ]+) </string>
 		</dict>
 		<key>Measure</key>
 		<dict>
 			<key>Path</key>
-			<string>./a/img/@alt</string>
+			<string>./div[@class=&quot;file&quot;]/a[starts-with(@class,&quot;fileThumb&quot;)]/img/@alt</string>
 			<key>Regex</key>
-			<string>\d+ (.*)</string>
+			<string>[\d\.]+ (.*)</string>
 		</dict>
 		<key>Spoiler</key>
-		<dict>
-			<key>Path</key>
-			<string>./a/img/@alt</string>
-			<key>Regex</key>
-			<string>(Spoiler Image, )</string>
-		</dict>
+		<string>./div[@class=&quot;file&quot;]/a[@class=&quot;fileThumb imgspoiler&quot;]/@href</string>
 		<key>MD5</key>
-		<string>./a/img/@md5</string>
+		<string>./div[@class=&quot;file&quot;]/a[starts-with(@class,&quot;fileThumb&quot;)]/img/@data-md5</string>
 		<key>Width</key>
 		<dict>
 			<key>Path</key>
-			<string>./span[@class=&quot;filesize&quot;]/text()[2]</string>
+			<string>./div[@class=&quot;file&quot;]/div[@class=&quot;fileInfo&quot;]/span[@class=&quot;fileText&quot;]/text()[2]</string>
 			<key>Regex</key>
 			<string>, (\d+)x</string>
 		</dict>
 		<key>Height</key>
 		<dict>
 			<key>Path</key>
-			<string>./span[@class=&quot;filesize&quot;]/text()[2]</string>
+			<string>./div[@class=&quot;file&quot;]/div[@class=&quot;fileInfo&quot;]/span[@class=&quot;fileText&quot;]/text()[2]</string>
 			<key>Regex</key>
 			<string>x([^,]+)</string>
 		</dict>
 		<key>Date</key>
 		<dict>
 			<key>Path</key>
-			<string>./span[@class=&quot;filesize&quot;]/a/text()</string>
+			<string>./div[@class=&quot;file&quot;]/div[@class=&quot;fileInfo&quot;]/span[@class=&quot;fileText&quot;]/a/text()</string>
 			<key>Regex</key>
-			<string>([^.]+)</string>
+			<string>(\d+)</string>
 		</dict>
 	</dict>
 	<key>Post</key>
 	<dict>
 		<key>OP</key>
-		<string>/html/body/form</string>
+		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer opContainer&quot;]/div</string>
 		<key>Index</key>
-		<string>/html/body/form/table/tr/td[@id=&quot;%@&quot;]</string>
+		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer replyContainer&quot;]/div[@id=&quot;p%@&quot;]</string>
 		<key>Subject</key>
-		<string>./span[@class=&quot;filetitle&quot;]</string>
+		<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;userInfo&quot;]/span[@class=&quot;subject&quot;]</string>
 		<key>Date</key>
-		<string>./span[@class=&quot;posttime&quot;]</string>
+		<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;dateTime&quot;]</string>
 		<key>Comment</key>
-		<string>./blockquote</string>
+		<string>./blockquote[@class=&quot;postMessage&quot;]</string>
 		<key>RawComment</key>
-		<string>./blockquote/text()</string>
+		<string>./blockquote[@class=&quot;postMessage&quot;]/text()</string>
 		<key>Abbreviated</key>
-		<string>./blockquote/span[@class=&quot;abbr&quot;]</string>
+		<string>./blockquote[@class=&quot;postMessage&quot;]/span[@class=&quot;abbr&quot;]</string>
 		<key>Admin</key>
-		<string>./blockquote/b/text()</string>
+		<string>./blockquote[@class=&quot;postMessage&quot;]/strong</string>
 		<key>Quotes</key>
 		<dict>
 			<key>XML</key>
-			<string>./blockquote//a[@class=&quot;quotelink&quot;]</string>
+			<string>./blockquote[@class=&quot;postMessage&quot;]/span[@class=&quot;quote&quot;]/a[@class=&quot;quotelink&quot;]</string>
 			<key>URL</key>
 			<string>./@href</string>
 			<key>ID</key>
-			<dict>
-				<key>Path</key>
-				<array>
-					<string>./font[@class=&quot;unkfunc&quot;]/text()</string>
-					<string>./text()</string>
-				</array>
-				<key>Regex</key>
-				<string>(&gt;&gt;\d+|&gt;&gt;&gt;/\w+/\d+)</string>
-			</dict>
+			<string>./text()</string>
 		</dict>
 		<key>InlineQuotes</key>
-		<string>./blockquote/font/text()</string>
+		<string>./blockquote[@class=&quot;postMessage&quot;]/span[@class=&quot;quote&quot;]/text()</string>
 		<key>Spoilers</key>
-		<string>./blockquote/span[@class=&quot;spoiler&quot;]/text()</string>
+		<string>./blockquote[@class=&quot;postMessage&quot;]/span[@class=&quot;spoiler&quot;]/text()</string>
 		<key>Sticky</key>
-		<string>./span[starts-with(@id,&quot;nothread&quot;)]/img[@alt=&quot;sticky&quot;]/@alt</string>
+		<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;postNum&quot;]/img[@alt=&quot;Sticky&quot;]/@alt</string>
 		<key>Closed</key>
-		<string>./span[starts-with(@id,&quot;nothread&quot;)]/img[@alt=&quot;closed&quot;]/@alt</string>
+		<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;postNum&quot;]/img[@alt=&quot;Closed&quot;]/@alt</string>
 		<key>BanMessage</key>
 		<string>(USER WAS BANNED FOR THIS POST)</string>
 	</dict>
@@ -305,67 +296,63 @@
 		<key>Captcha</key>
 		<dict>
 			<key>URL</key>
-			<string>/html/body/div[@class=&quot;postarea&quot;]/form/table/tr/td/noscript/iframe/@src</string>
+			<string>/html/body/form[@name=&quot;post&quot;]/table/tr/td/noscript/iframe/@src</string>
 			<key>Challenge</key>
 			<string>/html/body/form/input[@name=&quot;recaptcha_challenge_field&quot;]/@value</string>
 			<key>Image</key>
 			<string>/html/body/form/center/img/@src</string>
 		</dict>
 		<key>URL</key>
-		<string>/html/body/div[@class=&quot;postarea&quot;]/form/@action</string>
+		<string>/html/body/form[@name=&quot;post&quot;]/@action</string>
 	</dict>
 	<key>Thread</key>
 	<dict>
 		<key>Root</key>
-		<string>/html/body/form/input[@name=&quot;%@&quot;]/..</string>
+		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@id=&quot;t%@&quot;]/div[@class=&quot;postContainer opContainer&quot;]/div</string>
 		<key>Replies</key>
-		<string>/html/body/form/table/tr/td[@class=&quot;reply&quot;]/@id</string>
-		<key>Preceding</key>
-		<string>./span[@id=&quot;nothread%@&quot;]/preceding-sibling::hr[1]</string>
-		<key>Following</key>
-		<string>./span[@id=&quot;nothread%@&quot;]/following-sibling::hr[1]</string>
+		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer replyContainer&quot;]/div[@class=&quot;post reply&quot;]/div[@class=&quot;postInfo&quot;]/span[@class=&quot;postNum desktop&quot;]/a[@title=&quot;Quote this post&quot;]/text()</string>
 		<key>Omitted</key>
 		<dict>
 			<key>Path</key>
-			<string>./span[@class=&quot;omittedposts&quot;]/text()</string>
+			<string>../../span[@class=&quot;summary desktop&quot;]</string>
 			<key>Regex</key>
 			<string>([^\s]+)</string>
 		</dict>
 		<key>OmittedImages</key>
 		<dict>
 			<key>Path</key>
-			<string>./span[@class=&quot;omittedposts&quot;]/text()</string>
+			<string>../../span[@class=&quot;summary desktop&quot;]</string>
 			<key>Regex</key>
 			<string>[^\d]+(\d+)</string>
 		</dict>
 		<key>Trailing</key>
-		<string>./table/tr/td[@class=&quot;reply&quot;]/@id</string>
+		<string>../../div[@class=&quot;postContainer replyContainer&quot;]/div[@class=&quot;post reply&quot;]/div[@class=&quot;postInfo&quot;]/span[@class=&quot;postNum desktop&quot;]/a[@title=&quot;Quote this post&quot;]</string>
 		<key>Sticky</key>
-		<string>/html/body/form/span[starts-with(@id,&quot;nothread&quot;)]/img[@alt=&quot;sticky&quot;]/@alt</string>
+		<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;postNum&quot;]/img[@alt=&quot;Sticky&quot;]/@alt</string>
 		<key>Closed</key>
-		<string>/html/body/form/span[starts-with(@id,&quot;nothread&quot;)]/img[@alt=&quot;closed&quot;]/@alt</string>
+		<string>./div[@class=&quot;postInfo&quot;]/span[@class=&quot;postNum&quot;]/img[@alt=&quot;Closed&quot;]/@alt</string>
 	</dict>
 	<key>Page</key>
 	<dict>
 		<key>Number</key>
-		<string>/html/body/form/table[@class=&quot;pages&quot;]/tr/td/b/text()</string>
+		<string>/html/body/div[@class=&quot;pagelist desktop&quot;]/div[@class=&quot;pages&quot;]/strong</string>
 		<key>Threads</key>
-		<string>/html/body/form/span[starts-with(@id,&quot;nothread&quot;)]/a[not(@class=&quot;quotejs&quot;)]/@href</string>
+		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer opContainer&quot;]/div[@class=&quot;post op&quot;]/div[@class=&quot;postInfo&quot;]/span[@class=&quot;postNum&quot;]/a[@class=&quot;replylink&quot;]/@href</string>
 		<key>IDs</key>
-		<string>/html/body/form//input[@type=&quot;checkbox&quot;]/@name</string>
+		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer opContainer&quot;]/div[@class=&quot;post op&quot;]/div[@class=&quot;postInfo&quot;]/span[@class=&quot;postNum&quot;]/a[@title=&quot;Quote this post&quot;]</string>
 	</dict>
 	<key>Board</key>
 	<dict>
 		<key>Location</key>
-		<string>/html/body/form/span/a[text()=&quot;Return&quot;]/@href</string>
+		<string>/html/body/div[@class=&quot;navLinks&quot;]/a[1]/@href</string>
 		<key>Title</key>
-		<string>/html/body/div[@id=&quot;header&quot;]/span[@id=&quot;navtop&quot;]/a[@href=&quot;%@&quot;]/@title</string>
+		<string>/html/body/div[@id=&quot;boardNavDesktop&quot;]/a[@href=&quot;%@&quot;]/@title</string>
 		<key>AlternateTitle</key>
-		<string>/html/body/div[@class=&quot;logo&quot;]/font/b/span/text()</string>
+		<string>/html/body/div[@class=&quot;boardBanner&quot;]/div[@class=&quot;boardTitle&quot;]</string>
 		<key>Rules</key>
-		<string>/html/body/div[@class=&quot;postarea&quot;]/form/table/tr[8]/td/table/tr/td[@class=&quot;rules&quot;]/ul/li</string>
+		<string>/html/body/form[@name=&quot;post&quot;]/table[@id=&quot;postForm&quot;]/tr[@class=&quot;rules&quot;]/td/ul[@class=&quot;rules&quot;]/li</string>
 		<key>Pages</key>
-		<string>/html/body/form/table[@class=&quot;pages&quot;]/tr/td/a/@href</string>
+		<string>/html/body/div[@class=&quot;pagelist desktop&quot;]/div[@class=&quot;pages&quot;]/a/@href</string>
 	</dict>
 	<key>Chan</key>
 	<dict>
@@ -436,9 +423,9 @@
 			<key>Page</key>
 			<string>\.[^/]+/\w+/(\d+)$</string>
 			<key>Thread</key>
-			<string>/(\d+)[#q\d]*$</string>
+			<string>/(\d+)[#p\d]*$</string>
 			<key>Post</key>
-			<string>[#=q](\d+)$</string>
+			<string>[#=p](\d+)$</string>
 		</dict>
 		<key>Dates</key>
 		<dict>
@@ -454,11 +441,11 @@
 			<key>CrossBoardFormat</key>
 			<string>&gt;&gt;&gt;/%@/%d</string>
 			<key>ID</key>
-			<string>#(\d+)</string>
+			<string>#p(\d+)$</string>
 			<key>CrossThread</key>
-			<string>(\d+#\d+)$</string>
+			<string>(\d+#p\d+)$</string>
 			<key>CrossBoard</key>
-			<string>/\w+/res/\d+#\d+$</string>
+			<string>/\w+/res/\d+#p\d+$</string>
 			<key>Regex</key>
 			<string>&gt;&gt;\d+\s*|&gt;&gt;&gt;/\w+/\d+\s*</string>
 		</dict>
