@@ -42,6 +42,7 @@
 #define CK_POSTERR_DISALLOWED       5
 #define CK_POSTERR_REJECTED         8
 #define CK_POSTERR_FILETYPE         9
+#define CK_POSTERR_FAILEDUPLOAD    10
 
 // Imageboard software detection codes (CKRecipe @detectBoardSoftware)
 #define CK_DETECTION_COULDNOTPROCEED   -1

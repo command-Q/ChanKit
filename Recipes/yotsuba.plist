@@ -278,6 +278,13 @@
 				<key>Regex</key>
 				<string>(Error: Cannot find record\.)</string>
 			</dict>
+			<key>FailedUpload</key>
+			<dict>
+				<key>Path</key>
+				<string>/html/body/table/tr/td/font/b/span/text()</string>
+				<key>Regex</key>
+				<string>(Error: Upload failed\.)</string>
+			</dict>
 			<key>Thread</key>
 			<dict>
 				<key>Path</key>

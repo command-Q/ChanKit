@@ -245,6 +245,8 @@
 			*error = CK_POSTERR_REJECTED;
 		else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Filetype" inDocument:doc])
 			*error = CK_POSTERR_FILETYPE;
+		else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.FailedUpload" inDocument:doc])
+			*error = CK_POSTERR_FAILEDUPLOAD;
 		else if([[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate" inDocument:doc]) {
 			*error = CK_POSTERR_DUPLICATE;
 			return [CKPost postReferencingURL:[NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Poster.Response.Duplicate.URL" inDocument:doc] relativeToURL:URL]];

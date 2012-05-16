@@ -37,6 +37,7 @@
 		case CK_POSTERR_DISALLOWED:     return @"Comment disallowed";
 		case CK_POSTERR_REJECTED:       return @"File rejected";
 		case CK_POSTERR_FILETYPE:       return @"Filetype mismatch";
+		case CK_POSTERR_FAILEDUPLOAD:   return @"Upload failed";
 		default:                        return nil;
 	}
 }
