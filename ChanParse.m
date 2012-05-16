@@ -281,15 +281,17 @@ int main (int argc, const char * argv[]) {
 					[posters makeObjectsPerformSelector:@selector(setURL:) withObject:post.URL];
 			}
 			else { 
+				NSLog(@"Error: %@",[CKUtil describeError:err]);
 				switch(err) {
 					case CK_POSTERR_FLOOD: sleep += sleep ? 20 : 0; break;
+					case CK_POSTERR_DUPLICATE:
+						[post populate];
+						NSLog(@"Duplicate at: %@\n%@",[post.URL absoluteString],[post prettyPrint]);
 					case CK_POSTERR_VERIFICATION:
-					case CK_POSTERR_DUPLICATE:		
 					case CK_ERR_NETWORK: sleep = 0; break;
 					case CK_POSTERR_DISALLOWED:
 					case CK_POSTERR_NOTFOUND: error = YES; break;
 				}
-				NSLog(@"Error: %@",[CKUtil describeError:err]);
 			}	
 		}
 	}
