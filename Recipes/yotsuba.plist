@@ -230,51 +230,51 @@
 			<key>NotFound</key>
 			<dict>
 				<key>Path</key>
-				<string>/html/body/table/tr/td/font/b/text()</string>
+				<string>/html/body/table/tr/td/font/b/span/text()</string>
 				<key>Regex</key>
 				<string>(Error: Thread specified does not exist\.).*</string>
 			</dict>
 			<key>Disallowed</key>
 			<dict>
 				<key>Path</key>
-				<string>/html/body/table/tr/td/font/b/text()</string>
+				<string>/html/body/table/tr/td/font/b/span/text()</string>
 				<key>Regex</key>
 				<string>(Part of your comment isn&apos;t allowed to be posted :\().*</string>
 			</dict>
 			<key>Duplicate</key>
 			<dict>
 				<key>Path</key>
-				<string>/html/body/table/tr/td/font/b/a/text()</string>
+				<string>/html/body/table/tr/td/font/b/span/a/text()</string>
 				<key>Regex</key>
 				<string>(Error: Duplicate file entry detected\.)</string>
 				<key>URL</key>
-				<string>/html/body/table/tr/td/font/b/a[1]/@href</string>
+				<string>/html/body/table/tr/td/font/b/span/a[1]/@href</string>
 			</dict>
 			<key>Captcha</key>
 			<dict>
 				<key>Path</key>
-				<string>/html/body/table/tr/td/font/b/text()</string>
+				<string>/html/body/table/tr/td/font/b/span/text()</string>
 				<key>Regex</key>
 				<string>(You seem to have mistyped the verification\.).*</string>
 			</dict>
 			<key>Flood</key>
 			<dict>
 				<key>Path</key>
-				<string>/html/body/table/tr/td/font/b/text()</string>
+				<string>/html/body/table/tr/td/font/b/span/text()</string>
 				<key>Regex</key>
 				<string>Error: (Flood detected, post discarded\.).*</string>
 			</dict>
 			<key>Rejected</key>
 			<dict>
 				<key>Path</key>
-				<string>/html/body/table/tr/td/font/b/text()</string>
+				<string>/html/body/table/tr/td/font/b/span/text()</string>
 				<key>Regex</key>
 				<string>(Detected possible malicious code in image file\.)</string>
 			</dict>
 			<key>Filetype</key>
 			<dict>
 				<key>Path</key>
-				<string>/html/body/table/tr/td/font/b/text()</string>
+				<string>/html/body/table/tr/td/font/b/span/text()</string>
 				<key>Regex</key>
 				<string>(Error: Cannot find record\.)</string>
 			</dict>
@@ -296,7 +296,7 @@
 		<key>Captcha</key>
 		<dict>
 			<key>URL</key>
-			<string>/html/body/form[@name=&quot;post&quot;]/table/tr/td/noscript/iframe/@src</string>
+			<string>/html/body/form[@name=&quot;post&quot;]/table/tbody/tr/td/div/noscript/iframe/@src</string>
 			<key>Challenge</key>
 			<string>/html/body/form/input[@name=&quot;recaptcha_challenge_field&quot;]/@value</string>
 			<key>Image</key>
