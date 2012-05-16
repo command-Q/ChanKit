@@ -346,7 +346,7 @@
 		<key>Location</key>
 		<string>/html/body/div[@class=&quot;navLinks&quot;]/a[1]/@href</string>
 		<key>Title</key>
-		<string>/html/body/div[@id=&quot;boardNavDesktop&quot;]/a[@href=&quot;%@&quot;]/@title</string>
+		<string>/html/body/div[@id=&quot;boardNavDesktop&quot;]/a[text()=&quot;%@&quot;]/@title</string>
 		<key>AlternateTitle</key>
 		<string>/html/body/div[@class=&quot;boardBanner&quot;]/div[@class=&quot;boardTitle&quot;]</string>
 		<key>Rules</key>

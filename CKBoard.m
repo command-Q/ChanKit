@@ -85,7 +85,7 @@
 		
 	int index  = [[[CKRecipe sharedRecipe] lookup:@"Page.Number" inDocument:doc] integerValue];	
 	if(!title) {
-		title = [[[CKRecipe sharedRecipe] lookup:@"Board.Title" inDocument:doc test:[boardroot absoluteString]] retain];
+		title = [[[CKRecipe sharedRecipe] lookup:@"Board.Title" inDocument:doc test:name] retain];
 		DLog(@"Title: %@",title);
 	}
 	alternatetitle = [[[CKRecipe sharedRecipe] lookup:@"Board.AlternateTitle" inDocument:doc] retain];
