@@ -97,7 +97,7 @@ int main (int argc, const char * argv[]) {
 
 	if([args stringForKey:@"url"]) {
 		url = [NSURL URLWithString:[args stringForKey:@"url"]];
-		switch ([[CKRecipe sharedRecipe] resourceKindForURL:url]) {
+		switch([[CKRecipe sharedRecipe] resourceKindForURL:url]) {
 			case CK_RESOURCE_POST:   resource = [CKPost postFromURL:url];     break;
 			case CK_RESOURCE_THREAD: resource = [CKThread threadFromURL:url]; break;
 			case CK_RESOURCE_BOARD:  resource = [CKPage pageFromURL:url];     break;
@@ -133,12 +133,19 @@ int main (int argc, const char * argv[]) {
 	}
 	else if([args stringForKey:@"post"]) {
 		url = [NSURL URLWithString:[args stringForKey:@"post"]];
-		CKPost* post = [CKPost postFromURL:url];
-		NSLog(@"Responding to post:\n%@",[post prettyPrint]);
+		NSMutableString* rewritecomment = [NSMutableString string];
+		switch([[CKRecipe sharedRecipe] resourceKindForURL:url]) {
+			case CK_RESOURCE_THREAD: NSLog(@"Posting in thread:\n%@",[[CKPost postFromURL:url] prettyPrint]); break;
+			case CK_RESOURCE_BOARD:  NSLog(@"Posting new thread on /%@/",[CKUtil parseBoard:url]);            break;
+			case CK_RESOURCE_POST:
+				resource = [CKPost postFromURL:url];
+				[rewritecomment appendFormat:@">>%d\n",[resource ID]];
+				NSLog(@"Responding to post:\n%@",[resource prettyPrint]);
+		}
+
 		int runs = 1;
 		NSArray* uploads = nil;
 		NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithObject:url forKey:@"URL"];
-		NSMutableString* rewritecomment = post.OP ? [NSMutableString string] : [NSMutableString stringWithFormat:@">>%d\n",post.ID];
 		if([args stringForKey:@"name"])
 			[dict setObject:[args stringForKey:@"name"] forKey:@"Name"];
 		if([args stringForKey:@"trip"])
@@ -252,6 +259,7 @@ int main (int argc, const char * argv[]) {
 				[NSThread sleepForTimeInterval:sleep];
 
 			int err;
+			CKPost* post;
 			if([args boolForKey:@"dubs"])
 				post = [current post:&err attempt:dubs];
 			else
