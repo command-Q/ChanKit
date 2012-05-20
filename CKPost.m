@@ -166,14 +166,15 @@
 	subject = [[[CKRecipe sharedRecipe] lookup:@"Post.Subject" inDocument:doc] retain];
 	DLog(@"Subject: %@", subject);
 
-	NSDateFormatter* dateformat = [[NSDateFormatter alloc] init];
-	[dateformat setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
-	NSString* datestr = [[CKRecipe sharedRecipe] lookup:@"Post.Date" inDocument:doc];
-	if(!(date = [[dateformat dateFromString:datestr] retain])) {
-		[dateformat setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Alternate"]];
-		date = [[dateformat dateFromString:datestr] retain];
+	NSString* datestr = [[CKRecipe sharedRecipe] lookup:@"Post.Timestamp" inDocument:doc];
+	if(datestr)
+		date = [[NSDate alloc] initWithTimeIntervalSince1970:[datestr doubleValue]];
+	else {
+		NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+		[formatter setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
+		date = [[formatter dateFromString:[[CKRecipe sharedRecipe] lookup:@"Post.Date" inDocument:doc]] retain];
+		[formatter release];
 	}
-	[dateformat release];
 	DLog(@"Date: %@",date);
 
 	user = [[CKUser alloc] initWithXML:doc];

@@ -164,6 +164,8 @@
 		<string>./div[@class=&quot;postInfo desktop&quot;]/span[@class=&quot;userInfo&quot;]/span[@class=&quot;subject&quot;]</string>
 		<key>Date</key>
 		<string>./div[@class=&quot;postInfo desktop&quot;]/span[@class=&quot;dateTime&quot;]</string>
+		<key>Timestamp</key>
+		<string>./div[@class=&quot;postInfo desktop&quot;]/span[@class=&quot;dateTime&quot;]/@data-utc</string>
 		<key>Comment</key>
 		<string>./blockquote[@class=&quot;postMessage&quot;]</string>
 		<key>RawComment</key>
@@ -438,8 +440,6 @@
 		<dict>
 			<key>Format</key>
 			<string>MM/dd/yy(EEE)HH:mm:ss</string>
-			<key>Alternate</key>
-			<string>MM/dd/yy(EEE)HH:mm</string>
 		</dict>
 		<key>Quotes</key>
 		<dict>
