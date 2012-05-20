@@ -61,6 +61,7 @@ typedef struct {
 	BOOL closed;
 	BOOL banned;
 	BOOL deleted;
+	BOOL populated;
 }
 @property(nonatomic,readonly) NSURL* URL;
 @property(nonatomic,readonly) int ID;
