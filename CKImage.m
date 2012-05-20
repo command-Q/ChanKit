@@ -142,8 +142,8 @@
 	return [NSString stringWithFormat:@"%0.0fx%0.0f",resolution.width,resolution.height];
 }
 - (NSString*)formattedTimestamp {
-	NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-	[formatter setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
+	NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
+	[formatter setDateFormat:@"MM/dd/yy(EEE)HH:mm:ss"];
 	return [formatter stringFromDate:timestamp];
 }
 - (NSString*)description {
