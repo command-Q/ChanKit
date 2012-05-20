@@ -80,16 +80,16 @@
 	about = [[[CKRecipe sharedRecipe] lookup:@"Chan.About" inDocument:doc] retain];
 	DLog(@"About: %@",about);
 	
-	// Safe to assume that all imageboards have at least one stylesheet?
-	NSURL* css = [NSURL URLWithString:[[CKRecipe sharedRecipe] lookup:@"Chan.Stylesheet" inDocument:doc] relativeToURL:URL];
-	if(css) {
-		NSString* logolink = [[NSString stringWithContentsOfURL:css encoding:NSUTF8StringEncoding error:NULL]
-		                        stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Chan.Logo"] capture:1L];
-		NSURL* logoURL;
-		if(logolink && (logoURL = [NSURL URLWithString:logolink relativeToURL:css])) {
-			DLog(@"Logo URL: %@",logoURL);
-			logo = [[CKImage alloc] initByReferencingURL:logoURL];
-		}			
+	NSString* csshref = [[CKRecipe sharedRecipe] lookup:@"Chan.Stylesheet" inDocument:doc];
+	if(csshref) {
+		ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:csshref relativeToURL:URL]];
+		[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:fetch];
+		[fetch startSynchronous];
+		if([CKUtil validateResponse:fetch] == CK_ERR_SUCCESS) {
+			NSString* logohref = [[fetch responseString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Chan.Logo"] capture:1L];
+			if(logohref)
+				logo = [[CKImage alloc] initByReferencingURL:[NSURL URLWithString:logohref relativeToURL:URL]];
+		}
 	}
 	
 	categories = [[[[CKRecipe sharedRecipe] lookup:@"Chan.Categories" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] retain];
