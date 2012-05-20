@@ -440,6 +440,8 @@
 		<dict>
 			<key>Format</key>
 			<string>MM/dd/yy(EEE)HH:mm:ss</string>
+			<key>Timezone</key>
+			<string>America/New_York</string>
 		</dict>
 		<key>Quotes</key>
 		<dict>

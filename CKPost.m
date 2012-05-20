@@ -171,6 +171,7 @@
 		date = [[NSDate alloc] initWithTimeIntervalSince1970:[datestr doubleValue]];
 	else {
 		NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+		[formatter setTimeZone:[NSTimeZone timeZoneWithName:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Timezone"]]];
 		[formatter setDateFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Dates.Format"]];
 		date = [[formatter dateFromString:[[CKRecipe sharedRecipe] lookup:@"Post.Date" inDocument:doc]] retain];
 		[formatter release];
