@@ -9,6 +9,7 @@
 #import "CKUser.h"
 #import "CKImage.h"
 #import "CKPost.h"
+#import "CKPost_priv.h"
 #import "CKThread.h"
 
 @implementation CKPost

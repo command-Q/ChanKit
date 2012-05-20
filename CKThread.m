@@ -10,6 +10,7 @@
 #import "CKThread.h"
 #import "CKPost.h"
 #import "CKUser.h"
+#import "CKPost_priv.h"
 
 @interface CKThread()
 @property(nonatomic,readwrite) BOOL sticky;

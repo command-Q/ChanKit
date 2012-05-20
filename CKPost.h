@@ -78,10 +78,10 @@ typedef struct {
 @property(nonatomic,readonly) NSArray* inlinequotes;
 @property(nonatomic,readonly) NSArray* spoilers;
 @property(nonatomic,readonly) BOOL OP;
-@property(nonatomic,readwrite,assign) BOOL sticky;
-@property(nonatomic,readwrite,assign) BOOL closed;
+@property(nonatomic,readonly) BOOL sticky;
+@property(nonatomic,readonly) BOOL closed;
 @property(nonatomic,readonly) BOOL banned;
-@property(nonatomic,readwrite,assign) BOOL deleted;
+@property(nonatomic,readonly) BOOL deleted;
 @property(nonatomic,readonly) BOOL abbreviated;
 @property(nonatomic,readonly) NSString* IDString;
 
