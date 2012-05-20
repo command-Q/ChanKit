@@ -88,18 +88,20 @@
 
 		NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Trailing" inDocument:root] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 
+		postcount = [[[CKRecipe sharedRecipe] lookup:@"Thread.Omitted" inDocument:root] intValue];
 		NSString* URI = [doc URI];
 		for(NSString* reply in replies) {
 			[doc setURI:[NSString stringWithFormat:@"%@#%@",URL,reply]];
 			CKPost* post = [[CKPost alloc] initWithXML:doc threadContext:self];
+			post.index = ++postcount;
 			if(post) {
 				[posts addObject:post];
 				[post release];
 			}
-		}		
+		}
+		++postcount;
 		[doc setURI:URI];
 		
-		postcount = [[[CKRecipe sharedRecipe] lookup:@"Thread.Omitted" inDocument:root] intValue] + [posts count];
 		imagecount = [[[CKRecipe sharedRecipe] lookup:@"Thread.OmittedImages" inDocument:root] intValue] + [[self imagePosts] count];
 		DLog(@"Posts: %d",postcount);
 		DLog(@"Images: %d",imagecount);		
@@ -130,7 +132,7 @@
 	NSArray* replies = [[[CKRecipe sharedRecipe] lookup:@"Thread.Replies" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 	__block NSUInteger deleted = [[posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.deleted = YES"]] count];
 	if(!initialized) {
-		for(CKPost* post in posts)
+		for(CKPost* post in [posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"OP = YES || abbreviated = YES"]])
 			[post populate:doc threadContext:self];
 		// This would work just as well for repopulating a thread and look nicer, but it's terribly less efficient
 		replies = [replies objectsAtIndexes:[replies indexesOfObjectsPassingTest:^(id obj, NSUInteger idx, BOOL *stop) {
