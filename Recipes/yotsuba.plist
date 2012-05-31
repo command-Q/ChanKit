@@ -404,19 +404,19 @@
 		<key>Ban</key>
 		<dict>
 			<key>Identifier</key>
-			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/img[@alt=&quot;Banned&quot;]/@src</string>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/img[@alt=&quot;Banned&quot;]/@src</string>
 			<key>Board</key>
-			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[1]/text()</string>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[1]/text()</string>
 			<key>Reason</key>
-			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[2]/text()</string>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[2]/text()</string>
 			<key>From</key>
-			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[3]/text()</string>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[3]/text()</string>
 			<key>To</key>
-			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[4]/text()</string>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[4]/text()</string>
 			<key>IP</key>
-			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[6]/text()</string>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/b[6]/text()</string>
 			<key>Name</key>
-			<string>/html/body/div[@id=&quot;doc&quot;]/div[@id=&quot;bd&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/span[@class=&quot;trip&quot;]/text()</string>
+			<string>/html/body/div[@id=&quot;doc&quot;]/div[@class=&quot;box-outer top-box&quot;]/div[@class=&quot;box-inner&quot;]/div[@class=&quot;boxcontent&quot;]/span[@class=&quot;trip&quot;]//text()</string>
 			<key>Comment</key>
 			<string>Since parsing is based on location of bolded text, it only works with a single board and ban reason for the moment.</string>
 		</dict>
