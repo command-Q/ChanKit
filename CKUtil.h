@@ -30,6 +30,7 @@
 + (BOOL)detectBan:(NSXMLDocument*)doc;
 
 + (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest*)request;
++ (BOOL)checkProxySanity:(NSURL*)proxy destination:(NSURL*)url;
 
 + (NSString*)generatePassword;
 + (NSString*)MD5:(NSData*)data;

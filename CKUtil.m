@@ -169,6 +169,14 @@
 	DLog(@"Using proxy %@://%@:%d",[request proxyType],[request proxyHost],[request proxyPort]);
 }
 
++ (BOOL)checkProxySanity:(NSURL*)proxy destination:(NSURL*)url {
+	ASIHTTPRequest* head = [[ASIHTTPRequest requestWithURL:url] HEADRequest];
+	[CKUtil setProxy:proxy onRequest:head];
+	[head setTimeOutSeconds:10]; // plenty for a HEAD request
+	[head startSynchronous];
+	return [CKUtil validateResponse:head] == CK_ERR_SUCCESS && [[head url] isEqualTo:[url absoluteURL]];
+}
+
 + (NSString*)generatePassword {
 	char pass[8];
 	for(int i = 0; i < 8; i++)

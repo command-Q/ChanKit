@@ -305,25 +305,19 @@ int main (int argc, const char * argv[]) {
 		NSLog(@"%@\n%@",post.URL,[post prettyPrint]);
 	}
 	else if([args URLForKey:@"filter"] && [args stringForKey:@"against"]) {
-		// I've gotten a nonrepeateable segfault and bus error here, if anyone has any ideas...
 		url = [NSURL URLWithString:[args stringForKey:@"against"]];
 		if([[NSFileManager defaultManager] fileExistsAtPath:[[args URLForKey:@"filter"] path]]) {
 			NSArray* proxies = [[[NSString stringWithContentsOfURL:[args URLForKey:@"filter"] encoding:NSUTF8StringEncoding error:NULL]
 			                      stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
 			                         componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
 			// Set up recipe
-			[[CKRecipe sharedRecipe] detectSite:url];
 			[proxies enumerateObjectsWithOptions:NSEnumerationConcurrent usingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
 				NSURL* proxy = [NSURL URLWithString:obj];
 				if(![proxy host]) // Most likely the scheme was ommitted
 					proxy = [NSURL URLWithString:[@"http://" stringByAppendingString:obj]];
-				NSXMLDocument* tempdoc;
-				if([CKUtil fetchXML:&tempdoc fromURL:url throughProxy:proxy allowedRedirects:5] == CK_ERR_SUCCESS) {
-					// Use standard output so that list can be redirected to a file
-					// Note: this sometimes gives false positives on proxies that resolve to some access page
+				if([CKUtil checkProxySanity:proxy destination:url])
 					[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
 					   [[[proxy absoluteString] stringByAppendingString:@"\n"] dataUsingEncoding:NSUTF8StringEncoding]];
-				}
 			}];
 		}
 		else NSLog(@"%@ cannot be read.",[args URLForKey:@"filter"]);
