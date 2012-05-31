@@ -237,7 +237,7 @@ int main (int argc, const char * argv[]) {
 		NSTimeInterval sleep = 0;
 		for(int i = 0; !error && i < [posters count]; i++) {
 			CKPoster* current = [posters objectAtIndex:i];
-			NSString* progress = [NSString stringWithFormat:@"%d of %d",i+1,[posters count]];
+			NSString* progress = [NSString stringWithFormat:@"%d of %d",i+1,(int)[posters count]];
 			NSLog(@"Posting %@",progress);
 			if([args boolForKey:@"progress"]) {
 				if(current.comment)	current.comment = [current.comment stringByAppendingFormat:@"\n%@",progress];
@@ -346,9 +346,9 @@ int main (int argc, const char * argv[]) {
 		else if(!(board = [chan boardNamed:[args stringForKey:@"board"]]))
 			NSLog(@"%@ doesn't appear to have a board named %@.",[args stringForKey:@"chan"],[args stringForKey:@"board"]);
 		else if(!(resource = page = [board getPage:[args integerForKey:@"page"]]))
-			NSLog(@"There's no page numbered %d.",[args integerForKey:@"page"]);
+			NSLog(@"There's no page numbered %d.",(int)[args integerForKey:@"page"]);
 		else if([args objectForKey:@"thread"] && !(resource = thread = [page getThread:[args integerForKey:@"thread"]]))
-			NSLog(@"There doesn't seem to be a thread with index %d.",[args integerForKey:@"thread"]);
+			NSLog(@"There doesn't seem to be a thread with index %ld.",(long)[args integerForKey:@"thread"]);
 		else if([args objectForKey:@"post"] && ((index = [args integerForKey:@"post"]) > thread.postcount || 
 		       !(resource = index < 0 ? thread.latest : [thread.posts objectAtIndex:index])))
 				NSLog(@"There's no post at index %d.",index);

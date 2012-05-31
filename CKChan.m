@@ -114,7 +114,7 @@
 			[board release];
 		}
 	}
-	DLog(@"# of Boards: %d",[boards count]);
+	DLog(@"# of Boards: %lu",(unsigned long)[boards count]);
 	
 	return CK_ERR_SUCCESS;
 }

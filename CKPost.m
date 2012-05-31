@@ -162,7 +162,7 @@
 		}
 		index++;
 	}
-	DLog(@"Index: %d",index);
+	DLog(@"Index: %lu",(unsigned long)index);
 
 	sticky = [[CKRecipe sharedRecipe] lookup:@"Post.Sticky" inDocument:doc] != nil;
 	closed = [[CKRecipe sharedRecipe] lookup:@"Post.Closed" inDocument:doc] != nil;

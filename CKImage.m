@@ -28,7 +28,7 @@
 		resolution = [self.image size];
 		size = [image length];
 		DLog(@"Image Resolution: %0.0fx%0.0f",resolution.width,resolution.height);
-		DLog(@"Image Size: %u bytes",size);
+		DLog(@"Image Size: %lu bytes",(unsigned long)size);
 		return self;		
 	}
 	[self release];
@@ -57,7 +57,7 @@
 		DLog(@"Image Name: %@",name);
 		DLog(@"Image Timestamp: %@",timestamp);
 		DLog(@"Image Resolution: %0.0fx%0.0f",resolution.width,resolution.height);
-		DLog(@"Image Size: %u bytes",size);
+		DLog(@"Image Size: %lu bytes",(unsigned long)size);
 		DLog(@"Image MD5: %@",MD5);
 		DLog(@"Image is spoiler: %d",spoiler);
 
@@ -136,7 +136,7 @@
 	return CK_ERR_SUCCESS;
 }
 - (NSString*)formattedSize {
-	return size > 1048576 ? [NSString stringWithFormat:@"%.2f MB",size/1048576.0] : [NSString stringWithFormat:@"%u KB",size/1024];
+	return size > 1048576 ? [NSString stringWithFormat:@"%.2f MB",size/1048576.0] : [NSString stringWithFormat:@"%u KB",(unsigned int)size/1024];
 }
 - (NSString*)formattedResolution {
 	return [NSString stringWithFormat:@"%0.0fx%0.0f",resolution.width,resolution.height];
@@ -185,7 +185,7 @@
 	                                                      [NSString stringWithFormat:@"%0.0f",self.resolution.width]],
 	                                                      [NSXMLNode attributeWithName:@"data-height" stringValue:
 	                                                      [NSString stringWithFormat:@"%0.0f",self.resolution.height]],
-	                                                      [NSXMLNode attributeWithName:@"data-size" stringValue:[NSString stringWithFormat:@"%d",size]],
+	                                                      [NSXMLNode attributeWithName:@"data-size" stringValue:[NSString stringWithFormat:@"%lu",(unsigned long)size]],
 	                                                      [NSXMLNode attributeWithName:@"data-md5" stringValue:MD5],
 	                                                      [NSXMLNode attributeWithName:@"data-name" stringValue:name],
 	                                                      [NSXMLNode attributeWithName:@"data-origin" stringValue:[URL absoluteString]],nil]];

@@ -87,7 +87,7 @@
 		}		
 	}
 	[doc setURI:URI];
-	DLog(@"Threads: %d",[threads count]);
+	DLog(@"Threads: %lu",(unsigned long)[threads count]);
 }
 
 @synthesize URL;
