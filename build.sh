@@ -30,8 +30,8 @@ if [ $CKUP -ne 0 ]; then
 		ln -s A Current
 		cd ../../../
 	fi
-	
-	VERSION=$(grep CK_VERSION_MAJOR Common.h | cut -f 3).$(grep CK_VERSION_MINOR Common.h | cut -f 3).$(grep CK_VERSION_MICRO Common.h | cut -f 3)
+
+	VERSION=$(grep CK_VERSION_MAJOR Common.h | cut -d' ' -f3).$(grep CK_VERSION_MINOR Common.h | cut -d' ' -f3).$(grep CK_VERSION_MICRO Common.h | cut -d' ' -f3)
 	$CC $CFLAGS \
 		-framework Cocoa -I.. -include ChanKit_Prefix.pch CKUtil.m CKRecipe.m CKImage.m CKUser.m CKPost.m CKPoster.m CKThread.m CKPage.m CKBoard.m CKChan.m \
 		-framework SystemConfiguration -L/usr/lib -licucore -lz RegexKitLite/RegexKitLite.m ASIHTTPRequest/*.m NSData+Base64/NSData+Base64.m \

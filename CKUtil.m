@@ -1,9 +1,9 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
- * CKUtil.m - Utility string/URL/network methods. Globally included.
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
+ * CKUtil.m - Utility string/URL/network methods.
  */
 
 #import <CommonCrypto/CommonDigest.h>
@@ -50,30 +50,30 @@
 		case CK_RESOURCE_THREAD:
 			return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Thread"] capture:1L] integerValue];
 		default: return -1;
-	}	
+	}
 }
-+ (int)parseThreadID:(NSURL*)URL { 
++ (int)parseThreadID:(NSURL*)URL {
 	int res = [[CKRecipe sharedRecipe] resourceKindForURL:URL];
 	if(res != CK_RESOURCE_POST && res != CK_RESOURCE_THREAD) return -1;
-	return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Thread"] capture:1L] integerValue]; 
+	return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Thread"] capture:1L] integerValue];
 }
 + (int)parsePage:(NSURL*)URL {
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] != CK_RESOURCE_BOARD) return -1;
-	return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Page"] capture:1L] integerValue]; 
+	return [[[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Page"] capture:1L] integerValue];
 }
-+ (NSString*)parseBoard:(NSURL*)URL { 
++ (NSString*)parseBoard:(NSURL*)URL {
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] == CK_RESOURCE_UNDEFINED) return nil;
-	return [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Board"] capture:1L]; 
+	return [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.Board"] capture:1L];
 }
-+ (NSURL*)parseBoardRoot:(NSURL*)URL { 
++ (NSURL*)parseBoardRoot:(NSURL*)URL {
 	if([[CKRecipe sharedRecipe] resourceKindForURL:URL] == CK_RESOURCE_UNDEFINED) return nil;
 	NSString* root;
 	if((root = [[URL absoluteString] stringByMatching:[[CKRecipe sharedRecipe] lookup:@"Definitions.URL.BoardRoot"] capture:1L]))
 		return [NSURL URLWithString:root];
 	return nil;
 }
-+ (NSURL*)URLByDeletingFragment:(NSURL*)URL { 
-	return [NSURL URLWithString:[[URL absoluteString] stringByMatching:@"[^#]+"]]; 
++ (NSURL*)URLByDeletingFragment:(NSURL*)URL {
+	return [NSURL URLWithString:[[URL absoluteString] stringByMatching:@"[^#]+"]];
 }
 
 + (int)fetchXML:(NSXMLDocument**)doc viaRequest:(ASIHTTPRequest*)request throughProxy:(NSURL*)proxy allowedRedirects:(NSUInteger)redirects {
@@ -86,7 +86,7 @@
 		return error;
 	if(!request.contentLength)
 		return CK_ERR_UNDEFINED;
-		
+
 	//*doc = [[[NSXMLDocument alloc] initWithData:[request responseData] options:NSXMLDocumentTidyHTML error:NULL] autorelease];
 	//Dirty trick to work around a bug in the outdated version of libxml2 used by NSXMLDocument
 	NSString* response = [request responseString];
@@ -110,7 +110,7 @@
 		}
 		return CK_ERR_SUCCESS;
 	}
-	
+
 	if(!((redirect = [[[redirect objectAtIndex:0] stringValue] stringByMatching:@"(?i)\\d+;\\s*url=(.+)" capture:1L]) &&
 	     (redirect = [NSURL URLWithString:redirect relativeToURL:[request url]]))) {
 		[*doc autorelease];

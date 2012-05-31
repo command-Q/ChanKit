@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * CKPage.h - A single page.
  */
 
@@ -13,8 +13,9 @@
 	NSURL* URL;
 	NSString* board;
 	int index;
-	NSMutableArray* threads;	
+	NSMutableArray* threads;
 }
+
 @property(nonatomic,readonly) NSURL* URL;
 @property(nonatomic,readonly) NSString* board;
 @property(nonatomic,readonly) int index;
@@ -36,4 +37,5 @@
 - (NSTimeInterval)rangeOfPosts;
 
 - (NSString*)prettyPrint;
+
 @end

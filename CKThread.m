@@ -1,9 +1,9 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
- * CKThread.h - Thread object. May be initialized from thread XML or preinitialized from page XML.
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
+ * CKThread.m - Thread object. May be initialized from thread XML or preinitialized from page XML.
  */
 
 
@@ -31,12 +31,12 @@
 		[board release];
 		[posts removeAllObjects];
 		postcount = imagecount = 0;
-		
+
 		URL = [[CKUtil URLByDeletingFragment:url] retain];
 		board = [[CKUtil parseBoard:URL] retain];
 		ID = [CKUtil parseThreadID:URL];
 		initialized = NO;
-		
+
 		DLog(@"URL: %@", URL);
 		DLog(@"Board: %@", board);
 		DLog(@"Thread ID: %d",ID);
@@ -67,7 +67,7 @@
 + (CKThread*)threadFromURL:(NSURL*)url { return [[[self alloc] initWithURL:url] autorelease]; }
 
 - (id)initWithPage:(NSXMLDocument*)doc {
-	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]])) {		
+	if((self = [self initByReferencingURL:[NSURL URLWithString:[doc URI]]])) {
 		NSXMLElement* root = [[[[doc copy] autorelease] nodesForXPath:[NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Thread.Root"],self.IDString]
 		                                                        error:NULL] objectAtIndex:0];
 		[[root rootDocument] setURI:[URL absoluteString]];
@@ -101,7 +101,7 @@
 		}
 		++postcount;
 		[doc setURI:URI];
-		
+
 		imagecount = [[[CKRecipe sharedRecipe] lookup:@"Thread.OmittedImages" inDocument:root] intValue] + [[self imagePosts] count];
 		DLog(@"Posts: %d",postcount);
 		DLog(@"Images: %d",imagecount);		
@@ -117,7 +117,7 @@
 	[super dealloc];
 }
 
-- (int)populate { 
+- (int)populate {
 	NSXMLDocument* doc;
 	int error = [CKUtil fetchXML:&doc fromURL:URL];
 	if(error != CK_ERR_SUCCESS)
@@ -155,7 +155,7 @@
 				}
 				else {
 					if(!lastcommon) lastcommon = index + 1;
-					*stop = index == idx - deletedsince - 1;	
+					*stop = index == idx - deletedsince - 1;
 				}
 			}
 		}];
@@ -166,7 +166,7 @@
 	self.closed = [[CKRecipe sharedRecipe] lookup:@"Thread.Closed" inDocument:doc] != nil;
 	DLog(@"Sticky: %d",self.sticky);
 	DLog(@"Closed: %d",self.closed);
-	
+
 	NSString* URI = [doc URI];
 	for(NSString* reply in replies) {
 		NSAutoreleasePool* loop = [[NSAutoreleasePool alloc] init];
@@ -217,7 +217,7 @@
 	[self populate];
 	return [posts lastObject];
 }
-						  
+
 - (CKPost*)postWithID:(int)idno {
 	NSUInteger idx;
 	if((idx = [posts indexOfObjectPassingTest:^(id post, NSUInteger idx, BOOL *stop){return *stop = [post ID] == idno;}]) != NSNotFound)
@@ -227,10 +227,10 @@
 
 - (BOOL)isBy:(CKUser*)author { return [[[posts objectAtIndex:0] user] isEqual:author]; }
 - (NSArray*)postsBy:(CKUser*)author {
-	return [posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.user = %@",author]];	
+	return [posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.user = %@",author]];
 }
-- (NSArray*)postsExcluding:(CKUser*)author { 
-	return [posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.user != %@",author]]; 
+- (NSArray*)postsExcluding:(CKUser*)author {
+	return [posts filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.user != %@",author]];
 }
 
 - (NSArray*)postsQuoting:(CKPost*)post {
@@ -253,19 +253,17 @@
 - (NSString*)description {
 	NSString* delim = @"\n______________________________________________________________________________________________________________\n";
 	NSMutableString* desc = [NSMutableString stringWithFormat:@"%d posts and %d images",postcount,imagecount];
-	for(CKPost* post in posts) 
+	for(CKPost* post in posts)
 		[desc appendFormat:@"%@%@",delim,post];
 	return [desc stringByAppendingString:delim];
 }
 - (NSString*)prettyPrint {
 	NSMutableString* desc = [NSMutableString stringWithFormat:@"%d posts and %d images",postcount,imagecount];
-	for(CKPost* post in posts) 
+	for(CKPost* post in posts)
 		[desc appendFormat:@"\n\e[4m%110s\e[0m\n%@","",[post prettyPrint]];
 	return [desc stringByAppendingFormat:@"\n\e[4m%110s\e[0m\n",""];
 }
 - (BOOL)isEqual:(id)other { return [self hash] == [other hash]; }
 - (NSUInteger)hash { return [[posts objectAtIndex:0] hash]; }
-
-
 
 @end

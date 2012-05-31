@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * ChanKit.h - ChanKit main interface.
  *
  * ChanKit includes RegexKitLite, a lightweight, iOS-compatible regular expression library. 

@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * Common.h - Global includes/defines.
  */
 
@@ -10,11 +10,11 @@
 	#define	NSNewlineCharacter   0x000a
 #endif
 
-#define CK_VERSION_MAJOR	0
-#define CK_VERSION_MINOR	8
-#define CK_VERSION_MICRO	6
-#define CK_VERSION_TAG  	@""
-#define CK_VERSION_OS   	@"OS X"
+#define CK_VERSION_MAJOR 0
+#define CK_VERSION_MINOR 8
+#define CK_VERSION_MICRO 6
+#define CK_VERSION_TAG   @""
+#define CK_VERSION_OS    @"OS X"
 
 #ifdef _DEBUG
 	// HTML parsing is extremely messy, so this function is used to dump a ton of data

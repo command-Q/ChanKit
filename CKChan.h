@@ -1,10 +1,9 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
- * CKChan.h - Top level object encapsulating an entire imageboard.
- *	All other objects can be navigated to from here.
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
+ * CKChan.h - Top level object encapsulating an entire imageboard. All other objects can be navigated to from here.
  */
 
 @class CKImage;
@@ -20,6 +19,7 @@
 	NSArray* categories;
 	NSMutableArray* boards;
 }
+
 @property(nonatomic,readonly) NSURL* URL;
 @property(nonatomic,readonly) NSString* name;
 @property(nonatomic,readonly) NSString* about;
@@ -41,4 +41,5 @@
 - (NSArray*)workSafeBoards;
 - (NSArray*)boardsInCategory:(NSString*)category;
 - (CKBoard*)boardNamed:(NSString*)nm;
+
 @end

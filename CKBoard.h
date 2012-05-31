@@ -1,9 +1,9 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
- * CKBoard.m - Board object. May be initialized from any page on the board.
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
+ * CKBoard.h - Board object. May be initialized from any page on the board.
  */
 
 @class CKPost;
@@ -19,8 +19,9 @@
 	NSArray* rules;
 	NSMutableArray* pages;
 	int numpages;
-	BOOL is18plus;	
+	BOOL is18plus;
 }
+
 @property(nonatomic,readonly) NSURL* URL;
 @property(nonatomic,readonly) NSString* name;
 @property(nonatomic,readonly) NSString* title;
@@ -47,4 +48,5 @@
 - (int)newestPostID;
 - (CKPost*)findPostForImage:(NSURL*)url;
 - (NSString*)description;
+
 @end

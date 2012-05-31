@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2010-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * CKRecipe.m - Imageboard software definition singleton.
  */
 
@@ -15,7 +15,7 @@ static CKRecipe* sharedInstance = nil;
 + (CKRecipe*)sharedRecipe {
 	@synchronized(self) {
 		if(!sharedInstance)
-			sharedInstance = [[self alloc] init];		
+			sharedInstance = [[self alloc] init];
 	}
 	return sharedInstance;
 }
@@ -47,7 +47,7 @@ static CKRecipe* sharedInstance = nil;
 - (NSDictionary*)recipeNamed:(NSString*)name {
 	@synchronized(self) {
 		return [self recipeFile:[[NSBundle bundleForClass:[self class]] pathForResource:name ofType:@"plist" inDirectory:@"Recipes"]];
-	}	
+	}
 }
 
 - (NSDictionary*)recipeFile:(NSString*)path {
@@ -75,14 +75,14 @@ static CKRecipe* sharedInstance = nil;
 						certainty = CK_RECIPE_URLMATCH;
 						DLog(@"Using %@",path);
 						[recipe retain];
-						return CK_DETECTION_URL;			
+						return CK_DETECTION_URL;
 					}
 				for(NSString* regex in [site objectForKey:@"Regex"])
 					if([[URL absoluteString] isMatchedByRegex:regex]) {
 						certainty = CK_RECIPE_URLMATCH;
 						DLog(@"Using %@",path);
 						[recipe retain];
-						return CK_DETECTION_URL;						
+						return CK_DETECTION_URL;
 					}
 			}
 		}
@@ -135,8 +135,8 @@ static CKRecipe* sharedInstance = nil;
 				certainty = CK_RECIPE_XMLMATCH;
 				DLog(@"Using %@",path);
 				[recipe retain];
-				return CK_DETECTION_TITLE;			
-			}			
+				return CK_DETECTION_TITLE;
+			}
 		}
 		for(NSString* path in recipes) {
 			recipe = [NSDictionary dictionaryWithContentsOfFile:path];
@@ -155,7 +155,7 @@ static CKRecipe* sharedInstance = nil;
 - (NSDictionary*)recipe {
 	@synchronized(self) {
 		return recipe;
-	}	
+	}
 }
 
 - (id)lookupKeys:(NSArray*)keys inDictionary:(NSDictionary*)dict {
@@ -173,9 +173,9 @@ static CKRecipe* sharedInstance = nil;
 	@synchronized(self) {
 		NSDictionary* lookup = nil;
 		NSArray* paths,* nodes = nil;
-		
+
 		if(!doc || (certainty == CK_RECIPE_NOMATCH && [self detectBoardSoftware:[doc rootDocument]] == CK_DETECTION_FAILED)) return nil;
-		
+
 		id result = [self lookup:keyPath];
 		if([result isKindOfClass:[NSDictionary class]]) {
 			lookup = [NSDictionary dictionaryWithDictionary:result];
@@ -185,23 +185,22 @@ static CKRecipe* sharedInstance = nil;
 			paths = [NSArray arrayWithObject:[NSString stringWithString:result]];
 		else if([result isKindOfClass:[NSArray class]])
 			paths = [NSArray arrayWithArray:result];
-		else
-			return nil;
-		
+		else return nil;
+
 		for(NSString* path in paths) {
 			if(test) nodes = [doc nodesForXPath:[NSString stringWithFormat:path,test] error:NULL];
 			else     nodes = [doc nodesForXPath:path error:NULL];
 			if([nodes count]) break;
 		}
 		if(![nodes count]) return nil;
-		
+
 		NSString* regex,* string;
 		NSString* data = [NSString string];
 		for(NSXMLElement* node in nodes) {
 			string = [node stringValue];
-			if(lookup && (regex = [lookup objectForKey:@"NodeRegex"])) string = [string stringByMatching:regex capture:1L];		
+			if(lookup && (regex = [lookup objectForKey:@"NodeRegex"])) string = [string stringByMatching:regex capture:1L];
 			string = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-			if([string length]) data = [data stringByAppendingFormat:@"%@%c",string,NSNewlineCharacter];				
+			if([string length]) data = [data stringByAppendingFormat:@"%@%c",string,NSNewlineCharacter];
 		}
 		if(lookup && (regex = [lookup objectForKey:@"Regex"])) data = [data stringByMatching:regex capture:1L];
 		data = [data stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -231,7 +230,7 @@ static CKRecipe* sharedInstance = nil;
 // sitename must be part of the supported sites array of a recipe
 - (NSURL*)URLForSite:(NSString*)sitename {
 	@synchronized(self) {
-		for(NSString* path in [[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"]) {				
+		for(NSString* path in [[NSBundle bundleForClass:[self class]] pathsForResourcesOfType:@"plist" inDirectory:@"Recipes"]) {
 			NSArray* site = [[NSDictionary dictionaryWithContentsOfFile:path] valueForKeyPath:@"Support.Sites"];
 			NSUInteger i = [site indexOfObjectPassingTest:^(id dict, NSUInteger idx, BOOL *stop) {
 				return *stop = [sitename isEqualToString:[dict objectForKey:@"Name"]];
@@ -240,7 +239,7 @@ static CKRecipe* sharedInstance = nil;
 				return [NSURL URLWithString:[[site objectAtIndex:i] objectForKey:@"Home"]];
 		}
 		return nil;
-	}	
+	}
 }
 
 - (int)resourceKindForURL:(NSURL*)URL {

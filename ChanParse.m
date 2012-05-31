@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2010-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * ChanParse.m - Simple example/test app.
  */
 
@@ -69,14 +69,14 @@ int main (int argc, const char * argv[]) {
 		       "\n",
 		       [CKUtil version],[[[CKRecipe sharedRecipe] supportedSites] componentsJoinedByString:@", "],
 		       [[[CKRecipe sharedRecipe] supportedSoftware] componentsJoinedByString:@", "]);
-		
+
 		// This would already be handled by the argument defaults, but it's a good demo of the kit's convenience methods
 		CKPost* post = [[[[CKChan chanNamed:@"4chan"] boardNamed:@"g"] getPage:0] newestPost];
 		NSLog(@"%@\n%@",post.URL,[post prettyPrint]);
 		[pool drain];
 		return 0;
 	}
-	
+
 	if([args stringForKey:@"proxy"]) {
 		NSURL* proxy = [NSURL URLWithString:[args stringForKey:@"proxy"]];
 		if(![proxy host]) // Most likely the scheme was ommitted
@@ -84,7 +84,7 @@ int main (int argc, const char * argv[]) {
 		[args setURL:proxy forKey:@"CKProxySetting"];
 		NSLog(@"Using proxy %@",[args URLForKey:@"CKProxySetting"]);
 	}
-	
+
 	NSURL* url = nil;
 	id resource = nil;
 	int images = 0;
@@ -123,7 +123,7 @@ int main (int argc, const char * argv[]) {
 					NSLog(@"Dump complete! Got %d images.",images);
 				}
 				else NSLog(@"Directory error; path cannot be created at %@\n%@",path,[err localizedDescription]);
-			}			
+			}
 		}
 		else NSLog(@"404");
 	}
@@ -169,14 +169,14 @@ int main (int argc, const char * argv[]) {
 			runs = [uploads count];
 		}
 		[dict setObject:[NSNumber numberWithBool:[args boolForKey:@"spoiler"]] forKey:@"Spoiler"];
-		
+
 		if([rewritecomment length])
 			[dict setObject:rewritecomment forKey:@"Comment"];
-		 
+
 		NSArray* previousimages = [NSArray array];
 		if([args boolForKey:@"resume"])
 			previousimages = [[CKThread threadFromURL:url] images];
-			
+
 		NSMutableArray* posters = [NSMutableArray arrayWithCapacity:runs];
 	 	NSFileHandle* input = [NSFileHandle fileHandleWithStandardInput];
 		for(int i = 0; i < runs; i++) {
@@ -185,7 +185,7 @@ int main (int argc, const char * argv[]) {
 					NSLog(@"Ignoring %d of %d (%@)",i+1,runs,[uploads objectAtIndex:i]);
 					continue;
 				}
-					
+
 				NSString* UTI;
 				[[uploads objectAtIndex:i] getResourceValue:&UTI forKey:NSURLTypeIdentifierKey error:NULL];
 				if(UTTypeConformsTo((CFStringRef)UTI,(CFStringRef)@"public.jpeg") || 
@@ -202,17 +202,17 @@ int main (int argc, const char * argv[]) {
 			CKPoster* poster;
 			do {
 				poster = [CKPoster posterWithDictionary:dict];
-				
-				NSLog(@"Captcha:");	
+
+				NSLog(@"Captcha:");
 				const char* temp =[[NSTemporaryDirectory() stringByAppendingPathComponent:@"captcha.XXXXXX.jpg"] fileSystemRepresentation];
 				char tempfile[strlen(temp)+1];
 				strcpy(tempfile,temp);
 				mkstemps(tempfile,4);
 				NSString* captcha = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempfile length:strlen(tempfile)];
-			
+
 				[poster.captcha.data writeToFile:captcha atomically:NO];
 				[[NSWorkspace sharedWorkspace] openFile:captcha];
-			
+
 				NSData* data = [input availableData];
 				NSString* str = [[NSString alloc] initWithBytes:[data bytes] length:[data length] encoding:NSUTF8StringEncoding];
 				poster.verification = [str stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -221,7 +221,7 @@ int main (int argc, const char * argv[]) {
 			} while(![poster verify:nil]);
 			[posters addObject:poster];
 		}
-		
+
 		NSArray* proxies = [NSArray array];
 		if([args URLForKey:@"proxies"])
 			proxies = [[[NSString stringWithContentsOfURL:[args URLForKey:@"proxies"] encoding:NSUTF8StringEncoding error:NULL]
@@ -260,7 +260,7 @@ int main (int argc, const char * argv[]) {
 				post = [current post:&err attempt:dubs];
 			else
 				post = [current post:&err];
-			
+
 			lastpost = [NSDate date];
 			sleep = 20;
 			if(i == [posters count] - 1 || ([proxies count] && ((i + 1) % [proxies count] || [[NSDate date] timeIntervalSinceDate:firstpost] >= 40))) 
@@ -288,7 +288,7 @@ int main (int argc, const char * argv[]) {
 					case CK_POSTERR_DISALLOWED:
 					case CK_POSTERR_NOTFOUND: error = YES; break;
 				}
-			}	
+			}
 		}
 	}
 	else if([args boolForKey:@"random"]) {
@@ -325,7 +325,7 @@ int main (int argc, const char * argv[]) {
 	else {
 		if(![args stringForKey:@"chan"])  [args setObject:@"4chan" forKey:@"chan"];
 		if(![args stringForKey:@"board"]) [args setObject:@"g" forKey:@"board"];
-		
+
 		int index;
 		CKChan* chan;
 		CKBoard* board;
@@ -339,12 +339,12 @@ int main (int argc, const char * argv[]) {
 			NSLog(@"There's no page numbered %d.",(int)[args integerForKey:@"page"]);
 		else if([args objectForKey:@"thread"] && !(resource = thread = [page getThread:[args integerForKey:@"thread"]]))
 			NSLog(@"There doesn't seem to be a thread with index %ld.",(long)[args integerForKey:@"thread"]);
-		else if([args objectForKey:@"post"] && ((index = [args integerForKey:@"post"]) > thread.postcount || 
+		else if([args objectForKey:@"post"] && ((index = [args integerForKey:@"post"]) > thread.postcount ||
 		       !(resource = index < 0 ? thread.latest : [thread.posts objectAtIndex:index])))
 				NSLog(@"There's no post at index %d.",index);
 		else NSLog(@"%@\n%@",[resource URL],[resource prettyPrint]);
 	}
-	
+
 	if(resource && [args boolForKey:@"watch"] && ([resource isKindOfClass:[CKThread class]] || [resource isKindOfClass:[CKPost class]])) {
 		// This mess wonderfully illustrates the need for the CKBrowser delegate
 		int lastindex;
@@ -376,8 +376,8 @@ int main (int argc, const char * argv[]) {
 			NSArray* updates = [thread postsFromIndex:lastindex];
 			if([updates count]) {
 				if(postscope)
-					updates = [updates objectsAtIndexes:[updates indexesOfObjectsPassingTest:^(id p, NSUInteger idx, BOOL *stop) { 
-						return [p quoted:post]; 
+					updates = [updates objectsAtIndexes:[updates indexesOfObjectsPassingTest:^(id p, NSUInteger idx, BOOL *stop) {
+						return [p quoted:post];
 					}]];
 				for(CKPost* p in updates) {
 					[(NSFileHandle*)[NSFileHandle fileHandleWithStandardOutput] writeData:
@@ -393,7 +393,7 @@ int main (int argc, const char * argv[]) {
 						}
 					}
 				}
-				lastindex = [thread postcount];						
+				lastindex = [thread postcount];
 			}
 			else [NSThread sleepForTimeInterval:10];
 
@@ -407,7 +407,7 @@ int main (int argc, const char * argv[]) {
 		[post release];
 		[thread release];
 	}
-	[fileman release];	
+	[fileman release];
 	[args removeObjectForKey:@"CKProxySetting"]; // Don't want this to be archived
 	[pool drain];
     return 0;

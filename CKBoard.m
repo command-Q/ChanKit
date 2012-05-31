@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * CKBoard.m - Board object. May be initialized from any page on the board.
  */
 
@@ -29,8 +29,8 @@
 		name = [[CKUtil parseBoard:URL] retain];
 		boardroot = [[CKUtil parseBoardRoot:URL] retain];
 		DLog(@"URL: %@", URL);
-		DLog(@"Board: %@", name);		
-		DLog(@"Board Root: %@", boardroot);		
+		DLog(@"Board: %@", name);
+		DLog(@"Board Root: %@", boardroot);
 	}
 	return url != nil;
 }
@@ -47,7 +47,7 @@
 	if((self = [self initByReferencingURL:url])) {
 		title = [atitle retain];
 		DLog(@"Title: %@", title);
-		[self setCategory:cat is18Plus:NSFW];		
+		[self setCategory:cat is18Plus:NSFW];
 	}
 	return self;
 }
@@ -82,19 +82,19 @@
 		return error;
 	if(![self parseURL:[NSURL URLWithString:[doc URI]]])
 		return CK_ERR_REDIRECT;
-		
-	int index  = [[[CKRecipe sharedRecipe] lookup:@"Page.Number" inDocument:doc] integerValue];	
+
+	int index  = [[[CKRecipe sharedRecipe] lookup:@"Page.Number" inDocument:doc] integerValue];
 	if(!title) {
 		title = [[[CKRecipe sharedRecipe] lookup:@"Board.Title" inDocument:doc test:name] retain];
 		DLog(@"Title: %@",title);
 	}
 	alternatetitle = [[[CKRecipe sharedRecipe] lookup:@"Board.AlternateTitle" inDocument:doc] retain];
-	DLog(@"Alt Title: %@",alternatetitle);	
+	DLog(@"Alt Title: %@",alternatetitle);
 
 	rules = [[[[CKRecipe sharedRecipe] lookup:@"Board.Rules" inDocument:doc]
 	           componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] retain];
 	DLog(@"Rules: %@",rules);
-	
+
 	[pages removeAllObjects];
 	CKPage* page;
 	for(NSString* pageno in [[[CKRecipe sharedRecipe] lookup:@"Board.Pages" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
@@ -102,7 +102,7 @@
 			[pages addObject:page];
 	if((page = [CKPage pageFromXML:doc]))
 		[pages insertObject:page atIndex:index];
-	 
+
 	numpages = [pages count];
 	DLog(@"Pages: %d",numpages);
 
@@ -153,7 +153,7 @@
 }
 
 - (CKPost*)findPostForImage:(NSURL*)url {
-	CKImage* img = [CKImage imageReferencingURL:url];	
+	CKImage* img = [CKImage imageReferencingURL:url];
 //	__block NSMutableSet* searched = [NSMutableSet set];
 	__block CKPost* result = nil;
 	// This is an ungodly trainwreck (though it works)
@@ -169,7 +169,7 @@
 			done = result != nil;
 			[lock unlock];
 			if(done) return;
-			
+
 			[page populate];
 
 			[lock lock];
@@ -215,7 +215,7 @@
 						result = current;
 						[lock unlock];
 						return;
-					}						
+					}
 					oldest = [[current date] compare:[img timestamp]];
 					if(newest != NSOrderedAscending && oldest != NSOrderedDescending) {
 						// Image may be in this thread
@@ -243,9 +243,9 @@
 				}
 			}
 		}];
-	
+
 	[queue setSuspended:NO];
-    [queue waitUntilAllOperationsAreFinished];
+	[queue waitUntilAllOperationsAreFinished];
 	[lock release];
 	[queue release];
 	return result;
@@ -297,7 +297,7 @@
 	NSXMLDocument* doc;
 	if([CKUtil fetchXML:&doc fromURL:boardroot] != CK_ERR_SUCCESS)
 		return -1;
-	
+
 	int candidate, last = 0;
 	for(NSString* idstr in [[[CKRecipe sharedRecipe] lookup:@"Page.IDs" inDocument:doc] componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
 		if((candidate = [idstr intValue]) > last)

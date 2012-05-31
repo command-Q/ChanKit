@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * CKPoster.h - Posting data to the board.
  */
 
@@ -20,6 +20,7 @@ typedef struct {
 // Post attempt templates
 static BOOL (^get)(int) = ^(int idno) { return (BOOL)((idno + 1) % (int)pow(10,(int)log10(idno)) == 0); };
 static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); };
+
 @interface CKPoster : NSObject {
 	NSURL* URL;
 	NSURL* action;
@@ -29,10 +30,11 @@ static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); 
 	NSURL* file;
 	BOOL spoiler;
 	captcha_s captcha;
-	
+
 	CKBoard* board; // For dubs
 	ASIFormDataRequest* request;
 }
+
 @property(nonatomic,readwrite,retain) NSURL* URL;
 @property(nonatomic,readwrite,copy) CKUser* user;
 @property(nonatomic,readwrite,copy) NSString* subject;
@@ -58,4 +60,5 @@ static BOOL (^dubs)(int) = ^(int idno) { return (BOOL)!((idno + 1) % 100 % 11); 
 - (void)prepare;
 - (CKPost*)post:(int*)error;
 - (CKPost*)post:(int*)error attempt:(BOOL (^)(int idno))test;
+
 @end

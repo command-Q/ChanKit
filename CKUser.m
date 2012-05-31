@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2010-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * CKUser.m - Imageboard user.
  */
 
@@ -30,7 +30,7 @@
 			else if([key isEqualToString:@"Privilege"])
 				privilege = [[info objectForKey:key] intValue];
 			else if([key isEqualToString:@"Password"])
-				password = [[info objectForKey:key] retain];			
+				password = [[info objectForKey:key] retain];
 		}
 		DLog(@"Name: %@",name);
 		DLog(@"Tripcode: %@",tripcode.trip);
@@ -38,7 +38,7 @@
 		DLog(@"Email: %@",email);
 		DLog(@"Privilege: %d",privilege);
 		DLog(@"Password: %@",password);
-	}	
+	}
 	return self;
 }
 + (CKUser*)userWithInfo:(NSDictionary*)info { return [[[self alloc] initWithUserInfo:info] autorelease]; }
@@ -63,7 +63,7 @@
 			// doc is root node
 			NSURL* URL = [NSURL URLWithString:[doc URI]];
 			int ID = [CKUtil parsePostID:URL];
-			NSString* rootpath = ID == [CKUtil parseThreadID:URL] ? [[CKRecipe sharedRecipe] lookup:@"Post.OP"] : 
+			NSString* rootpath = ID == [CKUtil parseThreadID:URL] ? [[CKRecipe sharedRecipe] lookup:@"Post.OP"] :
 			                              [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],[NSNumber numberWithInt:ID]];
 			NSArray* nodes = [doc nodesForXPath:rootpath error:NULL];
 			if(![nodes count]) return nil;
@@ -78,7 +78,7 @@
 		tripcode.securetrip = [[[CKRecipe sharedRecipe] lookup:@"User.SecureTripcode" inDocument:doc] retain];
 		DLog(@"Secure Tripcode: %@",tripcode.securetrip);
 		if      ([[CKRecipe sharedRecipe] lookup:@"User.Authority.Admin" inDocument:doc]) privilege = CK_PRIV_ADMIN;
-		else if	([[CKRecipe sharedRecipe] lookup:@"User.Authority.Mod" inDocument:doc])   privilege = CK_PRIV_MOD;
+		else if ([[CKRecipe sharedRecipe] lookup:@"User.Authority.Mod" inDocument:doc])   privilege = CK_PRIV_MOD;
 		DLog(@"Privilege: %d",privilege);
 	}
 	return self;
@@ -143,7 +143,7 @@
 	if(tripcode.securetrip) [trip appendFormat:@"!!%@",tripcode.securetrip];
 	return trip;
 }
-- (NSString*)namestring { 
+- (NSString*)namestring {
 	NSMutableString* nm = [NSMutableString string];
 	if(name) [nm appendString:name];
 	[nm appendString:self.tripstring];
@@ -193,15 +193,16 @@
 	if(email) [p appendFormat:@" (mailto:%@%@\e[0m)",[email caseInsensitiveCompare:@"sage"] == NSOrderedSame ? @"\e[1;31m" : @"",email];
 	return p;
 }
+
 - (NSXMLNode*)XMLRepresentation {
 	NSXMLNode* xmlname = [NSXMLElement elementWithName:@"span"
 	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:name]]
 	                                        attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"name"]]];
-	
+
 	NSXMLNode* xmltrip = [NSXMLElement elementWithName:@"span"
 	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:tripcode.trip]]
 	                                        attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"tripcode"]]];
-	
+
 	NSXMLNode* xmlstrip = [NSXMLElement elementWithName:@"span"
 	                                           children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:tripcode.securetrip]]
 	                                         attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"securetripcode"]]];
@@ -216,7 +217,7 @@
 	                                         attributes:[NSArray arrayWithObjects:
 	                                                    [NSXMLNode attributeWithName:@"class" stringValue:@"mail"],
 	                                                    [NSXMLNode attributeWithName:@"href" stringValue:[NSString stringWithFormat:@"mailto:%@",email]],nil]];
-	
+
 	return [NSXMLElement elementWithName:@"div"
 	                            children:[NSArray arrayWithObjects:xmlname,xmltrip,xmlstrip,xmlauth,xmlemail,nil]
 	                          attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"user"]]];

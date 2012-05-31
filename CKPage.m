@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * CKPage.m - A single page.
  */
 
@@ -27,7 +27,7 @@
 		index = [CKUtil parsePage:URL];
 		DLog(@"URL: %@", URL);
 		DLog(@"Board: %@", board);
-		DLog(@"Index: %d",index);		
+		DLog(@"Index: %d",index);
 	}
 	return url != nil;
 }
@@ -84,7 +84,7 @@
 		if(thread) {
 			[threads addObject:thread];
 			[thread release];
-		}		
+		}
 	}
 	[doc setURI:URI];
 	DLog(@"Threads: %lu",(unsigned long)[threads count]);
@@ -116,7 +116,7 @@
 	for(int i = 1; i < [threads count]; i++)
 		if((candidate = [[[threads objectAtIndex:i] posts] objectAtIndex:0]).ID < result.ID)
 			result = candidate;
-	return result;	
+	return result;
 }
 - (NSTimeInterval)rangeOfPosts { return [[[self newestPost] date] timeIntervalSinceDate:[[self oldestPost] date]]; }
 

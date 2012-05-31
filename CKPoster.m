@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * CKPoster.m - Posting data to the board.
  */
 
@@ -64,7 +64,7 @@
 }
 + (CKPoster*)posterForXML:(NSXMLNode*)doc { return [[[self alloc] initWithXML:doc] autorelease]; }
 
-- (int)populate { 
+- (int)populate {
 	NSXMLDocument* doc;
 	int error = [CKUtil fetchXML:&doc fromURL:URL];
 	if(error != CK_ERR_SUCCESS)
@@ -201,7 +201,7 @@
 	[[[CKRecipe sharedRecipe] lookup:@"Poster.Fields.Extra"] enumerateKeysAndObjectsUsingBlock:^(id key, id object, BOOL *stop){
 		[request setPostValue:object forKey:key];
 	}];
-	
+
 	[request setPostValue:@"regist" forKey:@"mode"];
 
 	if(captcha.verification) {
@@ -216,14 +216,14 @@
 		if(error) *error = CK_ERR_UNDEFINED;
 		return nil;
 	}
-	
+
 	int idno;
 	do {
 		NSAutoreleasePool* loop = [[NSAutoreleasePool alloc] init];
 		idno = [board newestPostID];
 		[loop drain];
 	} while(!test(idno));
-	
+
 	return [self post:error];
 }
 

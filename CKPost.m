@@ -1,8 +1,8 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
  * CKPost.m - Data from a single post. Core building block of the framework.
  */
 
@@ -41,11 +41,11 @@
 		                                           @"Secure",@"Secure Tripcode",
 		                                           @"email@example.com",@"Email",
 		                                           [NSNumber numberWithInt:CK_PRIV_ADMIN],@"Privilege",nil]];
-		
+
 		NSBundle* classbundle = [NSBundle bundleForClass:[self class]];
 		image = [[CKImage alloc] initByReferencingURL:[classbundle URLForImageResource:@"ChanKit.png"]];
 		image.thumbnail = [CKImage imageWithContentsOfURL:[classbundle URLForImageResource:@"ChanKit_thumb.png"]];
-		[image setMetadata:[NSDictionary dictionaryWithObjectsAndKeys:	
+		[image setMetadata:[NSDictionary dictionaryWithObjectsAndKeys:
 		                      @"KRUrxKSynSfP8h/eYN8yqA==",@"MD5",
 		                      [NSNumber numberWithUnsignedInteger:328230],@"Size",
 		                      [NSValue valueWithSize:NSMakeSize(512.0,512.0)],@"Resolution",
@@ -66,7 +66,7 @@
 		[inlinequotes.values addObject:@">Inline"];
 		[inlinequotes.ranges addObject:[NSValue valueWithRange:NSMakeRange(4,7)]];
 	}
-	return self;	
+	return self;
 }
 + (CKPost*)testPost { return [[[self alloc] initTestPost] autorelease]; }
 
@@ -146,7 +146,7 @@
 - (void)populate:(NSXMLNode*)doc threadContext:(CKThread*)context {
 	if(![doc level]) {
 		// doc is root node
-		NSString* rootpath = OP ? [[CKRecipe sharedRecipe] lookup:@"Post.OP"] : 
+		NSString* rootpath = OP ? [[CKRecipe sharedRecipe] lookup:@"Post.OP"] :
 		                        [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Post.Index"],self.IDString];
 		NSArray* nodes = [doc nodesForXPath:rootpath error:NULL];
 		if([nodes count]) [self populate:[nodes objectAtIndex:0] threadContext:context];
@@ -156,7 +156,7 @@
 	if(!OP) {
 		// It would be nice if this could simply be taken from the xmlnode's index, thank Yotsuba and tidy's throwing out empty elements
 		if((index = [[[[CKRecipe sharedRecipe] lookup:@"Thread.Replies" inDocument:[doc rootDocument]]
-					  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] indexOfObject:self.IDString]) == NSNotFound) {		
+					  componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] indexOfObject:self.IDString]) == NSNotFound) {
 			deleted = YES;
 			return;
 		}
@@ -189,7 +189,7 @@
 		last = range.location + range.length;
 	}
 	DLog(@"Admin Messages: %@",adminmessages.values);
-	
+
 	banned = [[adminmessages.values filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF = %@",[[CKRecipe sharedRecipe] lookup:@"Post.BanMessage"]]] count];
 	DLog(@"Banned: %d",banned);
 
@@ -361,7 +361,7 @@
 		[desc appendFormat:@"\n\n\t%@",[[formatted componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]] componentsJoinedByString:@"\n\t"]];
 	}
 	if(abbreviated) [desc appendString:@"\n\t(…)"];
-	return desc;	
+	return desc;
 }
 
 - (NSString*)commentFilteringQuotes {
@@ -379,17 +379,17 @@
 - (NSString*)quoteRelativeToPost:(CKPost*)post {
 	if([board isEqualToString:post.board])
 		return [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.Format"],ID];
-	return [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossBoardFormat"],board,ID];	
+	return [NSString stringWithFormat:[[CKRecipe sharedRecipe] lookup:@"Definitions.Quotes.CrossBoardFormat"],board,ID];
 }
 
 - (NSXMLNode*)generateXML {
 	NSXMLNode* xmluser = [user XMLRepresentation];
 	NSXMLNode* xmlfile = [image XMLRepresentation];
-	
+
 	NSXMLElement* xmlsubject = [NSXMLElement elementWithName:@"span"
 	                                                children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:subject]]
 	                                              attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"subject"]]];
-	
+
 	NSMutableArray* piecemeal = [NSMutableArray array];
 	NSUInteger lastend = 0;
 	NSUInteger len = [comment length];
@@ -406,7 +406,7 @@
 		lastend = range.location + range.length;
 	}
 	[piecemeal addObject:[NSXMLNode textWithStringValue:[comment substringWithRange:NSMakeRange(lastend,len - lastend)]]];
-	
+
 	// ... eventually we return an <li>
 	return nil;
 }

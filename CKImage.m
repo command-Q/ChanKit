@@ -1,9 +1,9 @@
 /*
  * ChanKit - Imageboard parsing and interaction.
  * Copyright 2009-2012 command-Q.org. All rights reserved.
- * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2. 
- * 
- * CKImage.h - Cross-compatible wrapper around NSImage/UIImage with imageboard-specific metadata and convenience routines.
+ * This framework is distributed under the terms of the Do What The Fuck You Want To Public License, Version 2.
+ *
+ * CKImage.m - Cross-compatible wrapper around NSImage/UIImage with imageboard-specific metadata and convenience routines.
  */
 
 #import "CKImage.h"
@@ -29,7 +29,7 @@
 		size = [image length];
 		DLog(@"Image Resolution: %0.0fx%0.0f",resolution.width,resolution.height);
 		DLog(@"Image Size: %lu bytes",(unsigned long)size);
-		return self;		
+		return self;
 	}
 	[self release];
 	return nil;
@@ -52,7 +52,7 @@
 		MD5 = [[[CKRecipe sharedRecipe] lookup:@"Image.MD5" inDocument:doc] retain];
 		timestamp = [[NSDate alloc] initWithTimeIntervalSince1970:[[[CKRecipe sharedRecipe] lookup:@"Image.Date" inDocument:doc] doubleValue]];
 		spoiler = (BOOL)[[CKRecipe sharedRecipe] lookup:@"Image.Spoiler" inDocument:doc];
-		
+
 		DLog(@"Image URL: %@",URL);
 		DLog(@"Image Name: %@",name);
 		DLog(@"Image Timestamp: %@",timestamp);
@@ -110,12 +110,12 @@
 	if(!MD5) [self load];
 	return [[MD5 retain] autorelease];
 }
-- (NSImage*)image {	return [[[NSImage alloc] initWithData:image] autorelease]; }
+- (NSImage*)image { return [[[NSImage alloc] initWithData:image] autorelease]; }
 - (NSData*)data { 
 	[self load];
 	return [[image retain] autorelease];
 }
-- (int)load { 
+- (int)load {
 	if(!verified) {
 		ASIHTTPRequest* fetch = [ASIHTTPRequest requestWithURL:URL];
 		[CKUtil setProxy:[[NSUserDefaults standardUserDefaults] URLForKey:@"CKProxySetting"] onRequest:fetch];
@@ -189,7 +189,7 @@
 	                                                      [NSXMLNode attributeWithName:@"data-md5" stringValue:MD5],
 	                                                      [NSXMLNode attributeWithName:@"data-name" stringValue:name],
 	                                                      [NSXMLNode attributeWithName:@"data-origin" stringValue:[URL absoluteString]],nil]];
-	
+
 	NSXMLNode* xmlfile = [NSXMLElement elementWithName:@"a"
 	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:[imgpath lastPathComponent]]]
 	                                        attributes:[NSArray arrayWithObjects:
@@ -203,15 +203,15 @@
 	NSXMLNode* xmlres = [NSXMLElement elementWithName:@"span"
 	                                         children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.formattedResolution]]
 	                                       attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-resolution"]]];
-	
+
 	NSXMLNode* xmlname = [NSXMLElement elementWithName:@"span"
 	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:name]]
 	                                        attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-name"]]];
-	
+
 	NSXMLNode* xmltime = [NSXMLElement elementWithName:@"span"
 	                                          children:[NSArray arrayWithObject:[NSXMLNode textWithStringValue:self.formattedTimestamp]]
 	                                        attributes:[NSArray arrayWithObject:[NSXMLNode attributeWithName:@"class" stringValue:@"image-timestamp"]]];
-	
+
 
 	NSXMLNode* xmlcomma = [NSXMLNode textWithStringValue:@", "];
 	NSXMLNode* xmldescription = [NSXMLElement elementWithName:@"span"
