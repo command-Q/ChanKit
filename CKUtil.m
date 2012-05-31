@@ -104,7 +104,7 @@
 			DLog(@"Unsupported board type");
 			return CK_ERR_UNSUPPORTED;
 		}
-		if([CKUtil checkBan:*doc]) {
+		if([CKUtil detectBan:*doc]) {
 			DLog(@"Banned!");
 			return CK_ERR_BANNED;
 		}
@@ -142,6 +142,19 @@
 	return CK_ERR_SUCCESS;
 }
 
++ (BOOL)detectBan:(NSXMLDocument*)doc {
+	if([[CKRecipe sharedRecipe] lookup:@"Special.Ban.Identifier" inDocument:doc]) {
+		DLog(@"Banned from board: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.Board" inDocument:doc]);
+		DLog(@"Banned with reason: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.Reason" inDocument:doc]);
+		DLog(@"Banned IP: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.IP" inDocument:doc]);
+		DLog(@"Banned name: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.Name" inDocument:doc]);
+		DLog(@"Banned from %@ to %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.From" inDocument:doc],
+		                             [[CKRecipe sharedRecipe] lookup:@"Special.Ban.To" inDocument:doc]);
+		return YES;
+	}
+	return NO;
+}
+// the adjacency of these methods is in no way suggestive
 + (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest*)request {
 	if(!proxy) return;
 	[request setTimeOutSeconds:CK_PROXY_TIMEOUT]; // Since it's a proxy, latency may be much higher
@@ -154,19 +167,6 @@
 	else if([[proxy scheme] caseInsensitiveCompare:@"socks"] == NSOrderedSame)
 		[request setProxyType:(NSString*)kCFProxyTypeSOCKS];
 	DLog(@"Using proxy %@://%@:%d",[request proxyType],[request proxyHost],[request proxyPort]);
-}
-
-+ (BOOL)checkBan:(NSXMLDocument*)doc { 
-	if([[CKRecipe sharedRecipe] lookup:@"Special.Ban.Identifier" inDocument:doc]) {
-		DLog(@"Banned from board: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.Board" inDocument:doc]);
-		DLog(@"Banned with reason: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.Reason" inDocument:doc]);
-		DLog(@"Banned IP: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.IP" inDocument:doc]);
-		DLog(@"Banned name: %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.Name" inDocument:doc]);
-		DLog(@"Banned from %@ to %@",[[CKRecipe sharedRecipe] lookup:@"Special.Ban.From" inDocument:doc],
-		                             [[CKRecipe sharedRecipe] lookup:@"Special.Ban.To" inDocument:doc]);
-		return YES;
-	}
-	return NO;
 }
 
 + (NSString*)generatePassword {

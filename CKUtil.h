@@ -27,8 +27,9 @@
 + (int)fetchXML:(NSXMLDocument**)doc fromURL:(NSURL*)URL;
 
 + (int)validateResponse:(ASIHTTPRequest*)response;
++ (BOOL)detectBan:(NSXMLDocument*)doc;
+
 + (void)setProxy:(NSURL*)proxy onRequest:(ASIHTTPRequest*)request;
-+ (BOOL)checkBan:(NSXMLDocument*)doc;
 
 + (NSString*)generatePassword;
 + (NSString*)MD5:(NSData*)data;
