@@ -346,7 +346,7 @@
 		<key>Number</key>
 		<string>/html/body/div[@class=&quot;pagelist desktop&quot;]/div[@class=&quot;pages&quot;]/strong</string>
 		<key>Threads</key>
-		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer opContainer&quot;]/div[@class=&quot;post op&quot;]/div[@class=&quot;postInfo desktop&quot;]/span[@class=&quot;postNum&quot;]/a[@class=&quot;replylink&quot;]/@href</string>
+		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer opContainer&quot;]/div[@class=&quot;post op&quot;]/div[@class=&quot;postInfo desktop&quot;]/span[@class=&quot;postNum&quot;]/span/a[@class=&quot;replylink&quot;]/@href</string>
 		<key>IDs</key>
 		<string>/html/body/form[@name=&quot;delform&quot;]/div[@class=&quot;board&quot;]/div[@class=&quot;thread&quot;]/div[@class=&quot;postContainer opContainer&quot;]/div[@class=&quot;post op&quot;]/div[@class=&quot;postInfo desktop&quot;]/span[@class=&quot;postNum&quot;]/a[@title=&quot;Quote this post&quot;]</string>
 	</dict>
